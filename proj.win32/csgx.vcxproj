@@ -156,6 +156,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\gayola\CxHttpClient.cpp" />
     <ClCompile Include="..\gayola\CxTcpClient.cpp" />
     <ClCompile Include="..\gayola\CxThreadEx.cpp" />
+    <ClCompile Include="..\gayola\CxUri.cpp" />
+    <ClCompile Include="..\gayola\http_parser.c" />
+    <ClCompile Include="..\gayola\XHttp3.cpp" />
+    <ClCompile Include="..\gayola\xnet.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,10 +172,17 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Game\XObject.h" />
     <ClInclude Include="..\Game\XPlayer.h" />
     <ClInclude Include="..\Game\XScene.h" />
+    <ClInclude Include="..\gayola\ByteBuffer.h" />
+    <ClInclude Include="..\gayola\ByteConverter.h" />
+    <ClInclude Include="..\gayola\ByteReader.h" />
     <ClInclude Include="..\gayola\CCTcpClient.h" />
     <ClInclude Include="..\gayola\CxHttpClient.h" />
     <ClInclude Include="..\gayola\CxTcpClient.h" />
     <ClInclude Include="..\gayola\CxThreadEx.h" />
+    <ClInclude Include="..\gayola\CxUri.h" />
+    <ClInclude Include="..\gayola\http_parser.h" />
+    <ClInclude Include="..\gayola\XHttp3.h" />
+    <ClInclude Include="..\gayola\xnet.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

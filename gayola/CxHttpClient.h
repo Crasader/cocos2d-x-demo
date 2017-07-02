@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 
+
 /*
 Android 必须在主线程中执行
 	socket connect 
@@ -22,7 +23,7 @@ public:
 	static void ThreadGetDocumentToFile(std::string uri, FILE* pf);
 	static void ThreadGetDocumentToString(std::string uri, std::string& result);
 
-	static void ThGet(std::string uri, DIDNETMESSAGE proc,void* n);
+	static void ThGet(std::string _uri, DIDNETMESSAGE proc,void* n);
 
 };
 

@@ -1,11 +1,18 @@
 #include "LogoScene.h"
 #include "SimpleAudioEngine.h"
 
+#include "gayola/CxHttpClient.h"
+#include "MyTcpClient.h"
+
 USING_NS_CC;
 
 Scene* Logo::createScene()
 {
-	return Logo::create();
+	auto scene = Scene::create();
+	auto layer = Logo::create();
+	layer->setName("main");
+	scene->addChild(layer);
+	return scene;
 }
 
 // on "init" you need to initialize your instance
@@ -53,15 +60,16 @@ bool Logo::init()
 
 	// add the label as a child to this layer
 	this->addChild(label, 1);
+	label->setName("main_label");
 
-	// add "Logo" splash screen"
-	auto sprite = Sprite::create("Logo.png");
+	//// add "Logo" splash screen"
+	//auto sprite = Sprite::create("Logo.png");
 
-	// position the sprite on the center of the screen
-	sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
+	//// position the sprite on the center of the screen
+	//sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
-	// add the sprite as a child to this layer
-	this->addChild(sprite, 0);
+	//// add the sprite as a child to this layer
+	//this->addChild(sprite, 0);
 	
 
 	GetAuthURL("http://mangoschina.blog.163.com/blog/static/27333216120175612634726");
@@ -73,18 +81,8 @@ bool Logo::init()
 
 void Logo::menuCloseCallback(Ref* pSender)
 {
-	//Close the cocos2d-x game scene and quit the application
-	Director::getInstance()->end();
 
-	#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif
-	
-	/*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() and exit(0) as given above,instead trigger a custom event created in RootViewController.mm as below*/
-	
-	//EventCustom customEndEvent("game_scene_close_event");
-	//_eventDispatcher->dispatchEvent(&customEndEvent);
-	
+	GetAuthURL("http://mangoschina.blog.163.com/blog/static/27333216120175612634726");
 	
 }
 
@@ -95,7 +93,7 @@ void Logo::GetAuthURL(std::string URL)
 	//开启请求并接收线程
 	//处理结果在收到结束消息后
 
-	CxHttpClient::ThGet(URL);
+	CxHttpClient::ThGet(URL, XzOnNetMessage,this);
 
 }
 
@@ -106,5 +104,7 @@ void Logo::OnAppMessage(char* buf, size_t sz, void* who)
 
 void Logo::OnNetMessage(char* buf, size_t sz, void* arg)
 {
-
+	auto label = Label::createWithTTF(buf, "fonts/Marker Felt.ttf", 24);
+	label->setPosition(Vec2(480, 320));
+	this->addChild(label, 1);
 }
