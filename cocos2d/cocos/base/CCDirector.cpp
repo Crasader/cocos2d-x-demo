@@ -111,15 +111,25 @@ void cocos2d::Director::DispatchNetMsg(char* buf, size_t sz, void* arg)
 }
 
 
-void cocos2d::Director::TickAdd(DIRECTOR_TICK _tick)
+void cocos2d::Director::TickAdd(DIRECTOR_TICK _tick, void* _arg, int _order)
 {
-	myTicks.insert(_tick);
+	director_tick_t dt = {_tick,_arg,_order};
+	myTicks.push_back(dt);
+	myTicks.sort([](const director_tick_t A, const director_tick_t B) {return A.order < B.order; });
 }
 
 
 void cocos2d::Director::TickDel(DIRECTOR_TICK _tick)
 {
-	myTicks.erase(_tick);
+	//myTicks.erase(_tick);
+	for (auto it=myTicks.begin();it!=myTicks.end();)
+	{
+		if (it->proc == _tick) {
+			it = myTicks.erase(it);
+		}
+		else it++;
+	}
+	myTicks.sort([](const director_tick_t A, const director_tick_t B) {return A.order < B.order; });
 }
 
 const char *Director::EVENT_BEFORE_SET_NEXT_SCENE = "director_before_set_next_scene";
@@ -375,7 +385,7 @@ void Director::drawScene()
 //-------------------------------------
 	for (auto it : myTicks)
 	{
-		(it)(_deltaTime);
+		(it.proc)(_deltaTime,it.arg);
 	}
 
 	Node* n = getRunningScene();

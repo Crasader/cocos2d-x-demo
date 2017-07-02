@@ -13,6 +13,9 @@
     <Filter Include="Game">
       <UniqueIdentifier>{3264bb94-c9da-4e3d-bce1-8484145a8e42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gayola">
+      <UniqueIdentifier>{fb25a93d-f907-47d1-ac3e-1d27c28b51c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -35,6 +38,24 @@
     </ClCompile>
     <ClCompile Include="..\Game\XScene.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gayola\CxThreadEx.cpp">
+      <Filter>gayola</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gayola\CxHttpClient.cpp">
+      <Filter>gayola</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gayola\CCTcpClient.cpp">
+      <Filter>gayola</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MyTcpClient.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gayola\CxTcpClient.cpp">
+      <Filter>gayola</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\LogoScene.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +82,24 @@
     </ClInclude>
     <ClInclude Include="..\Game\XGame.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\CxThreadEx.h">
+      <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\CxHttpClient.h">
+      <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\CCTcpClient.h">
+      <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MyTcpClient.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\CxTcpClient.h">
+      <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LogoScene.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

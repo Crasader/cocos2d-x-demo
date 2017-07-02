@@ -146,20 +146,32 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
+    <ClCompile Include="..\Classes\LogoScene.cpp" />
+    <ClCompile Include="..\Classes\MyTcpClient.cpp" />
     <ClCompile Include="..\Game\XActor.cpp" />
     <ClCompile Include="..\Game\XObject.cpp" />
     <ClCompile Include="..\Game\XPlayer.cpp" />
     <ClCompile Include="..\Game\XScene.cpp" />
+    <ClCompile Include="..\gayola\CCTcpClient.cpp" />
+    <ClCompile Include="..\gayola\CxHttpClient.cpp" />
+    <ClCompile Include="..\gayola\CxTcpClient.cpp" />
+    <ClCompile Include="..\gayola\CxThreadEx.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
+    <ClInclude Include="..\Classes\LogoScene.h" />
+    <ClInclude Include="..\Classes\MyTcpClient.h" />
     <ClInclude Include="..\Game\XActor.h" />
     <ClInclude Include="..\Game\XGame.h" />
     <ClInclude Include="..\Game\XObject.h" />
     <ClInclude Include="..\Game\XPlayer.h" />
     <ClInclude Include="..\Game\XScene.h" />
+    <ClInclude Include="..\gayola\CCTcpClient.h" />
+    <ClInclude Include="..\gayola\CxHttpClient.h" />
+    <ClInclude Include="..\gayola\CxTcpClient.h" />
+    <ClInclude Include="..\gayola\CxThreadEx.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

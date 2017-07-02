@@ -83,7 +83,18 @@ enum class MATRIX_STACK_TYPE
     MATRIX_STACK_TEXTURE
 };
 
-typedef void(*DIRECTOR_TICK)(float);
+typedef void(*DIRECTOR_TICK)(float _delta,void* _arg);
+
+
+struct  director_tick_s
+{
+	DIRECTOR_TICK proc;
+	void* arg;
+	int order;
+};
+
+typedef struct  director_tick_s director_tick_t;
+
 
 /**
  @brief Class that creates and handles the main Window and manages how
@@ -100,11 +111,11 @@ typedef void(*DIRECTOR_TICK)(float);
 class CC_DLL Director : public Ref
 {
 public:
-	std::set<DIRECTOR_TICK> myTicks;
+	std::list<director_tick_t> myTicks;
 	void AppMsgPushBack(char* buf, size_t sz, void* arg);
 	void DispatchNetMsg(char* buf, size_t sz, void* arg);
 
-	void TickAdd(DIRECTOR_TICK _tick);
+	void TickAdd(DIRECTOR_TICK _tick,void* _arg,int _order);
 	void TickDel(DIRECTOR_TICK _tick);
 
 public:
