@@ -4,6 +4,8 @@
 #include "gayola/CxHttpClient.h"
 #include "MyTcpClient.h"
 
+#include <fstream>
+
 USING_NS_CC;
 
 Scene* Logo::createScene()
@@ -72,7 +74,7 @@ bool Logo::init()
 	//this->addChild(sprite, 0);
 	
 
-	GetAuthURL("http://mangoschina.blog.163.com/blog/static/27333216120175612634726");
+	//GetAuthURL("http://mangoschina.blog.163.com/blog/static/27333216120175612634726");
 
 
 	return true;
@@ -93,7 +95,7 @@ void Logo::GetAuthURL(std::string URL)
 	//开启请求并接收线程
 	//处理结果在收到结束消息后
 
-	CxHttpClient::ThGet(URL, XzOnNetMessage,this);
+	CxHttpClient::ThGet(URL, XzAppMessagePushBack,this);
 
 }
 
@@ -104,7 +106,19 @@ void Logo::OnAppMessage(char* buf, size_t sz, void* who)
 
 void Logo::OnNetMessage(char* buf, size_t sz, void* arg)
 {
+
+#if(0)
 	auto label = Label::createWithTTF(buf, "fonts/Marker Felt.ttf", 24);
 	label->setPosition(Vec2(480, 320));
 	this->addChild(label, 1);
+#endif
+
+
+	std::ofstream ofs;
+	ofs.open("d:\\1.txt", std::ios_base::binary);
+	if (ofs.good()) {
+		ofs.write(buf, sz);
+		ofs.close();
+	}
+
 }

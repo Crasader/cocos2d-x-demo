@@ -22,6 +22,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <unordered_map>
 
 //#include <winsock2.h>
 //#include <ws2tcpip.h>
@@ -58,7 +59,7 @@ struct FtpFile   //定义一个结构为了传递给my_fwrite函数.可用curl_e
 
 //int XHtpGet3(const char* url,ByteBuffer* pBBuffer=NULL,bool ssl_on=false,double* _len=NULL);
 
-int XHtpPost3(const char* url,const char* fname);
+//int XHtpPost3(const char* url,const char* fname);
 
 
 extern double xhttp_down_total;		/*当前准备下载文件的总长度*/
@@ -97,7 +98,6 @@ public:
 	virtual ~HttpResponse();
 
 //	HttpResponse(string& _data);
-
 //	string& Content();
 
 	void Parse();
@@ -117,18 +117,22 @@ public:
 	
 //	ByteBuffer m_DataBbf;
 
-	map<string, string> mapHead;
+	unordered_map<string, string> mapHead;
 
 	int iContentLength;
 
 	const char* GetContent();
+	size_t GetContentLength() { return m_Content.size(); };
 
 	ByteBuffer m_Content;
 
+	bool m_b_chunked;
 
 	int resultCode;
 	std::string PVer; //协议说明
 	std::string ErrorString; //错误提示文本
+
+	std::string GetHeadFeildValueIgnoreCase(std::string kname);
 
 protected:
 //	size_t rpos_Content;
@@ -195,7 +199,7 @@ public:
 
 public:
 	void Perform(HttpResponse* _response);
-	void AddFile(const std::string& name, const std::string& filename, const std::string& type);
+//	void AddFile(const std::string& name, const std::string& filename, const std::string& type);
 	void AddMultilineField(const std::string& name, std::list<std::string>& values);
 
 	void AddField(const std::string& name, const std::string& value);
@@ -203,6 +207,8 @@ public:
 public:
 	void GetURL(string surl,HttpResponse* _response);
 
+	//2017-07-02
+	HttpResponse* GetDocAfterConnected();
 };
 
 

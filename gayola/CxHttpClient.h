@@ -20,10 +20,10 @@ class CxHttpClient
 {
 
 public:
-	static void ThreadGetDocumentToFile(std::string uri, FILE* pf);
-	static void ThreadGetDocumentToString(std::string uri, std::string& result);
+//	static void ThreadGetDocumentToFile(std::string uri, FILE* pf);
+//	static void ThreadGetDocumentToString(std::string uri, std::string& result);
 
-	static void ThGet(std::string _uri, DIDNETMESSAGE proc,void* n);
+	static void ThGet(std::string _uri, void* proc,void* n);
 
 };
 

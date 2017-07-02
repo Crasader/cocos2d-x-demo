@@ -225,6 +225,34 @@ void HttpResponse::ParseContentForChunked()
 	//这里开始处理
 }
 
+/**
+修剪掉前后的内容
+*/
+static int trimString(std::string& src, std::string estr)
+{
+	int r = 0;
+	//前
+	while (!src.empty())
+	{
+		char c = src.front();
+		if(std::string::npos==estr.find(c)) break;
+		src.erase(src.begin());
+		r++;
+	}
+
+	//后
+	while (!src.empty())
+	{
+		char c = src.back();
+		if (std::string::npos == estr.find(c)) break;
+		src.pop_back();
+		r++;
+	}
+
+	return r;
+}
+
+
 
 void HttpResponse::Parse()
 {
@@ -309,7 +337,23 @@ void HttpResponse::Parse()
 
 		int ip = str.find(":");
 		string sfi = str.substr(0, ip);
+
+		//去掉前面空格和换行符
+		//while(1)
+		//{
+		//	char c = sfi.front();
+		//	if (c == ' ' || c == '\n' || c == '\r') sfi.erase(sfi.begin());
+		//	else break;
+		//}
+		trimString(sfi, "\r\n ");
+
+		std::transform(sfi.begin(), sfi.end(),sfi.begin(), tolower);
+
 		string sfv = str.substr(ip + 1, str.length() - ip + 1);
+
+		trimString(sfv, "\r\n ");
+		std::transform(sfv.begin(), sfv.end(), sfv.begin(), tolower);
+
 		//这里考虑将前面的空字符去掉
 		mapHead[sfi] = sfv;
 
@@ -326,16 +370,19 @@ void HttpResponse::Parse()
 	//ptrContent = _dat + 4;
 
 	//如果没发现长度标记 会导致png文件多接收到13个字节 原因未明
-
-	if (mapHead["Transfer-Encoding"].compare(" chunked") == 0)
+	std::string kvalue=GetHeadFeildValueIgnoreCase("transfer-encoding");
+	//if (mapHead["transfer-encoding"].compare("chunked") == 0)
+	if(kvalue.compare("chunked")==0)
 	{
 		//ParseContentForChunked();
 		ParseChunk();
 		return;
 	}
 
-	if (mapHead.find("Content-Length") != mapHead.end())
-		iContentLength = atoi(mapHead["Content-Length"].c_str());
+	kvalue = GetHeadFeildValueIgnoreCase("content-length");
+	//if (mapHead.find("content-length") != mapHead.end())
+	if(!kvalue.empty())
+		iContentLength = atoi(kvalue.c_str());
 	else iContentLength = rpos_Data - ihead_len - 4;
 
 	if (iContentLength>0) m_Content.append(_dat + 4, iContentLength);
@@ -343,12 +390,152 @@ void HttpResponse::Parse()
 }
 
 
+#if(0)
+void HTTPSocket::OnRawData(const char *buf, size_t len)
+{
+	if (!m_header)
+	{
+		if (m_b_chunked)
+		{
+			size_t ptr = 0;
+			while (ptr < len)
+			{
+				switch (m_chunk_state)
+				{
+				case 4:
+					while (ptr < len && (m_chunk_line.size() < 2 || m_chunk_line.substr(m_chunk_line.size() - 2) != "\r\n"))
+						m_chunk_line += buf[ptr++];
+					if (m_chunk_line.size() > 1 && m_chunk_line.substr(m_chunk_line.size() - 2) == "\r\n")
+					{
+						OnDataComplete();
+						// prepare for next request(or response)
+						m_b_chunked = false;
+						SetLineProtocol(true);
+						m_first = true;
+						m_header = true;
+						m_body_size_left = 0;
+						if (len - ptr > 0)
+						{
+							char tmp[TCP_BUFSIZE_READ];
+							memcpy(tmp, buf + ptr, len - ptr);
+							tmp[len - ptr] = 0;
+							OnRead(tmp, len - ptr);
+							ptr = len;
+						}
+					}
+					break;
+				case 0:
+					while (ptr < len && (m_chunk_line.size() < 2 || m_chunk_line.substr(m_chunk_line.size() - 2) != "\r\n"))
+						m_chunk_line += buf[ptr++];
+					if (m_chunk_line.size() > 1 && m_chunk_line.substr(m_chunk_line.size() - 2) == "\r\n")
+					{
+						m_chunk_line.resize(m_chunk_line.size() - 2);
+						Parse pa(m_chunk_line, ";");
+						std::string size_str = pa.getword();
+						m_chunk_size = Utility::hex2unsigned(size_str);
+						if (!m_chunk_size)
+						{
+							m_chunk_state = 4;
+							m_chunk_line = "";
+						}
+						else
+						{
+							m_chunk_state = 1;
+							m_chunk_line = "";
+						}
+					}
+					break;
+				case 1:
+				{
+					size_t left = len - ptr;
+					size_t sz = m_chunk_size < left ? m_chunk_size : left;
+					OnData(buf + ptr, sz);
+					m_chunk_size -= sz;
+					ptr += sz;
+					if (!m_chunk_size)
+					{
+						m_chunk_state = 2;
+					}
+				}
+				break;
+				case 2: // skip CR
+					ptr++;
+					m_chunk_state = 3;
+					break;
+				case 3: // skip LF
+					ptr++;
+					m_chunk_state = 0;
+					break;
+				}
+			}
+		}
+		else
+			if (!m_b_http_1_1 || !m_b_keepalive)
+			{
+				OnData(buf, len);
+				/*
+				request is HTTP/1.0 _or_ HTTP/1.1 and not keep-alive
+
+				This means we destroy the connection after the response has been delivered,
+				hence no need to reset all internal state variables for a new incoming
+				request.
+				*/
+				m_body_size_left -= len;
+				if (!m_body_size_left)
+				{
+					OnDataComplete();
+				}
+			}
+			else
+			{
+				size_t sz = m_body_size_left < len ? m_body_size_left : len;
+				OnData(buf, sz);
+				m_body_size_left -= sz;
+				if (!m_body_size_left)
+				{
+					OnDataComplete();
+					// prepare for next request(or response)
+					SetLineProtocol(true);
+					m_first = true;
+					m_header = true;
+					m_body_size_left = 0;
+					if (len - sz > 0)
+					{
+						char tmp[TCP_BUFSIZE_READ];
+						memcpy(tmp, buf + sz, len - sz);
+						tmp[len - sz] = 0;
+						OnRead(tmp, len - sz);
+					}
+				}
+			}
+	}
+}
+
+#endif
+
 
 const char* HttpResponse::GetContent()
 {
 	return (char*)m_Content.contents();
 	//return (char*)m_Data + ihead_len+4;
 	//return (char*)m_Data + ihead_len;
+}
+
+std::string HttpResponse::GetHeadFeildValueIgnoreCase(std::string kname)
+{
+	std::string res;
+	std::transform(kname.begin(), kname.end(), kname.begin(), tolower);
+	for (auto it : mapHead)
+	{
+		std::string s1 = it.first;
+		std::transform(s1.begin(), s1.end(), s1.begin(), tolower);
+		if (s1.compare(kname) == 0)
+		{
+			res = it.second;
+			std::transform(res.begin(), res.end(), res.begin(), tolower);
+		}
+	}
+	return res;
 }
 
 //////////////////////////////////////////////////////////////
@@ -660,6 +847,49 @@ void HttpRequest::GetURL(string surl, HttpResponse* _response)
 		_response->Parse();
 	}
 
+}
+
+HttpResponse* HttpRequest::GetDocAfterConnected()
+{
+	if (m_socket == 0) return NULL;
+
+	SetMethod("GET");
+	SetHttpVersion("HTTP/1.1");
+	AddResponseHeader("Host", m_host); // oops - this is actually a request header that we're adding..
+	AddResponseHeader("User-agent", "Mozilla/5.0");
+	AddResponseHeader("Accept", "text/html,image/gif, image/x-xbitmap, image/jpeg,image/png, text/plain, */*;");
+	AddResponseHeader("Connection", "close");
+	AddResponseHeader("Accept-Encoding", "gzip, deflate");
+
+	SendRequest();
+	size_t rrnum = 0;
+	HttpResponse* _response = new HttpResponse();
+	if (_response)
+	{
+		unsigned char buf[40960];
+		int rnum = 0;
+		while (1) {
+			memset(buf, 0, sizeof(buf));
+			rnum = xnet_recv(m_socket, (char*)buf, 40960, 0);
+			if (rnum > 0) {
+				_response->Append(buf, rnum);
+				rrnum += rnum;
+			}
+			if (rnum < 1) break;
+		}
+
+		_response->Parse();
+	}
+
+	//这里有分部分传输过来的数据
+
+/*
+编码使用若干个Chunk组成，由一个标明长度为0的chunk结束，每个Chunk有两部分组成，第一部分是该Chunk的长度和长度单位（一般不写），第二部分就是指定长度的内容，每个部分用CRLF隔开。在最后一个长度为0的Chunk中的内容是称为footer的内容，是一些没有写的头部内容。
+*/
+
+
+
+	return _response;
 }
 
 void HttpRequest::Perform(HttpResponse* _response)

@@ -7,6 +7,12 @@
 #include "CxUri.h"
 #include "xnet.h"
 
+#include "XHttp3.h"
+
+#include <fstream>
+
+
+typedef void(*APPMESSAGEPUSHBACK)(void* wnd,const char* buf, size_t sz, void* who, bool zip);
 
 /*
 
@@ -101,7 +107,38 @@ void WkGetDo(void* arg)
 }
 
 
-void CxHttpClient::ThGet(std::string _uri, DIDNETMESSAGE proc, void* n)
+void WkGetDo3(HttpRequest* req, void* proc,void* n)
+{
+
+	HttpResponse * response=req->GetDocAfterConnected();
+	if (response)
+	{
+
+		//判断是否为压缩 ("content-encoding", "gzip")
+		std::string kvalue = response->GetHeadFeildValueIgnoreCase("content-encoding");
+		bool zip = (kvalue.compare("gzip") == 0)?true:false;
+		
+		//压入到消息队列
+		APPMESSAGEPUSHBACK _p = (APPMESSAGEPUSHBACK)proc;
+		if (_p) (_p)(n, response->GetContent(), response->GetContentLength(),0,zip);
+		
+
+		//if (proc) (proc)(n,response->GetContent(),response->GetContentLength(),0);
+		//std::ofstream ofs;
+		//ofs.open("d:\\1.txt", std::ios_base::binary);
+		//if (ofs.good()) {
+		//	ofs.write(response->GetContent(), response->GetContentLength());
+		//	ofs.close();
+		//}
+
+		delete response;
+	}
+
+	delete req;
+}
+
+
+void CxHttpClient::ThGet(std::string _uri, void* proc, void* n)
 {
 	Zx::Uri my_uri=Zx::Uri::parse(_uri);
 	int i = 0;
@@ -109,9 +146,6 @@ void CxHttpClient::ThGet(std::string _uri, DIDNETMESSAGE proc, void* n)
 
 	//struct http_parser_url _url;
 
-	htp_work_item_t* wit = new htp_work_item_t();
-	wit->proc = proc;
-	wit->n = n;
 
 	struct hostent * remoteHost = xnet_gethostbyname(my_uri.getHost().c_str());
 	if (remoteHost == NULL) return;
@@ -130,26 +164,32 @@ void CxHttpClient::ThGet(std::string _uri, DIDNETMESSAGE proc, void* n)
 	int port = my_uri.getPort();
 	if (port == 0) port = 80;
 
+#if(1)
+	HttpRequest* req = new HttpRequest();
+	req->SetURL(_uri);
+	req->m_socket= xnet_connect(ipAddr, port);
+	if (req->m_socket== INVALID_SOCKET) {
+		printf("连接服务器错误");
+		delete req;
+	}
+	else
+	{
+		std::thread* _work = new std::thread(WkGetDo3, req, proc, n);
+		CxThreadPool::Instance()->Add(_work);
+	}
+#else
+	htp_work_item_t* wit = new htp_work_item_t();
+	wit->proc = proc;
+	wit->n = n;
 	wit->sk = xnet_connect(ipAddr, port);// Zx::SocketConnectEx(my_uri.getHost(), 80);
-
-	//wit->doc = my_uri.getPath();
-	//char buffer[4096];
-	//snprintf(buffer, 4096, "GET %s HTTP/1.1\nHost:%s\nAccept: text/html\n\r\n\r\n",
-	//	my_uri.getPath().c_str(),
-	//	my_uri.getHost().c_str()
-	//	);
-
-
-	
 	wit->request = "GET " + my_uri.getPath() + " HTTP/1.0 \n"
 		+ "Host: " + my_uri.getHost() + "\n"
 		+ "User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; zh-CN; rv:1.9.1.13) Gecko/20100914 Firefox/3.5.13 ( .NET CLR 3.5.30729) \r\n\r\n";
 
-
-
-//	wit->request = buffer;
-
 	std::thread* _work = new std::thread(WkGetDo,wit);
 	CxThreadPool::Instance()->Add(_work);
+#endif
+
+
 }
 
