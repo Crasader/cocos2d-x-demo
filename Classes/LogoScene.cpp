@@ -4,6 +4,8 @@
 #include "gayola/CxHttpClient.h"
 #include "MyTcpClient.h"
 
+#include "game/XGame.h"
+
 #include <fstream>
 
 USING_NS_CC;
@@ -126,10 +128,25 @@ void Logo::OnMessage(char* buf, size_t sz, void* arg)
 
 void Logo::OnChangeDisplyString(const char* txt)
 {
-
+	auto label = Label::create(txt, "Î¢ÈíÑÅºÚ", 24);
+	if (label) {
+		label->setPosition(Vec2(480,320));
+		this->addChild(label, 1);
+		label->setName("main_label");
+	}
 }
 
 void Logo::OnError(int ecode, const char* txt)
 {
 
+}
+
+Logo::Logo()
+{
+	GxApplication::Instance()->GxListenerAdd(this);
+}
+
+Logo::~Logo()
+{
+	GxApplication::Instance()->GxListenerDel(this);
 }

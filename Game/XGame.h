@@ -11,6 +11,9 @@
 #define	 X_IDS_AUTH_URL_REQ	"http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
 #define  X_IDS_AUTH_URL_PATH "/blog/static/27333216120175612634726"
 
+#define X_MARK_L "&gt;&gt;&gt;&gt;&gt;"
+#define X_MARK_R "&lt;&lt;&lt;&lt;&lt;"
+
 using namespace xg;
 
 class GxApplication : public Singleton<GxApplication>
@@ -48,6 +51,23 @@ public:
 
 public:
 	int OnMessage(char* buf, size_t sz, void* arg);
+
+
+	void DisplayStringSet(const char* txt);
+	const char* DisplayStringGet();
+
+	void LastErrorSet(int n, const char* txt);
+
+	string m_strDisplay;
+	string m_strError;
+	int	   m_iErrorCode;
+
+public:
+	std::set<GxListener*> m_gxListener;
+
+	void GxListenerAdd(GxListener*);
+	void GxListenerDel(GxListener*);
+
 
 };
 

@@ -38,9 +38,45 @@ int GxApplication::OnMessage(char* buf, size_t sz, void* arg)
 	uint16_t msgId = brr.read<uint16_t>();
 	if (msgId == XSMSG_AUTH_URL)
 	{
+		brr >> m_strDisplay;
+		DisplayStringSet(m_strDisplay.c_str());
 		return 1;
 	}
 
 	return 0;
+}
+
+void GxApplication::DisplayStringSet(const char* txt)
+{
+	if (txt == NULL) return;
+	m_strDisplay = string(txt);
+	for (auto it : m_gxListener) {
+		it->OnChangeDisplyString(m_strDisplay.c_str());
+	}
+}
+
+const char* GxApplication::DisplayStringGet()
+{
+	return m_strDisplay.c_str();
+}
+
+void GxApplication::LastErrorSet(int n, const char* txt)
+{
+	m_iErrorCode = n;
+	if(txt) m_strError = string(txt);
+	for (auto it : m_gxListener) {
+		it->OnError(n, m_strError.c_str());
+	}
+
+}
+
+void GxApplication::GxListenerAdd(GxListener* arg)
+{
+	m_gxListener.insert(arg);
+}
+
+void GxApplication::GxListenerDel(GxListener* arg)
+{
+	m_gxListener.erase(arg);
 }
 

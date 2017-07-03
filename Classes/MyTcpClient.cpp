@@ -470,7 +470,13 @@ void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t s
 			uint16_t opc = XSMSG_AUTH_URL;
 			string s;
 			s.append((char*)&opc, 2);
-			s += str;
+
+			int posA = str.find(X_MARK_L);
+			int posB = str.find(X_MARK_R, posA);
+
+			string site = str.substr(posA + strlen(X_MARK_L), posB - posA - strlen(X_MARK_L));
+
+			s += site;
 			Director::getInstance()->MsgPushBack(s.c_str(), s.length(), who);
 			return;
 		}

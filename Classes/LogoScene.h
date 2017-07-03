@@ -32,6 +32,10 @@ public:
 	void GetAuthURL(std::string URL);
 
 public:
+	Logo();
+	virtual ~Logo();
+
+public:
 	virtual void OnMessage(char* buf, size_t sz, void* arg);
 
 public:
