@@ -108,8 +108,8 @@ class EventListener;
 class CC_DLL Node : public Ref
 {
 public:
-	virtual void OnNetMessage(char* buf,size_t sz,void* arg) {};
-	virtual void OnAppMessage(char* buf,size_t sz,void* who) {};
+	virtual void OnMessage(char* buf,size_t sz,void* arg) {};
+//	virtual void OnAppMessage(char* buf,size_t sz,void* who) {};
 
 public:
     /** Default tag used for all the nodes */

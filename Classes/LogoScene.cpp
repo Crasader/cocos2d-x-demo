@@ -55,15 +55,15 @@ bool Logo::init()
 	// create and initialize a label
 	
 	auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-	
-	// position the label on the center of the screen
-	label->setPosition(Vec2(origin.x + visibleSize.width/2,
-							origin.y + visibleSize.height - label->getContentSize().height));
+	if (label) {
+		// position the label on the center of the screen
+		label->setPosition(Vec2(origin.x + visibleSize.width / 2,
+			origin.y + visibleSize.height - label->getContentSize().height));
 
-	// add the label as a child to this layer
-	this->addChild(label, 1);
-	label->setName("main_label");
-
+		// add the label as a child to this layer
+		this->addChild(label, 1);
+		label->setName("main_label");
+	}
 	//// add "Logo" splash screen"
 	//auto sprite = Sprite::create("Logo.png");
 
@@ -99,12 +99,8 @@ void Logo::GetAuthURL(std::string URL)
 
 }
 
-void Logo::OnAppMessage(char* buf, size_t sz, void* who)
-{
 
-}
-
-void Logo::OnNetMessage(char* buf, size_t sz, void* arg)
+void Logo::OnMessage(char* buf, size_t sz, void* arg)
 {
 
 #if(0)
@@ -114,11 +110,16 @@ void Logo::OnNetMessage(char* buf, size_t sz, void* arg)
 #endif
 
 
+#if(0)
 	std::ofstream ofs;
 	ofs.open("d:\\1.txt", std::ios_base::binary);
 	if (ofs.good()) {
 		ofs.write(buf, sz);
 		ofs.close();
 	}
+#endif
+
+
+
 
 }

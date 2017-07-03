@@ -31,8 +31,7 @@ public:
 	void GetAuthURL(std::string URL);
 
 public:
-	virtual void OnNetMessage(char* buf, size_t sz, void* arg);
-	virtual void OnAppMessage(char* buf, size_t sz, void* who);
+	virtual void OnMessage(char* buf, size_t sz, void* arg);
 
 };
 

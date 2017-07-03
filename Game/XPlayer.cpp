@@ -8,11 +8,11 @@ namespace xg
 
 
 
-	CxPlayer* CxPlayer::_myself=NULL;
+	GxPlayer* GxPlayer::_myself=NULL;
 
-	CxPlayer* CxPlayer::Instance()
+	GxPlayer* GxPlayer::Instance()
 	{
-		if (_myself == NULL) _myself = new CxPlayer();
+		if (_myself == NULL) _myself = new GxPlayer();
 		return _myself;
 	}
 

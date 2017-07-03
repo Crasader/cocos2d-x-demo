@@ -229,7 +229,6 @@ int gzdecompress(Byte *zdata, uLong nzdata,
 #define CHECK_ERR(err, msg) { \
 	if (err != Z_OK) { \
 		fprintf(stderr, "%s error: %d\n", msg, err); \
-		exit(1); \
 	} \
 }
 
@@ -400,7 +399,7 @@ void DIRECTOR_TICK_TCPCLIENT(float,void* arg)
 void XzOnNetMessage(void* wnd, char* buf, size_t sz, void* arg)
 {
 	Node* n = (Node*)wnd;
-	if (n) n->OnNetMessage(buf, sz, arg);
+	if (n) n->OnMessage(buf, sz, arg);
 }
 
 void XzAppMessagePushBack2(void* wnd, const char* buf, size_t sz, void* who, bool zip)
@@ -434,7 +433,7 @@ void XzAppMessagePushBack2(void* wnd, const char* buf, size_t sz, void* who, boo
 }
 
 
-void XzAppMessagePushBack(void* wnd, const char* buf, size_t sz, void* who, bool zip)
+void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t sz, void* who, bool zip)
 {
 	if (zip)
 	{
@@ -449,7 +448,7 @@ void XzAppMessagePushBack(void* wnd, const char* buf, size_t sz, void* who, bool
 		X_large_inflate((Byte*)buf, sz, (Byte*)0, &outLen,sss);
 		//std::vector<char> res;
 		//bool b= unzip_buffer(buf, sz, res);
-		//if (b)
+		if (0)
 		{
 			std::ofstream ofs;
 			ofs.open("d:\\1.txt", std::ios_base::binary);
@@ -460,8 +459,13 @@ void XzAppMessagePushBack(void* wnd, const char* buf, size_t sz, void* who, bool
 			}
 		}
 		//delete[] outByte;
+		std::string str = sss.str();
+
+		//前面加上内容
+
+		Director::getInstance()->MsgPushBack(str.c_str(), str.length(), who);
 	}
 
-	//Director::getInstance()->
+	//
 }
 

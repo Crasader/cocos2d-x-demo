@@ -21,8 +21,8 @@ namespace xg
 
 		static CxScene* Instance();
 
-		CxPlayer* PlayerNew();
-		void PlayerDelete(CxPlayer* ply);
+		GxPlayer* PlayerNew();
+		void PlayerDelete(GxPlayer* ply);
 
 
 	};

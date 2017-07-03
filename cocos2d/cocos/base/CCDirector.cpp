@@ -93,21 +93,30 @@ static Director *s_SharedDirector = nullptr;
 extern const char* cocos2dVersion(void);
 
 
-void cocos2d::Director::AppMsgPushBack(char* buf, size_t sz, void* arg)
+void cocos2d::Director::MsgPushBack(const char* buf, size_t sz, void* arg)
 {
 	GxMsgQueue::shared()->PushBack(buf, sz, arg);
 }
 
 
-void cocos2d::Director::DispatchNetMsg(char* buf, size_t sz, void* arg)
+void cocos2d::Director::DispatchMsg(char* buf, size_t sz, void* arg)
 {
+	//分发给
+	for (auto it : myMsgProc)
+	{
+		int r = (it.second)(buf, sz, arg);
+		if(r!=0) break;
+	}
+
 	Node* n = getRunningScene();
 	if (n) {
 		n = n->getChildByName("main");
 	}
 	if (n) {
-		n->OnNetMessage(buf, sz, arg);
+		n->OnMessage(buf, sz, arg);
 	}
+	
+
 }
 
 
@@ -130,6 +139,28 @@ void cocos2d::Director::TickDel(DIRECTOR_TICK _tick)
 		else it++;
 	}
 	myTicks.sort([](const director_tick_t A, const director_tick_t B) {return A.order < B.order; });
+}
+
+void cocos2d::Director::MsgProcAdd(DIRECTOR_MSG_F proc, int _order)
+{
+	MsgProcDel(proc);
+
+	myMsgProc.push_back(std::pair<int, DIRECTOR_MSG_F>(_order,proc));
+	myMsgProc.sort([](const MSGFITEM A, const MSGFITEM B)
+	{
+		return A.first < B.first;
+	});
+}
+
+void cocos2d::Director::MsgProcDel(DIRECTOR_MSG_F proc)
+{
+	for (auto it = myMsgProc.begin();it!=myMsgProc.end();)
+	{
+		if (it->second == proc) {
+			it = myMsgProc.erase(it);
+		}
+		else it++;
+	}
 }
 
 const char *Director::EVENT_BEFORE_SET_NEXT_SCENE = "director_before_set_next_scene";
@@ -388,18 +419,24 @@ void Director::drawScene()
 		(it.proc)(_deltaTime,it.arg);
 	}
 
-	Node* n = getRunningScene();
-	if (n) {
-		n = n->getChildByName("main");
-	}
+	//Node* n = getRunningScene();
+	//if (n) {
+	//	n = n->getChildByName("main");
+	//}
 
-	if (n) {
+//	if (n) 
+	{
 		GxMsgQueue::shared()->LoopWork([](char * buf, size_t sz, void* who, void * arg)
 		{
-			Node* n = (Node*)arg;
-			n->OnAppMessage(buf, sz, who);
+			Director* d = (Director*)arg;
+			//n->OnMessage(buf, sz, who);
 			//CCLOG(".");
-		}, n);
+
+			//将消息发给所有的消息接收者 如果其中返回不为0就不再继续下发
+			//Director::getInstance()->DispatchNetMsg();
+			d->DispatchMsg(buf,sz,who);
+
+		}, Director::getInstance());
 	}
 
 //--------------------------------------

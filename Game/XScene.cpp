@@ -25,9 +25,9 @@ namespace xg
 
 
 
-	CxPlayer* CxScene::PlayerNew()
+	GxPlayer* CxScene::PlayerNew()
 	{
-		CxPlayer* ply = new CxPlayer();
+		GxPlayer* ply = new GxPlayer();
 		m_childs.insert(ply);
 		ply->m_parent = this;
 		return ply;
@@ -35,7 +35,7 @@ namespace xg
 
 
 
-	void CxScene::PlayerDelete(CxPlayer* ply)
+	void CxScene::PlayerDelete(GxPlayer* ply)
 	{
 		CxObject::ChildDelete(ply);
 	}

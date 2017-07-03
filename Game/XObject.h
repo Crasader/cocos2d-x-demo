@@ -6,6 +6,10 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <time.h>
+
+
+#include "Singleton.h"
 
 using namespace std;
 

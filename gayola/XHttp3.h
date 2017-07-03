@@ -209,6 +209,8 @@ public:
 
 	//2017-07-02
 	HttpResponse* GetDocAfterConnected();
+	std::string GetPath() { return m_url; };
+
 };
 
 

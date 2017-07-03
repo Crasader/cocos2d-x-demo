@@ -69,6 +69,9 @@
     <ClCompile Include="..\gayola\XHttp3.cpp">
       <Filter>gayola</Filter>
     </ClCompile>
+    <ClCompile Include="..\Game\XGame.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -133,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="..\gayola\XHttp3.h">
       <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\Singleton.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\opcodes.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

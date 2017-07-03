@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,9 +16,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef MANGOS_BYTECONVERTER_H
-#define MANGOS_BYTECONVERTER_H
+#ifndef MANGOS_SINGLETON_H
+#define MANGOS_SINGLETON_H
 
+/**
+ * @brief class Singleton
+ */
+
+    template<typename T>
+    class Singleton
+    {
+        public:
+			static T* Instance() {
+				if (si_instance == 0) si_instance = new T();
+				return si_instance;
+			}
+
+		protected:
+
+            Singleton()
+            {
+            }
+
+        private:
+            // Prohibited actions...this does not prevent hijacking.
+            Singleton(const Singleton&);
+            Singleton& operator=(const Singleton&);
+
+            // Singleton Helpers
+			static void DestroySingleton() {
+				delete Singleton::si_instance;
+				Singleton::si_instance=0;
+			}
+
+            static T* si_instance;
+    };
+
+
+#define X_IMPL_SINSTANCE(A) template<>A* Singleton<A>::si_instance = 0;
 
 
 #endif

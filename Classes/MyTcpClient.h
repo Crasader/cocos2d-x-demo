@@ -41,7 +41,7 @@ void XzOnNetMessage(void* wnd,char* buf, size_t sz, void* arg);
 void XzOnAppMessage(void* wnd,char* buf, size_t sz, void* who);
 
 
-void XzAppMessagePushBack(void* wnd, const char* buf, size_t sz, void* who,bool zip);
+void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t sz, void* who,bool zip);
 
 
 #endif // CCTcpClient_h__

@@ -85,6 +85,10 @@ enum class MATRIX_STACK_TYPE
 
 typedef void(*DIRECTOR_TICK)(float _delta,void* _arg);
 
+/**消息处理函数
+@return 不为零的时候 后续的消息处理将不进行
+*/
+typedef int(*DIRECTOR_MSG_F)(char* buf, size_t sz, void* arg);
 
 struct  director_tick_s
 {
@@ -95,6 +99,7 @@ struct  director_tick_s
 
 typedef struct  director_tick_s director_tick_t;
 
+typedef std::pair<int, DIRECTOR_MSG_F> MSGFITEM;
 
 /**
  @brief Class that creates and handles the main Window and manages how
@@ -112,11 +117,15 @@ class CC_DLL Director : public Ref
 {
 public:
 	std::list<director_tick_t> myTicks;
-	void AppMsgPushBack(char* buf, size_t sz, void* arg);
-	void DispatchNetMsg(char* buf, size_t sz, void* arg);
+	void MsgPushBack(const char* buf, size_t sz, void* arg);
+	void DispatchMsg(char* buf, size_t sz, void* arg);
 
 	void TickAdd(DIRECTOR_TICK _tick,void* _arg,int _order);
 	void TickDel(DIRECTOR_TICK _tick);
+
+	std::list<std::pair<int, DIRECTOR_MSG_F>> myMsgProc;
+	void MsgProcAdd(DIRECTOR_MSG_F proc, int _order);
+	void MsgProcDel(DIRECTOR_MSG_F proc);
 
 public:
     /** Director will trigger an event before set next scene. */

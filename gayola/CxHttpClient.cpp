@@ -12,7 +12,7 @@
 #include <fstream>
 
 
-typedef void(*APPMESSAGEPUSHBACK)(void* wnd,const char* buf, size_t sz, void* who, bool zip);
+typedef void(*APPMESSAGEPUSHBACK)(std::string kname,void* wnd,const char* buf, size_t sz, void* who, bool zip);
 
 /*
 
@@ -120,7 +120,7 @@ void WkGetDo3(HttpRequest* req, void* proc,void* n)
 		
 		//压入到消息队列
 		APPMESSAGEPUSHBACK _p = (APPMESSAGEPUSHBACK)proc;
-		if (_p) (_p)(n, response->GetContent(), response->GetContentLength(),0,zip);
+		if (_p) (_p)(req->GetPath(),n, response->GetContent(), response->GetContentLength(),0,zip);
 		
 
 		//if (proc) (proc)(n,response->GetContent(),response->GetContentLength(),0);
