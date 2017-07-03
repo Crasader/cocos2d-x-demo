@@ -7,19 +7,20 @@
 namespace xg
 {
 
-	class  CxScene : public  CxObject
+	class  GxScene : public  GxObject
 	{
 	private:
-		static CxScene* _instance;
+		static GxScene* _instance;
 
 	protected:
-		CxScene();
+		
 
 	public:
-		virtual ~CxScene();
+		GxScene();
+		virtual ~GxScene();
 
 
-		static CxScene* Instance();
+		static GxScene* Instance();
 
 		GxPlayer* PlayerNew();
 		void PlayerDelete(GxPlayer* ply);

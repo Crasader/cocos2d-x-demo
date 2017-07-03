@@ -178,6 +178,8 @@ public:
 	string m_host;
 	string m_port;
 
+	string m_uri_original;
+
 public:
 	std::map<std::string, std::list<std::string> > m_fields;
 	std::map<std::string, std::string> m_files;

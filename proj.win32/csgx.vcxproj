@@ -172,6 +172,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Game\Singleton.h" />
     <ClInclude Include="..\Game\XActor.h" />
     <ClInclude Include="..\Game\XGame.h" />
+    <ClInclude Include="..\Game\XListener.h" />
     <ClInclude Include="..\Game\XObject.h" />
     <ClInclude Include="..\Game\XPlayer.h" />
     <ClInclude Include="..\Game\XScene.h" />

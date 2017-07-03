@@ -4,6 +4,7 @@
 #include "gayola/CxThreadEx.h"
 #include "MyTcpClient.h"
 #include "LogoScene.h"
+#include "game/XGame.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -76,6 +77,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	director->TickAdd(DIRECTOR_TICK_THREADPOOL, CxThreadPool::Instance(),0);
 	director->TickAdd(DIRECTOR_TICK_TCPCLIENT, CCTcpClient::shared(), 0);
+
+
+	director->MsgProcAdd(GameDirectorMsg, -255);
 
 	// turn on display FPS
 	director->setDisplayStats(true);

@@ -659,6 +659,8 @@ void HttpRequest::SendFile(const string& fname)
 
 void HttpRequest::SetURL(const string& url)
 {
+	m_uri_original = url;
+
 	Zx::Uri _uri = Zx::Uri::parse(url);
 	//std::string protocol = _uri.Protocol();
 	m_port = "80";

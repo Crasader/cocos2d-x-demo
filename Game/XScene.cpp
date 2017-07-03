@@ -4,28 +4,28 @@
 namespace xg
 {
 
-	CxScene* CxScene::_instance=NULL;
+	GxScene* GxScene::_instance=NULL;
 
-	CxScene::CxScene()
+	GxScene::GxScene()
 	{
 
 	}
 
-	CxScene::~CxScene()
+	GxScene::~GxScene()
 	{
 
 	}
 
-	CxScene* CxScene::Instance()
+	GxScene* GxScene::Instance()
 	{
-		if (_instance == NULL) _instance = new CxScene();
+		if (_instance == NULL) _instance = new GxScene();
 		return _instance;
 	}
 
 
 
 
-	GxPlayer* CxScene::PlayerNew()
+	GxPlayer* GxScene::PlayerNew()
 	{
 		GxPlayer* ply = new GxPlayer();
 		m_childs.insert(ply);
@@ -35,9 +35,9 @@ namespace xg
 
 
 
-	void CxScene::PlayerDelete(GxPlayer* ply)
+	void GxScene::PlayerDelete(GxPlayer* ply)
 	{
-		CxObject::ChildDelete(ply);
+		GxObject::ChildDelete(ply);
 	}
 
 };

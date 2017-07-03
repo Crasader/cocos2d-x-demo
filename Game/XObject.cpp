@@ -4,22 +4,22 @@
 namespace xg
 {
 
-	CxObject::~CxObject()
+	GxObject::~GxObject()
 	{
 		//清除所有的孩子
 		ChildRemoveAll();
 	}
 
-	CxObject* CxObject::ChildNew()
+	GxObject* GxObject::ChildNew()
 	{
-		CxObject* obj = new CxObject();
+		GxObject* obj = new GxObject();
 		obj->m_parent = this;
 		m_childs.insert(obj);
 		return obj;
 	}
 
 
-	void CxObject::ChildDelete(CxObject* obj)
+	void GxObject::ChildDelete(GxObject* obj)
 	{
 		if (obj) {
 			m_childs.erase(obj);
@@ -27,12 +27,12 @@ namespace xg
 		}
 	}
 
-	void CxObject::ChildRemoveAll()
+	void GxObject::ChildRemoveAll()
 	{
 		while (!m_childs.empty())
 		{
 			auto it = m_childs.begin();
-			CxObject* obj = (*it);
+			GxObject* obj = (*it);
 			delete obj;
 			m_childs.erase(it);
 		}

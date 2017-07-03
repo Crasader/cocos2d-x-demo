@@ -13,8 +13,9 @@
 
 
 #include "cocos2d.h"
+#include "game/XListener.h"
 
-class Logo : public cocos2d::Scene
+class Logo : public cocos2d::Scene , public GxListener
 {
 public:
 	static cocos2d::Scene* createScene();
@@ -32,6 +33,13 @@ public:
 
 public:
 	virtual void OnMessage(char* buf, size_t sz, void* arg);
+
+public:
+	//显示文本发生改变
+	virtual void OnChangeDisplyString(const char* txt);
+
+	//发生错误信息
+	virtual void OnError(int ecode, const char* txt);
 
 };
 

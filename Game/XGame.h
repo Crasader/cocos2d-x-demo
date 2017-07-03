@@ -5,6 +5,11 @@
 #include "XActor.h"
 #include "XPlayer.h"
 #include "XScene.h"
+#include "opcodes.h"
+#include "XListener.h"
+
+#define	 X_IDS_AUTH_URL_REQ	"http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
+#define  X_IDS_AUTH_URL_PATH "/blog/static/27333216120175612634726"
 
 using namespace xg;
 
@@ -15,9 +20,13 @@ public:
 	string m_strAuthURL;
 
 	GxPlayer m_mySelf;
+	GxScene  m_myScene;
 
 	string m_session;  //会话令牌
 	string m_password; //密码
+
+	string m_game_host; //游戏服务器主机地址
+	int    m_game_port; //游戏服务器端口
 
 protected:
 
@@ -26,16 +35,23 @@ public:
 	virtual ~GxApplication();
 
 	GxPlayer& MySelf();
+	GxScene&  MyScene();
 
 	void LoadConfigFromXmlFile(const char* fname);
 
 	bool AuthUrlIsExpire();
 	void AuthUrlSet(std::string str);
 
+	void Login();
+	void ConnectGameServer();
 
+
+public:
+	int OnMessage(char* buf, size_t sz, void* arg);
 
 };
 
+int GameDirectorMsg(char* buf, size_t sz, void* arg);
 
 
 #endif // XGame_h__

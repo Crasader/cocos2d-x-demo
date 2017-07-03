@@ -143,6 +143,9 @@
     <ClInclude Include="..\Game\opcodes.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="..\Game\XListener.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

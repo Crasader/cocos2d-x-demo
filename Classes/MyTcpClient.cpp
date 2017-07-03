@@ -13,6 +13,9 @@
 
 #include <fstream>
 
+#include "game/opcodes.h"
+#include "game/xgame.h"
+
 using namespace cocos2d;
 
 typedef unsigned char uint8;
@@ -462,6 +465,15 @@ void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t s
 		std::string str = sss.str();
 
 		//前面加上内容
+		if (kname.compare(X_IDS_AUTH_URL_PATH) == 0)
+		{
+			uint16_t opc = XSMSG_AUTH_URL;
+			string s;
+			s.append((char*)&opc, 2);
+			s += str;
+			Director::getInstance()->MsgPushBack(s.c_str(), s.length(), who);
+			return;
+		}
 
 		Director::getInstance()->MsgPushBack(str.c_str(), str.length(), who);
 	}

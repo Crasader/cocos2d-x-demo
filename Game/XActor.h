@@ -10,7 +10,7 @@ namespace xg
 	/**
 	
 	*/
-	class CxActor : public CxObject
+	class CxActor : public GxObject
 	{
 
 	public:

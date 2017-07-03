@@ -16,23 +16,23 @@ using namespace std;
 namespace xg
 {
 
-	class CxObject
+	class GxObject
 	{
 	public:
 		int64_t		m_tag; //在场景中唯一的编号
 		string		m_name; //名字
 		int			m_icon;	//小肖像编号
 
-		CxObject*  m_parent; //父
+		GxObject*  m_parent; //父
 
-		set<CxObject*> m_childs;
+		set<GxObject*> m_childs;
 
 	public:
 
-		virtual ~CxObject();
+		virtual ~GxObject();
 
-		CxObject* ChildNew();
-		void ChildDelete(CxObject* obj);
+		GxObject* ChildNew();
+		void ChildDelete(GxObject* obj);
 		void ChildRemoveAll();
 
 	};

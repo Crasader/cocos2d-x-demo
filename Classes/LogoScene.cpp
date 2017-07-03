@@ -123,3 +123,13 @@ void Logo::OnMessage(char* buf, size_t sz, void* arg)
 
 
 }
+
+void Logo::OnChangeDisplyString(const char* txt)
+{
+
+}
+
+void Logo::OnError(int ecode, const char* txt)
+{
+
+}
