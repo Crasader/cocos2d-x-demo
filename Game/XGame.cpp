@@ -1,9 +1,13 @@
 
 #include "XGame.h"
 #include "gayola/ByteBuffer.h"
+#include "gayola/CxTcpClient.h"
 
 X_IMPL_SINSTANCE(GxApplication)
 
+using namespace xs;
+
+void XzSendToServer(void* buf, size_t sz);
 
 int GameDirectorMsg(char* buf, size_t sz, void* arg)
 {
@@ -29,6 +33,12 @@ GxPlayer& GxApplication::MySelf()
 GxScene& GxApplication::MyScene()
 {
 	return m_myScene;
+}
+
+void GxApplication::SendToServer(const void* buf, size_t sz)
+{
+	//XzSendToServer(buf, sz);
+	CxTcpClient::shared()->SendData(buf, sz);
 }
 
 int GxApplication::OnMessage(char* buf, size_t sz, void* arg)

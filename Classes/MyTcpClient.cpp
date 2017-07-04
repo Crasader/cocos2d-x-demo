@@ -319,7 +319,7 @@ CCTcpClient* CCTcpClient::_shared = NULL;
 
 void CCTcpClient::Step()
 {
-	m_tcpClient.Step();
+	m_tcpClient->Step();
 
 	//
 
@@ -338,18 +338,19 @@ CCTcpClient::CCTcpClient()
 {
 	xs::CxTcpClient::Startup();
 
+	m_tcpClient = CxTcpClient::shared();
 	
-	m_tcpClient.AddListener(this);
+	m_tcpClient->AddListener(this);
 }
 
 CCTcpClient::~CCTcpClient()
 {
-	
+	m_tcpClient->RemoveListener(this);
 }
 
 int CCTcpClient::Connect(std::string host, int port)
 {
-	return m_tcpClient.Connect(host, port);
+	return m_tcpClient->Connect(host, port);
 }
 
 
@@ -357,7 +358,7 @@ int CCTcpClient::Connect(std::string host, int port)
 
 int CCTcpClient::SendToServer(const char* buf, int sz)
 {
-	m_tcpClient.SendData(buf, sz);
+	m_tcpClient->SendData(buf, sz);
 	return 0;
 }
 
@@ -385,7 +386,7 @@ void CCTcpClient::OnTcpClientDataRecv(CxTcpClient* sender, const char* _txt, int
 
 void CCTcpClient::OnTcpClientStateChange(CxTcpClient* sender, int state_name, int state_val, int arg)
 {
-	if (sender == &m_tcpClient)
+	if (sender == m_tcpClient)
 	{
 		//if(state_name==)
 		//		GxMsgQueue::shared()->PushBack(0, 0, 0, "OnTcpClientStateChange");
@@ -497,5 +498,10 @@ void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t s
 	}
 
 	//
+}
+
+void XzSendToServer(void* buf, size_t sz)
+{
+	CxTcpClient::shared()->SendData(buf, sz);
 }
 

@@ -11,10 +11,12 @@ private:
 	static CCTcpClient* _shared;
 protected:
 
-	CxTcpClient m_tcpClient;
+	
 
 
 public:
+	CxTcpClient* m_tcpClient;
+
 	virtual void Step();
 
 public:
@@ -43,5 +45,6 @@ void XzOnAppMessage(void* wnd,char* buf, size_t sz, void* who);
 
 void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t sz, void* who,bool zip);
 
+void XzSendToServer(void* buf,size_t sz);
 
 #endif // CCTcpClient_h__

@@ -46,8 +46,9 @@ public:
 	void AuthUrlSet(std::string str);
 
 	void Login();
-	void ConnectGameServer();
+//	void ConnectGameServer();
 
+	void SendToServer(const void* buf, size_t sz);
 
 public:
 	int OnMessage(char* buf, size_t sz, void* arg);
