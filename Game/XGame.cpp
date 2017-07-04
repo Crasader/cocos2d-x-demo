@@ -2,12 +2,14 @@
 #include "XGame.h"
 #include "gayola/ByteBuffer.h"
 #include "gayola/CxTcpClient.h"
+#include "gayola/CxHttpClient.h"
 
 X_IMPL_SINSTANCE(GxApplication)
 
 using namespace xs;
 
 void XzSendToServer(void* buf, size_t sz);
+void XzAppMessagePushBack(std::string kname, void* wnd, const char* buf, size_t sz, void* who, bool zip);
 
 int GameDirectorMsg(char* buf, size_t sz, void* arg)
 {
@@ -33,6 +35,13 @@ GxPlayer& GxApplication::MySelf()
 GxScene& GxApplication::MyScene()
 {
 	return m_myScene;
+}
+
+void GxApplication::Login()
+{
+	//向服务器发送HTTP请求
+
+	//CxHttpClient::ThGet(URL, XzAppMessagePushBack, this);
 }
 
 void GxApplication::SendToServer(const void* buf, size_t sz)
