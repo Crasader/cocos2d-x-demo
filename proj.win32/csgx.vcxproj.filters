@@ -72,6 +72,9 @@
     <ClCompile Include="..\Game\XGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\HallScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="..\Game\XListener.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HallScene.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

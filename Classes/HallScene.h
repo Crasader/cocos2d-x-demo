@@ -1,10 +1,10 @@
-#ifndef __Logo_SCENE_H__
-#define __Logo_SCENE_H__
+#ifndef __Hall_SCENE_H__
+#define __Hall_SCENE_H__
 
 
 /*
 
-1) 显示公司LOGO
+1) 显示公司Hall
 2）显示游戏警告（是否显示过，本地配置文件）
 3）获取登录服务器信息
 4）读取自己的账号（本地配置文件）
@@ -17,7 +17,7 @@
 
 using namespace cocos2d;
 
-class Logo : public cocos2d::Scene , public GxListener
+class Hall : public cocos2d::Scene , public GxListener
 {
 public:
 	static cocos2d::Scene* createScene();
@@ -30,14 +30,14 @@ public:
 	void menuConnectCallback(cocos2d::Ref* pSender);
 	
 	// implement the "static create()" method manually
-	CREATE_FUNC(Logo);
+	CREATE_FUNC(Hall);
 
 
 	void GetAuthURL(std::string URL);
 
 public:
-	Logo();
-	virtual ~Logo();
+	Hall();
+	virtual ~Hall();
 
 public:
 	virtual void OnMessage(char* buf, size_t sz, void* arg);
@@ -51,4 +51,4 @@ public:
 
 };
 
-#endif // __Logo_SCENE_H__
+#endif // __Hall_SCENE_H__
