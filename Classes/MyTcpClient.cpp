@@ -16,6 +16,8 @@
 #include "game/opcodes.h"
 #include "game/xgame.h"
 
+#include "gayola/ByteBuffer.h"
+
 using namespace cocos2d;
 
 typedef unsigned char uint8;
@@ -309,7 +311,9 @@ int X_large_inflate(Byte *zdata, uLong nzdata,
 	return 0;
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////
 
 CCTcpClient* CCTcpClient::_shared = NULL;
 
@@ -361,7 +365,6 @@ void CCTcpClient::OnTcpClientDataRecv(CxTcpClient* sender, const char* _txt, int
 {
 	//if (sender == &m_tcpClient)
 	//{
-
 	//	{
 	//		Node* n = Director::getInstance()->getRunningScene()->getChildByName("main");
 	//		if (n) {
@@ -374,6 +377,9 @@ void CCTcpClient::OnTcpClientDataRecv(CxTcpClient* sender, const char* _txt, int
 	//		}
 	//	}
 	//}
+
+	//Director::getInstance()->MsgPushBack(_txt, sz, sender);
+	Director::getInstance()->DispatchMsg((char*)_txt, sz, sender);
 }
 
 
@@ -383,6 +389,12 @@ void CCTcpClient::OnTcpClientStateChange(CxTcpClient* sender, int state_name, in
 	{
 		//if(state_name==)
 		//		GxMsgQueue::shared()->PushBack(0, 0, 0, "OnTcpClientStateChange");
+		ByteBuffer bbf;
+		bbf << (uint16_t)XXMSG_TCP_EVENT;
+		bbf << state_name;
+		bbf << state_val;
+		bbf << arg;
+		Director::getInstance()->DispatchMsg((char*)bbf.contents(), bbf.size(), sender);
 	}
 }
 

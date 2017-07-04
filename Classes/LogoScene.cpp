@@ -5,6 +5,7 @@
 #include "MyTcpClient.h"
 
 #include "game/XGame.h"
+#include "gayola/ByteBuffer.h"
 
 #include <fstream>
 
@@ -45,9 +46,17 @@ bool Logo::init()
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
 								origin.y + closeItem->getContentSize().height/2));
 
+
+	auto connectItem = MenuItemImage::create(
+		"CloseNormal.png",
+		"CloseSelected.png",
+		CC_CALLBACK_1(Logo::menuConnectCallback, this));
+
+
 	// create menu, it's an autorelease object
-	auto menu = Menu::create(closeItem, NULL);
-	menu->setPosition(Vec2::ZERO);
+	auto menu = Menu::create(closeItem, connectItem, NULL);
+	menu->setPosition(Vec2(480,320));
+	menu->alignItemsHorizontally();
 	this->addChild(menu, 1);
 
 	/////////////////////////////
@@ -121,7 +130,25 @@ void Logo::OnMessage(char* buf, size_t sz, void* arg)
 	}
 #endif
 
+	ByteReader bbr(buf, sz);
+	uint16_t msgId;
+	bbr >> msgId;
 
+	if (msgId == XXMSG_TCP_EVENT)
+	{
+		int state_name;
+		int state_val;
+		int arg;
+		bbr >> state_name;
+		bbr >> state_val;
+		bbr >> arg;
+
+		if (state_name == XTCS_CONNECT && arg == 1)
+		{
+			OnChangeDisplyString("connected.");
+		}
+		return;
+	}
 
 
 }
@@ -149,4 +176,9 @@ Logo::Logo()
 Logo::~Logo()
 {
 	GxApplication::Instance()->GxListenerDel(this);
+}
+
+void Logo::menuConnectCallback(cocos2d::Ref* pSender)
+{
+	CCTcpClient::shared()->Connect("127.0.0.1", 4002);
 }

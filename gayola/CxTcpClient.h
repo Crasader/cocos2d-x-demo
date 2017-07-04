@@ -52,6 +52,7 @@ namespace xs
 
 	enum TCPCLIENT_STATE
 	{
+		XTCS_UNKNOW,
 		XTCS_CONNECT,		//连接
 		XTCS_DISCONNECT,	//断开
 		XTCS_READY,			//准备就绪
@@ -235,6 +236,8 @@ namespace Zx
 	XSOCKET SocketConnectEx(std::string host,int port);
 
 };
+
+
 
 
 #endif // XTcpClient_h__

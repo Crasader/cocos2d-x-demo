@@ -13,6 +13,9 @@
 //  Created by im on 12-11-15.
 //  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
 //
+/*
+2017-07-04 修改支持连接后发送和接收采用线程
+*/
 
 #ifndef XNetGame_XHttp3_h_
 #define XNetGame_XHttp3_h_  werqasdfas34345234

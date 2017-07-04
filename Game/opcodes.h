@@ -7,6 +7,7 @@ enum opcodes
 
 	XSMSG_AUTH_URL,
 
+	XXMSG_TCP_EVENT,
 
 };
 
