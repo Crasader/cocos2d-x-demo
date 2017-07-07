@@ -9,6 +9,9 @@ enum opcodes
 
 	XXMSG_TCP_EVENT,
 
+	XCMSG_BAG_INFO,
+
+
 };
 
 

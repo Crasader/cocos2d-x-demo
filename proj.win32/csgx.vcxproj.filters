@@ -78,6 +78,12 @@
     <ClCompile Include="..\Game\CxVar.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\Game\XBag.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Game\XItem.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -156,6 +162,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Game\CxVar.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\XBag.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\XItem.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>

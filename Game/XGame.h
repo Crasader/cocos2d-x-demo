@@ -16,7 +16,7 @@
 
 using namespace xg;
 
-class GxApplication : public Singleton<GxApplication>
+class GxApplication :public GxObject, public Singleton<GxApplication>
 {
 public:
 	time_t m_tiAuthURL; //最后一次获得的登录
