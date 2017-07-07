@@ -25,6 +25,10 @@ namespace xg
 		GxPlayer* PlayerNew();
 		void PlayerDelete(GxPlayer* ply);
 
+		/**
+		网络来的消息
+		*/
+		void OnMessage(const char* buf,size_t sz);
 
 	};
 

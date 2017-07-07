@@ -87,6 +87,10 @@ public:
 	void GxListenerAdd(GxListener*);
 	void GxListenerDel(GxListener*);
 
+public:
+	//通知渲染层的改变
+	void RenderDraw(int opc,void* buf,size_t sz,void* p1,void* p2);
+
 
 };
 

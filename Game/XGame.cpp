@@ -143,3 +143,8 @@ void GxApplication::GxListenerDel(GxListener* arg)
 	m_gxListener.erase(arg);
 }
 
+void GxApplication::RenderDraw(int opc, void* buf, size_t sz, void* p1, void* p2)
+{
+
+}
+

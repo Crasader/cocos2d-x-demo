@@ -90,6 +90,9 @@
     <ClCompile Include="..\Game\XBagIO.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\Game\XMsgHandler.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -180,6 +183,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Game\XBagIO.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\XMsgHandler.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>

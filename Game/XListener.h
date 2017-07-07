@@ -12,6 +12,9 @@ public:
 	//发生错误信息
 	virtual void OnError(int ecode, const char* txt) {};
 
+	//渲染层发送改变
+	virtual void OnRenderDraw(int opc, void* buf, size_t sz, void* p1, void* p2) {};
+
 };
 
 
