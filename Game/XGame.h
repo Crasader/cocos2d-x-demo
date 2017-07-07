@@ -37,6 +37,14 @@ public:
 	GxBagClient m_bagClient;	//背包客户端
 	tinyxml2::XMLDocument m_cfgDoc;
 
+
+	void CfgAttribIntSet(const char* kname,int _val );
+	int  CfgAttribIntGet(const char* kname);
+
+	void CfgAttribStringSet(const char* kname,const char* _val,size_t _sz);
+	std::string CfgAttribStringGet(const char* kname);
+
+
 protected:
 
 public:
@@ -52,6 +60,9 @@ public:
 	void AuthUrlStringGet();
 	void AuthUrlSet(std::string str);
 
+
+	//注册一个游客 也是给玩家一个默认的账号
+	void RegisterGuest();
 	void Login();
 //	void ConnectGameServer();
 

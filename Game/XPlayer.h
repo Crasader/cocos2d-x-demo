@@ -11,8 +11,7 @@ namespace xg
 	*/
 	class GxPlayer : public CxActor
 	{
-	private:
-		static GxPlayer* _myself;
+
 
 	public:
 		string m_acct_uuid; //账号 唯一的 在游戏中
@@ -21,12 +20,10 @@ namespace xg
 //		uint64_t m_gold;//绑金
 //		uint64_t m_coin;//游戏币
 
+
 	public:
 
-		/*
-		玩家自己
-		*/
-		static GxPlayer* Instance();
+
 
 
 	};

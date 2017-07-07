@@ -17,6 +17,27 @@ int GameDirectorMsg(char* buf, size_t sz, void* arg)
 }
 
 
+void GxApplication::CfgAttribIntSet(const char* kname, int _val)
+{
+
+}
+
+int GxApplication::CfgAttribIntGet(const char* kname)
+{
+	return 0;
+}
+
+void GxApplication::CfgAttribStringSet(const char* kname, const char* _val, size_t _sz)
+{
+
+}
+
+std::string GxApplication::CfgAttribStringGet(const char* kname)
+{
+	std::string str;
+	return str;
+}
+
 GxApplication::GxApplication()
 {
 
@@ -51,6 +72,11 @@ bool GxApplication::AuthUrlIsExpire()
 }
 
 void GxApplication::AuthUrlStringGet()
+{
+
+}
+
+void GxApplication::RegisterGuest()
 {
 
 }

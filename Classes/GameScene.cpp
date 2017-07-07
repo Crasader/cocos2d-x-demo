@@ -1,4 +1,4 @@
-#include "LogoScene.h"
+#include "GameScene.h"
 #include "SimpleAudioEngine.h"
 
 #include "gayola/CxHttpClient.h"
@@ -11,17 +11,17 @@
 
 USING_NS_CC;
 
-Scene* Logo::createScene()
+Scene* Game::createScene()
 {
 	auto scene = Scene::create();
-	auto layer = Logo::create();
+	auto layer = Game::create();
 	layer->setName("main");
 	scene->addChild(layer);
 	return scene;
 }
 
 // on "init" you need to initialize your instance
-bool Logo::init()
+bool Game::init()
 {
 	//////////////////////////////
 	// 1. super init first
@@ -41,7 +41,7 @@ bool Logo::init()
 	auto closeItem = MenuItemImage::create(
 										   "CloseNormal.png",
 										   "CloseSelected.png",
-										   CC_CALLBACK_1(Logo::menuCloseCallback, this));
+										   CC_CALLBACK_1(Game::menuCloseCallback, this));
 	
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
 								origin.y + closeItem->getContentSize().height/2));
@@ -50,7 +50,7 @@ bool Logo::init()
 	auto connectItem = MenuItemImage::create(
 		"CloseNormal.png",
 		"CloseSelected.png",
-		CC_CALLBACK_1(Logo::menuConnectCallback, this));
+		CC_CALLBACK_1(Game::menuConnectCallback, this));
 
 
 	// create menu, it's an autorelease object
@@ -68,14 +68,14 @@ bool Logo::init()
 }
 
 
-void Logo::menuCloseCallback(Ref* pSender)
+void Game::menuCloseCallback(Ref* pSender)
 {
 
 	GetAuthURL("http://mangoschina.blog.163.com/blog/static/27333216120175612634726");
 	
 }
 
-void Logo::GetAuthURL(std::string URL)
+void Game::GetAuthURL(std::string URL)
 {
 
 	//链接服务器
@@ -87,7 +87,7 @@ void Logo::GetAuthURL(std::string URL)
 }
 
 
-void Logo::OnMessage(char* buf, size_t sz, void* arg)
+void Game::OnMessage(char* buf, size_t sz, void* arg)
 {
 
 #if(0)
@@ -129,7 +129,7 @@ void Logo::OnMessage(char* buf, size_t sz, void* arg)
 
 }
 
-void Logo::OnChangeDisplyString(const char* txt)
+void Game::OnChangeDisplyString(const char* txt)
 {
 	auto label = Label::create(txt, "微软雅黑", 24);
 	if (label) {
@@ -139,72 +139,30 @@ void Logo::OnChangeDisplyString(const char* txt)
 	}
 }
 
-void Logo::OnError(int ecode, const char* txt)
+void Game::OnError(int ecode, const char* txt)
 {
 
 }
 
-Logo::Logo()
+Game::Game()
 {
 	GxApplication::Instance()->GxListenerAdd(this);
 }
 
-Logo::~Logo()
+Game::~Game()
 {
 	GxApplication::Instance()->GxListenerDel(this);
 }
 
-void Logo::menuConnectCallback(cocos2d::Ref* pSender)
+void Game::menuConnectCallback(cocos2d::Ref* pSender)
 {
 	CCTcpClient::shared()->Connect("127.0.0.1", 4002);
 }
 
-void Logo::onEnter()
+void Game::onEnter()
 {
-	GxApplication* _app= GxApplication::Instance();
 	Scene::onEnter();
-
-	string fname = CCFileUtils::getInstance()->getWritablePath() + "cfg.xml";
-	_bShowWarning =!CCFileUtils::getInstance()->isFileExist(fname);
-
-	if (!_bShowWarning)
-	{
-	
-		_app->LoadConfigFromXmlFile(fname.c_str());
-
-		if (_app->AuthUrlIsExpire())
-		{
-			_app->AuthUrlStringGet();
-		}
-
-	}
-	else {
-
-	}
 
 	//动态播放动画 后台获取登录验证
 
-}
-
-void Logo::OnAfterLogoShow()
-{
-	//LOGO 动画播放完毕后
-	if (_bShowWarning)
-	{
-
-	}
-}
-
-void Logo::ShowWarning()
-{
-
-}
-
-void Logo::OnWarningAgree()
-{
-	_bShowWarning = true;
-
-	GxApplication::Instance()->CfgAttribIntSet("app_warning",true);
-
-	OnAfterLogoShow();
 }
