@@ -161,8 +161,47 @@ void Logo::menuConnectCallback(cocos2d::Ref* pSender)
 
 void Logo::onEnter()
 {
+	GxApplication* _app= GxApplication::Instance();
 	Scene::onEnter();
+
+	string fname = CCFileUtils::getInstance()->getWritablePath() + "cfg.xml";
+	_bShowWarning =!CCFileUtils::getInstance()->isFileExist(fname);
+
+	if (!_bShowWarning)
+	{
+	
+		_app->LoadConfigFromXmlFile(fname.c_str());
+
+		if (_app->AuthUrlIsExpire())
+		{
+			_app->AuthUrlStringGet();
+		}
+
+	}
+	else {
+
+	}
 
 	//动态播放动画 后台获取登录验证
 
+}
+
+void Logo::OnAfterLogoShow()
+{
+	//LOGO 动画播放完毕后
+	if (_bShowWarning)
+	{
+
+	}
+}
+
+void Logo::ShowWarning()
+{
+
+}
+
+void Logo::OnWarningAgree()
+{
+	_bShowWarning = true;
+	OnAfterLogoShow();
 }

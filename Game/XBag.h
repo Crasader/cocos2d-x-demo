@@ -107,6 +107,11 @@ class GxBagDataSource
 
 };
 
+class GxBagDataStorage
+{
+
+};
+
 class GxBagClient : public GxBag
 {
 

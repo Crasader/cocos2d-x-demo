@@ -40,6 +40,9 @@ AppDelegate::~AppDelegate()
 #elif USE_SIMPLE_AUDIO_ENGINE
 	SimpleAudioEngine::end();
 #endif
+
+	delete GxApplication::Instance();
+
 	CxTcpClient::Shutdown();
 }
 
@@ -73,7 +76,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 		director->setOpenGLView(glview);
 	}
 
-	
+	GxApplication::Instance();
 
 	director->TickAdd(DIRECTOR_TICK_THREADPOOL, CxThreadPool::Instance(),0);
 	director->TickAdd(DIRECTOR_TICK_TCPCLIENT, CCTcpClient::shared(), 0);

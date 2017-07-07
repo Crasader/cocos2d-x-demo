@@ -37,6 +37,24 @@ GxScene& GxApplication::MyScene()
 	return m_myScene;
 }
 
+void GxApplication::LoadConfigFromXmlFile(const char* fname)
+{
+	m_cfgDoc.LoadFile(fname);
+	if (m_cfgDoc.Error()) {
+		LastErrorSet(m_cfgDoc.ErrorID(), m_cfgDoc.GetErrorStr1());
+	}
+}
+
+bool GxApplication::AuthUrlIsExpire()
+{
+	return true;
+}
+
+void GxApplication::AuthUrlStringGet()
+{
+
+}
+
 void GxApplication::Login()
 {
 	//向服务器发送HTTP请求

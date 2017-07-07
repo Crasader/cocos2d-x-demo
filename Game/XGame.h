@@ -7,6 +7,8 @@
 #include "XScene.h"
 #include "opcodes.h"
 #include "XListener.h"
+#include "XBag.h"
+#include "tinyxml2/tinyxml2.h"
 
 #define	 X_IDS_AUTH_URL_REQ	"http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
 #define  X_IDS_AUTH_URL_PATH "/blog/static/27333216120175612634726"
@@ -31,6 +33,10 @@ public:
 	string m_game_host; //游戏服务器主机地址
 	int    m_game_port; //游戏服务器端口
 
+public:
+	GxBagClient m_bagClient;	//背包客户端
+	tinyxml2::XMLDocument m_cfgDoc;
+
 protected:
 
 public:
@@ -43,6 +49,7 @@ public:
 	void LoadConfigFromXmlFile(const char* fname);
 
 	bool AuthUrlIsExpire();
+	void AuthUrlStringGet();
 	void AuthUrlSet(std::string str);
 
 	void Login();

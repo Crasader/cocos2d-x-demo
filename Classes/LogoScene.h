@@ -39,6 +39,12 @@ public:
 	Logo();
 	virtual ~Logo();
 
+
+	void OnAfterLogoShow();
+
+	void ShowWarning();
+	void OnWarningAgree();
+
 public:
 	virtual void OnMessage(char* buf, size_t sz, void* arg);
 
@@ -49,6 +55,9 @@ public:
 	//发生错误信息
 	virtual void OnError(int ecode, const char* txt);
 
+private:
+	bool _bShowWarning; //显示警告
+	
 };
 
 #endif // __Logo_SCENE_H__
