@@ -93,6 +93,9 @@
     <ClCompile Include="..\Game\XMsgHandler.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\Game\XBagClient.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -186,6 +189,9 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="..\Game\XMsgHandler.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\XBagClient.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
