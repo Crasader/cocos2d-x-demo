@@ -11,9 +11,10 @@
 
 typedef int16_t XBC_INT;
 
-extern std::unordered_map<XBC_INT, XBC_INT> theItemRulerCombine;//物品道具合并数量
-extern std::unordered_map<XBC_INT, XBC_INT> theItemRulerSort;	//物品道具排序顺序
-extern std::unordered_map<XBC_INT, XBC_INT> theItemRulerType;	//物品道具分类
+extern std::unordered_map<XBC_INT, XBC_INT> theItemRulerCombine;//物品道具合并数量 guid,num
+extern std::unordered_map<XBC_INT, XBC_INT> theItemRulerSort;	//物品道具排序顺序 guid,order
+extern std::unordered_map<XBC_INT, XBC_INT> theItemRulerType;	//物品道具分类 guid,typeid
+extern std::unordered_map<XBC_INT, XBC_INT> theItemRulerPage;	//物品道具分在哪个页面上 guid,pageid
 
 class GxBagCell
 {
@@ -23,7 +24,7 @@ public:
 	XBC_INT item_id;	 //物品道具编号
 	XBC_INT item_num;	 //数量
 
-//	char pageId;	//分页
+	char pageId;	//分页
 
 //private:
 //	char type;  //物品道具分类
@@ -41,9 +42,10 @@ public:
 public:
 	char type;
 	char order;
+	std::string name;	//页面名字
 
 public:
-	std::vector<GxBagCell> cells;
+	
 
 protected:
 	std::vector<XBC_INT> reuse_pos;
@@ -69,6 +71,7 @@ public:
 
 class GxBagDataSource;
 class GxBagDataStorage;
+class GxBagListener;
 
 class GxBag
 {
@@ -79,6 +82,12 @@ public:
 	uint64_t m_exp; //经验
 
 	std::vector<GxBag> pages;
+	
+	std::vector<GxBagCell> cells;
+
+protected:
+	GxBagDataSource* m_pSource;
+	GxBagDataStorage* m_pStorage;
 
 public:
 	void SetDataSource(GxBagDataSource* _source);
@@ -89,8 +98,8 @@ public:
 	void SaveBase(); //保存基本信息 5分钟一次
 	
 	/**
-				 增加物品
-					 根据物品配表进行合并
+	增加物品
+	根据物品配表进行合并
 	*/
 	GxBagCell* AddItem(XBC_INT _iid, XBC_INT _num);
 
@@ -104,6 +113,8 @@ public:
 
 class GxBagDataSource
 {
+public:
+	virtual void Reload(GxBag* target)=0;
 
 };
 
@@ -112,9 +123,14 @@ class GxBagDataStorage
 
 };
 
-class GxBagClient : public GxBag
+class GxBagListener
 {
-
+public:
+	/**
+	如果不返回 0 值 后面将不真正执行
+	*/
+	virtual int OnBagCellChangeBefore(GxBag* sender, GxBagCell* _old, GxBagCell* _new) {};
+	virtual void OnBagCellChangeAfter(GxBag* sender, GxBagCell* _old, GxBagCell* _new) {};
 };
 
 /**

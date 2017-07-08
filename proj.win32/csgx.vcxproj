@@ -154,6 +154,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Game\CxVar.cpp" />
     <ClCompile Include="..\Game\XActor.cpp" />
     <ClCompile Include="..\Game\XBag.cpp" />
+    <ClCompile Include="..\Game\XBagClient.cpp" />
     <ClCompile Include="..\Game\XBagIO.cpp" />
     <ClCompile Include="..\Game\XGame.cpp" />
     <ClCompile Include="..\Game\XItem.cpp" />
@@ -184,6 +185,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Game\Singleton.h" />
     <ClInclude Include="..\Game\XActor.h" />
     <ClInclude Include="..\Game\XBag.h" />
+    <ClInclude Include="..\Game\XBagClient.h" />
     <ClInclude Include="..\Game\XBagIO.h" />
     <ClInclude Include="..\Game\XGame.h" />
     <ClInclude Include="..\Game\XItem.h" />
