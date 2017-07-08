@@ -60,6 +60,8 @@ GxScene& GxApplication::MyScene()
 
 void GxApplication::LoadConfigFromXmlFile(const char* fname)
 {
+	assert(fname);
+	m_strCfgFilename = fname;
 	m_cfgDoc.LoadFile(fname);
 	if (m_cfgDoc.Error()) {
 		LastErrorSet(m_cfgDoc.ErrorID(), m_cfgDoc.GetErrorStr1());

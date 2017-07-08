@@ -93,6 +93,9 @@
     <ClCompile Include="..\Game\XMsgHandler.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\CommUI.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -187,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="..\Game\XMsgHandler.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CommUI.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

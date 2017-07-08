@@ -33,6 +33,8 @@ public:
 	string m_game_host; //游戏服务器主机地址
 	int    m_game_port; //游戏服务器端口
 
+	string m_strCfgFilename;
+
 public:
 	GxBagClient m_bagClient;	//背包客户端
 	tinyxml2::XMLDocument m_cfgDoc;

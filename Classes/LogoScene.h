@@ -39,11 +39,12 @@ public:
 	Logo();
 	virtual ~Logo();
 
-
+	void ShowLogo();
 	void OnAfterLogoShow();
 
 	void ShowWarning();
 	void OnWarningAgree();
+	void OnAfterWarningAgree();
 
 public:
 	virtual void OnMessage(char* buf, size_t sz, void* arg);

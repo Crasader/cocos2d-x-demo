@@ -494,6 +494,11 @@ void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t s
 			return;
 		}
 
+
+		//登录请求返回后处理
+
+
+
 		Director::getInstance()->MsgPushBack(str.c_str(), str.length(), who);
 	}
 

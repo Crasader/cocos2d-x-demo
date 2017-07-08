@@ -5,6 +5,7 @@
 #include "MyTcpClient.h"
 #include "LogoScene.h"
 #include "game/XGame.h"
+#include "CommUI.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -108,6 +109,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	{        
 		director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
 	}
+
+	XUIInit();
 
 	register_all_packages();
 

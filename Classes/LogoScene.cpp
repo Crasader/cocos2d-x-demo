@@ -7,6 +7,8 @@
 #include "game/XGame.h"
 #include "gayola/ByteBuffer.h"
 
+#include "CommUI.h"
+
 #include <fstream>
 
 USING_NS_CC;
@@ -70,13 +72,15 @@ bool Logo::init()
 
 void Logo::menuCloseCallback(Ref* pSender)
 {
-
-	GetAuthURL("http://mangoschina.blog.163.com/blog/static/27333216120175612634726");
+	ShowLogo();
+	//GetAuthURL("http://mangoschina.blog.163.com/blog/static/27333216120175612634726");
 	
 }
 
 void Logo::GetAuthURL(std::string URL)
 {
+
+
 
 	//链接服务器
 	//开启请求并接收线程
@@ -183,16 +187,20 @@ void Logo::onEnter()
 	}
 
 	//动态播放动画 后台获取登录验证
-
+	ShowLogo();
 }
 
 void Logo::OnAfterLogoShow()
 {
 	//LOGO 动画播放完毕后
-	if (_bShowWarning)
-	{
-
-	}
+	//if (_bShowWarning)
+	//{
+	//	OnAfterWarningAgree();
+	//}
+	//else {
+	//}
+	//显示警告
+	ShowWarning();
 }
 
 void Logo::ShowWarning()
@@ -207,4 +215,38 @@ void Logo::OnWarningAgree()
 	GxApplication::Instance()->CfgAttribIntSet("app_warning",true);
 
 	OnAfterLogoShow();
+}
+
+void Logo::ShowLogo()
+{
+	auto sprite = Sprite::create("Logo.png");
+	if (sprite) {
+		sprite->setPosition(theUICenter);
+		this->addChild(sprite, 0);
+		sprite->setOpacity(0);
+		
+		if (_bShowWarning) {
+			sprite->runAction(Sequence::create(FadeIn::create(0.8f),
+				DelayTime::create(0.8f),
+				FadeOut::create(0.35f),
+				CallFunc::create(CC_CALLBACK_0(Logo::OnAfterWarningAgree, this)),
+				RemoveSelf::create(), NULL));
+		}
+		else {
+			sprite->runAction(Sequence::create(FadeIn::create(0.8f),
+				DelayTime::create(0.8f),
+				FadeOut::create(0.35f),
+				CallFunc::create(CC_CALLBACK_0(Logo::OnAfterLogoShow, this)),
+				RemoveSelf::create(), NULL));
+		}
+
+	}
+
+}
+
+void Logo::OnAfterWarningAgree()
+{
+	//读取配置文件中使用的账号
+	//如果没读到就注册
+	GxApplication::Instance()->Login();
 }
