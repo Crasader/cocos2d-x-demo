@@ -8,6 +8,7 @@
 #include "opcodes.h"
 #include "XListener.h"
 #include "XBag.h"
+#include "XBagClient.h"
 #include "tinyxml2/tinyxml2.h"
 
 #define	 X_IDS_AUTH_URL_REQ	"http://mangoschina.blog.163.com/blog/static/27333216120175612634726"

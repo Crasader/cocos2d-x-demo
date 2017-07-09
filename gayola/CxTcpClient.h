@@ -191,6 +191,9 @@ namespace xs
 
 		bool ExistWaitSend();
 
+		//发送心跳包给服务器 ECHO 返回时间来判断网络情况
+		virtual void SendBreakHeart();
+
 	private:
 		GETSTRINGBYINDEX m_gstr_func;
 
@@ -207,6 +210,10 @@ namespace xs
 		bool m_bConnect;
 		bool m_bReady;
 		bool m_bSSL;
+		int m_nBreakHeart;	//间隔多少秒向服务器发送一次心跳包
+
+		time_t m_tiLastSend;//最后一次向服务器发送数据时间
+
 
 		std::set<CxTcpClientListener*> m_lis;
 

@@ -85,6 +85,7 @@ namespace xs
 	CxTcpClient::CxTcpClient()
 	{
 		ConnectSocket=0;
+		m_nBreakHeart = 10;
 		Clear();
 	}
 
@@ -333,6 +334,12 @@ namespace xs
 			delete dc;
 		}
 
+		//看是否发送心跳包
+		if (m_nBreakHeart > 0 && difftime(time(NULL), m_tiLastSend) >= m_nBreakHeart)
+		{
+			SendBreakHeart();
+		}
+
 	}
 
 	void CxTcpClient::SendData(const void* buf, int sz)
@@ -345,6 +352,7 @@ namespace xs
 
 	int CxTcpClient::SendDataIme(const void* buf, int sz)
 	{
+		m_tiLastSend = time(NULL);
 		return ::send(ConnectSocket, (const char*)buf, (int)sz, 0);
 	}
 
@@ -402,6 +410,11 @@ namespace xs
 		getsockopt(ConnectSocket, SOL_SOCKET, SO_ERROR, (void*)&error, (socklen_t*)&len);
 		return error;
 #endif
+	}
+
+	void CxTcpClient::SendBreakHeart()
+	{
+
 	}
 
 };
