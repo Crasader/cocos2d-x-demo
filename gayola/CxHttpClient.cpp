@@ -120,7 +120,7 @@ void WkGetDo3(HttpRequest* req, void* proc,void* n)
 		
 		//压入到消息队列
 		APPMESSAGEPUSHBACK _p = (APPMESSAGEPUSHBACK)proc;
-		if (_p) (_p)(req->GetPath(),n, response->GetContent(), response->GetContentLength(),0,zip);
+		if (_p && response->GetContentLength()>0) (_p)(req->GetPath(),n, response->GetContent(), response->GetContentLength(), response,zip);
 		
 
 		//if (proc) (proc)(n,response->GetContent(),response->GetContentLength(),0);
@@ -137,6 +137,13 @@ void WkGetDo3(HttpRequest* req, void* proc,void* n)
 	delete req;
 }
 
+CxHttpClient* CxHttpClient::_shared = NULL;
+
+CxHttpClient* CxHttpClient::Instance()
+{
+	if (_shared == NULL) _shared = new CxHttpClient();
+	return _shared;
+}
 
 void CxHttpClient::ThGet(std::string _uri, void* proc, void* n)
 {
@@ -167,6 +174,7 @@ void CxHttpClient::ThGet(std::string _uri, void* proc, void* n)
 #if(1)
 	HttpRequest* req = new HttpRequest();
 	req->SetURL(_uri);
+	req->SetCookie(m_cookie);
 	req->m_socket= xnet_connect(ipAddr, port);
 	if (req->m_socket== INVALID_SOCKET) {
 		printf("连接服务器错误");
@@ -191,5 +199,10 @@ void CxHttpClient::ThGet(std::string _uri, void* proc, void* n)
 #endif
 
 
+}
+
+void CxHttpClient::SetCookie(std::string _cookie)
+{
+	m_cookie = _cookie;
 }
 

@@ -111,7 +111,7 @@ public:
 	virtual HttpResponse& operator<< (const char* value);
 	virtual HttpResponse& operator<< (const unsigned char* value);
 
-	void Append(const void* value,size_t sz);
+	int Append(const void* value,size_t sz);
 
 public:
 //	unsigned char* m_Content;
@@ -190,6 +190,8 @@ public:
 	std::map<std::string, long> m_content_length;
 	std::map<std::string, std::string> m_content_type;
 
+	std::unordered_map<std::string, std::string> m_HeadFeilds;
+
 private:
 	bool m_bMultipart;
 
@@ -215,6 +217,9 @@ public:
 	//2017-07-02
 	HttpResponse* GetDocAfterConnected();
 	std::string GetPath() { return m_url; };
+
+	//2017-07-15
+	void SetCookie(std::string _cookie);
 
 };
 

@@ -78,10 +78,13 @@ HttpResponse& HttpResponse::operator<< (const unsigned char* value)
 	return *this;
 }
 
-void HttpResponse::Append(const void* value, size_t sz)
+int HttpResponse::Append(const void* value, size_t sz)
 {
 	m_bbf.append((const uint8*)value, sz);
-	return;
+
+	
+
+	return 0;
 
 	//这里增加需要的长度
 	//CheckDataSize(sz);
@@ -676,6 +679,15 @@ void HttpRequest::SendRequest()
 	std::string msg;
 	msg = m_method + " " + m_url + " " + m_http_version + "\r\n";
 	msg += strHead;
+
+	for (auto it : m_HeadFeilds)
+	{
+		if(it.second.empty()) continue;
+		string str;
+		str = it.first + " : " + it.second + "\r\n";
+		msg += str;
+	}
+
 	msg += "\r\n";
 	Send(msg);
 }
@@ -866,20 +878,73 @@ HttpResponse* HttpRequest::GetDocAfterConnected()
 	SendRequest();
 	size_t rrnum = 0;
 	HttpResponse* _response = new HttpResponse();
+	std::string head;
+	size_t cnt_len = 0;
+
 	if (_response)
 	{
 		unsigned char buf[40960];
 		int rnum = 0;
+
+		//先收内容头部
 		while (1) {
-			memset(buf, 0, sizeof(buf));
-			rnum = xnet_recv(m_socket, (char*)buf, 40960, 0);
+			rnum = xnet_recv(m_socket, (char*)buf, 1, 0);
+			if (rnum > 0) {
+				head.push_back(buf[0]);
+				rrnum += rnum;
+			}
+			if (rnum < 1) {
+				_response->Append(head.c_str(), head.length());
+				goto S1;
+			}
+
+			//这里查询是否已经收全了本次内容
+			if (cnt_len == 0) {
+				//FIXME 这里要不区分大小写
+				int pos = head.find("Content-Length");
+				int pos1=-1;
+				if (pos != std::string::npos) {
+					pos += strlen("Content-Length")+1;
+					pos1= head.find("\r", pos);
+				}
+				if (pos != std::string::npos && pos1 > pos)
+				{
+					std::string str_cnt_len = head.substr(pos, pos1 - pos);
+					cnt_len = std::strtol(str_cnt_len.c_str(), NULL, 10);
+				}
+			}
+
+			if (head.find("\r\n\r\n")!=std::string::npos) break;
+		}
+
+		_response->Append(head.c_str(), head.length());
+
+		size_t remain = 40960;
+		if (cnt_len > 0) remain = min(cnt_len, 40960);
+		rrnum = 0;
+		while (1) {
+//			memset(buf, 0, sizeof(buf));
+			rnum = xnet_recv(m_socket, (char*)buf, remain, 0);
 			if (rnum > 0) {
 				_response->Append(buf, rnum);
 				rrnum += rnum;
+
+				if (cnt_len > 0) {
+					remain = cnt_len - rrnum;
+					
+					if (remain == 0)  //本次内容读完了
+					{
+						goto S1;
+					}
+					remain = min(remain, 40960);
+				}
 			}
 			if (rnum < 1) break;
-		}
 
+			//这里查询是否已经收全了本次内容
+
+		}
+S1:
 		_response->Parse();
 	}
 
@@ -892,6 +957,11 @@ HttpResponse* HttpRequest::GetDocAfterConnected()
 
 
 	return _response;
+}
+
+void HttpRequest::SetCookie(std::string _cookie)
+{
+	m_HeadFeilds["Cookie"]=_cookie;
 }
 
 void HttpRequest::Perform(HttpResponse* _response)
