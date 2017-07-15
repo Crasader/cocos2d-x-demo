@@ -155,7 +155,7 @@ class HttpRequest
 {
 public:
 	HttpRequest();
-
+	virtual ~HttpRequest();
 public:
 	void AddResponseHeader(const char* feild,const char* value);
 

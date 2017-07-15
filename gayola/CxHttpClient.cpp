@@ -206,3 +206,8 @@ void CxHttpClient::SetCookie(std::string _cookie)
 	m_cookie = _cookie;
 }
 
+void CxHttpClient::Disconnect()
+{
+
+}
+

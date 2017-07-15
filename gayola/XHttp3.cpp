@@ -613,6 +613,11 @@ HttpRequest::HttpRequest()
 	m_method = "GET";
 }
 
+HttpRequest::~HttpRequest()
+{
+	if (m_socket != X_INVALID_SOCKET) xnet_disconnect(m_socket);
+}
+
 void HttpRequest::SetMethod(const string& method/* = "GET"*/)
 {
 	m_method = method;

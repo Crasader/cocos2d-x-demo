@@ -32,6 +32,8 @@ public:
 
 	void ThGet(std::string _uri, void* proc,void* n);
 	void SetCookie(std::string _cookie);
+
+	void Disconnect();
 };
 
 
