@@ -99,6 +99,9 @@
     <ClCompile Include="..\Classes\CommUI.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\gayola\XStrHelper.cpp">
+      <Filter>gayola</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -199,6 +202,12 @@
     </ClInclude>
     <ClInclude Include="..\Classes\CommUI.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\XNetBuffer.h">
+      <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\XStrHelper.h">
+      <Filter>gayola</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
