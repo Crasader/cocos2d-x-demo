@@ -4,6 +4,9 @@
 #include "gayola/CxThreadEx.h"
 #include "MyTcpClient.h"
 #include "LogoScene.h"
+
+#include "HallScene.h"
+
 #include "game/XGame.h"
 #include "CommUI.h"
 
@@ -112,11 +115,18 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	XUIInit();
 
+
+	std::string cfgfilename = FileUtils::getInstance()->getWritablePath() + "cfg.xml";
+	if (!FileUtils::getInstance()->isFileExist(cfgfilename)) GxApplication::Instance()->ConfigDefaultSave(cfgfilename);
+
+	GxApplication::Instance()->LoadConfigFromXmlFile(cfgfilename.c_str());
+
 	register_all_packages();
 
 	// create a scene. it's an autorelease object
 	//auto scene = HelloWorld::createScene();
-	auto scene = Logo::createScene();
+	//auto scene = Logo::createScene();
+	auto scene = Hall::createScene();
 
 	// run
 	director->runWithScene(scene);

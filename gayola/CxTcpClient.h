@@ -16,6 +16,8 @@
 #include <stdarg.h>
 #include <vector>
 
+#include "XNetBuffer.h"
+
 #ifdef _MSC_VER
 
 #include <winsock2.h>
@@ -178,6 +180,7 @@ namespace xs
 		void Clear();
 
 		XSOCKET GetSocket();
+		void SetProtocol(int _type, const char* _mark, size_t _mark_len);
 
 	protected:
 		/**
@@ -194,10 +197,18 @@ namespace xs
 		//发送心跳包给服务器 ECHO 返回时间来判断网络情况
 		virtual void SendBreakHeart();
 
+		
+
 	private:
 		GETSTRINGBYINDEX m_gstr_func;
 
 	protected:
+
+		int m_pto_type;
+		std::string m_pto_emark;
+
+		CxNetBuffer m_input;
+
 		uint64_t
 			m_send_bytes,	//发送字节数
 			m_recv_bytes,	//接收字节数
@@ -228,6 +239,11 @@ namespace xs
 
 		std::string m_ipSvr;
 		int m_portSvr;
+
+
+		void Write(const char* buf,size_t sz);
+
+		int ExecuteCmdline(const char* buf,size_t sz);
 
 	public:
 		void* userData;
