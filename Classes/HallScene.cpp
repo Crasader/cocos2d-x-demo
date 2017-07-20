@@ -82,7 +82,7 @@ void Hall::GetAuthURL(std::string URL)
 	//开启请求并接收线程
 	//处理结果在收到结束消息后
 
-	CxHttpClient::ThGet(URL, XzAppMessagePushBack,this);
+//	CxHttpClient::ThGet(URL, XzAppMessagePushBack,this);
 
 }
 

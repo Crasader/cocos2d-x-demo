@@ -86,7 +86,7 @@ void Logo::GetAuthURL(std::string URL)
 	//开启请求并接收线程
 	//处理结果在收到结束消息后
 
-	CxHttpClient::ThGet(URL, XzAppMessagePushBack,this);
+//	CxHttpClient::ThGet(URL, XzAppMessagePushBack,this);
 
 }
 
@@ -126,6 +126,9 @@ void Logo::OnMessage(char* buf, size_t sz, void* arg)
 		if (state_name == XTCS_CONNECT && arg == 1)
 		{
 			OnChangeDisplyString("connected.");
+
+			//设置协议
+
 		}
 		return;
 	}
