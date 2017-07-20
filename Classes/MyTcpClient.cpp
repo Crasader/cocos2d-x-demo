@@ -17,6 +17,7 @@
 #include "game/xgame.h"
 
 #include "gayola/ByteBuffer.h"
+#include "gayola/XHttp3.h"
 
 using namespace cocos2d;
 
@@ -396,6 +397,13 @@ void CCTcpClient::OnTcpClientStateChange(CxTcpClient* sender, int state_name, in
 		bbf << state_val;
 		bbf << arg;
 		Director::getInstance()->DispatchMsg((char*)bbf.contents(), bbf.size(), sender);
+
+		//如果是连接成功 发送网络协议设定 FIXME
+		if(state_name==XTCS_CONNECT && state_val==1) m_tcpClient->SetProtocol(0, "\r\n\r\n", 4);
+
+
+		
+
 	}
 }
 
@@ -448,9 +456,15 @@ void XzAppMessagePushBack2(void* wnd, const char* buf, size_t sz, void* who, boo
 	//Director::getInstance()->
 }
 
+void XzDirectorPushBack(const void* buf, size_t sz, void* arg)
+{
+	Director::getInstance()->MsgPushBack((const char*)buf, sz, arg);
+}
 
 void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t sz, void* who, bool zip)
 {
+	HttpResponse* response = (HttpResponse*)who;
+
 	if (zip)
 	{
 		//char outByte[40960];
@@ -502,11 +516,27 @@ void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t s
 		Director::getInstance()->MsgPushBack(str.c_str(), str.length(), who);
 	}
 
-	//
+	//游客登录
+	std::string cookie= response->GetHeadFeildValueIgnoreCase("Set-Cookie");
+	if (memcmp(cookie.c_str(),"game.login",strlen("game.login")) == 0)
+	{
+		uint16_t opc = XSMSG_LOGIN;
+		string s;
+		s.append((char*)&opc, 2);
+		s.append(buf, sz);
+		Director::getInstance()->MsgPushBack(s.c_str(), s.length(), wnd);
+		return;
+	}
+
 }
 
 void XzSendToServer(void* buf, size_t sz)
 {
 	CxTcpClient::shared()->SendData(buf, sz);
+}
+
+void XzConnectGame(std::string host, int port)
+{
+	CCTcpClient::shared()->Connect(host, port);
 }
 

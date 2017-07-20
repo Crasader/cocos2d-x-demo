@@ -170,6 +170,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\gayola\http_parser.c" />
     <ClCompile Include="..\gayola\XHttp3.cpp" />
     <ClCompile Include="..\gayola\xnet.cpp" />
+    <ClCompile Include="..\gayola\XStrHelper.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +206,8 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\gayola\http_parser.h" />
     <ClInclude Include="..\gayola\XHttp3.h" />
     <ClInclude Include="..\gayola\xnet.h" />
+    <ClInclude Include="..\gayola\XNetBuffer.h" />
+    <ClInclude Include="..\gayola\XStrHelper.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

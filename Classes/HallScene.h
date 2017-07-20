@@ -17,7 +17,7 @@
 
 using namespace cocos2d;
 
-class Hall : public cocos2d::Scene , public GxListener
+class Hall : public cocos2d::Layer, public GxListener
 {
 public:
 	static cocos2d::Scene* createScene();
@@ -25,15 +25,10 @@ public:
 	virtual bool init();
 	virtual void onEnter();
 
-	// a selector callback
-	void menuCloseCallback(cocos2d::Ref* pSender);
-	void menuConnectCallback(cocos2d::Ref* pSender);
 	
 	// implement the "static create()" method manually
 	CREATE_FUNC(Hall);
 
-
-	void GetAuthURL(std::string URL);
 
 public:
 	Hall();

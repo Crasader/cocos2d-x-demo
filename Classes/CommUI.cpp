@@ -3,12 +3,25 @@
 
 
 Vec2 theUICenter;
+Size theWinSize;
+Vec2 theWinCenter;
 
 void XUIInit()
 {
-	cocos2d::Size sz = Director::getInstance()->getVisibleSize();
-	theUICenter.x = sz.width / 2;
-	theUICenter.y = sz.height / 2;
+	theWinSize = Director::getInstance()->getVisibleSize();
+
+	theUICenter.x = theWinSize.width / 2;
+	theUICenter.y = theWinSize.height / 2;
+	
+	theWinCenter = theUICenter;
+
+
+	auto fileUtils = FileUtils::getInstance();
+	std::vector<std::string> searchPaths;
+	searchPaths.push_back("uih");
+	fileUtils->setSearchPaths(searchPaths);
+
+
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -46,6 +59,7 @@ XUiLayout* XUiLayout::createWith(Layout* _layout)
 		_layout->removeFromParent();
 
 		_res->setKeyboardEnabled(true);
+		_res->setTouchEnabled(true);
 
 		return _res;
 	}

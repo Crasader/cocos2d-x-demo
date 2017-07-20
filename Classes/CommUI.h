@@ -19,6 +19,8 @@ using namespace cocostudio;
 using namespace CocosDenshion;
 
 extern Vec2 theUICenter;
+extern Size theWinSize;
+extern Vec2 theWinCenter;
 
 void XUIInit();
 
@@ -51,6 +53,12 @@ protected:
 	EventListenerKeyboard* _keyboardListener;
 
 };
+
+#define xui_widget_click(a,b) _w = (Helper::seekWidgetByName(_Layout, a)); if (_w){ _w->setVisible(true);  \
+	_w->addClickEventListener(CC_CALLBACK_1(b, this)); _w->setTouchEnabled(true);  }
+
+#define xui_widget_click_ex(a,b,c) _w = (Helper::seekWidgetByName(a, b)); if (_w){ _w->setVisible(true);  \
+	_w->addClickEventListener(CC_CALLBACK_1(c, this)); _w->setTouchEnabled(true);  }
 
 
 #endif // __CommUI_SCENE_H__

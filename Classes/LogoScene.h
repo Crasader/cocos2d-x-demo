@@ -17,8 +17,11 @@
 
 using namespace cocos2d;
 
-class Logo : public cocos2d::Scene , public GxListener
+class Logo : public cocos2d::Layer , public GxListener
 {
+private:
+	Vec2 ptStartButton;
+
 public:
 	static cocos2d::Scene* createScene();
 
@@ -45,6 +48,15 @@ public:
 	void ShowWarning();
 	void OnWarningAgree();
 	void OnAfterWarningAgree();
+
+
+	//响应界面上的按键点击
+	void OnClickAgree(Ref* sender);
+	void OnClickStartGame(Ref* sender);
+
+	void ShowLoading();
+
+	void ConnectGame();
 
 public:
 	virtual void OnMessage(char* buf, size_t sz, void* arg);
