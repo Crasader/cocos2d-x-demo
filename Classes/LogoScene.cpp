@@ -27,7 +27,7 @@ bool Logo::init()
 {
 	//////////////////////////////
 	// 1. super init first
-	if ( !Scene::init() )
+	if ( !Layer::init() )
 	{
 		return false;
 	}
@@ -169,7 +169,7 @@ void Logo::menuConnectCallback(cocos2d::Ref* pSender)
 void Logo::onEnter()
 {
 	GxApplication* _app= GxApplication::Instance();
-	Scene::onEnter();
+	Layer::onEnter();
 
 	string fname = CCFileUtils::getInstance()->getWritablePath() + "cfg.xml";
 	_bShowWarning =!CCFileUtils::getInstance()->isFileExist(fname);
@@ -251,5 +251,5 @@ void Logo::OnAfterWarningAgree()
 {
 	//读取配置文件中使用的账号
 	//如果没读到就注册
-	GxApplication::Instance()->Login();
+	//GxApplication::Instance()->Login();
 }
