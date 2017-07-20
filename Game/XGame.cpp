@@ -6,6 +6,8 @@
 
 #include "tinyxml2/tinyxml2.h"
 
+#include "XProtocol.h"
+
 X_IMPL_SINSTANCE(GxApplication)
 
 using namespace xs;
@@ -115,12 +117,23 @@ void GxApplication::OnAfterConnectGame()
 	//协议号
 	//账号+会话
 	//登录服务器IP+port
+	//其他信息附加
+	ByteBuffer bbf;
+	bbf << (uint16_t)XCMSG_SESSION;
+	bbf << m_acct_id;
+	bbf << m_session;
+	bbf << m_login_host;
+	bbf << m_login_port;
+	bbf << m_net_pcode;
 	
+	CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
+
 }
 
 void GxApplication::ResponseSessionRecvAfter()
 {
 	//请求角色列表
+	XPTO_GAME::c_char_enum();
 
 }
 
