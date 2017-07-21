@@ -151,6 +151,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\LogoScene.cpp" />
     <ClCompile Include="..\Classes\MyTcpClient.cpp" />
+    <ClCompile Include="..\Classes\WorldScene.cpp" />
     <ClCompile Include="..\Game\CxVar.cpp" />
     <ClCompile Include="..\Game\XActor.cpp" />
     <ClCompile Include="..\Game\XBag.cpp" />
@@ -182,6 +183,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="..\Classes\LogoScene.h" />
     <ClInclude Include="..\Classes\MyTcpClient.h" />
+    <ClInclude Include="..\Classes\WorldScene.h" />
     <ClInclude Include="..\Game\CxVar.h" />
     <ClInclude Include="..\Game\opcodes.h" />
     <ClInclude Include="..\Game\Singleton.h" />

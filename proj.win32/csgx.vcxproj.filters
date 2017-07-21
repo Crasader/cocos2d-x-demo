@@ -105,6 +105,9 @@
     <ClCompile Include="..\Game\XProtocol.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\WorldScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="..\Game\XProtocol.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\WorldScene.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
