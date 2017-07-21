@@ -195,7 +195,7 @@ namespace xs
 		bool ExistWaitSend();
 
 		//发送心跳包给服务器 ECHO 返回时间来判断网络情况
-		virtual void SendBreakHeart();
+		void SendBreakHeart();
 
 		
 
@@ -221,6 +221,7 @@ namespace xs
 		bool m_bConnect;
 		bool m_bReady;
 		bool m_bSSL;
+
 		int m_nBreakHeart;	//间隔多少秒向服务器发送一次心跳包
 
 		time_t m_tiLastSend;//最后一次向服务器发送数据时间
@@ -235,7 +236,7 @@ namespace xs
 		char m_buffer[8192];
 
 		std::deque<CxDatChunk*> m_send_que;
-		std::mutex m_mtx_send_que;
+//		std::mutex m_mtx_send_que;
 
 		std::string m_ipSvr;
 		int m_portSvr;

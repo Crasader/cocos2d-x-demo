@@ -3,6 +3,12 @@
 #include "xnet.h"
 #include "XStrHelper.h"
 
+#include <chrono>
+
+#define XSTR_NET_BH  "@!ECHO 0123456789"
+
+
+
 namespace xs
 {
 
@@ -85,7 +91,7 @@ namespace xs
 	CxTcpClient::CxTcpClient()
 	{
 		ConnectSocket=0;
-		m_nBreakHeart = 5;//10
+		m_nBreakHeart = 10;
 		SetProtocol(1, "\r\n\r\n", 4);
 		Clear();
 	}
@@ -336,7 +342,7 @@ namespace xs
 		}
 
 		//发送数据
-		std::lock_guard<std::mutex> lck(m_mtx_send_que);
+//		std::lock_guard<std::mutex> lck(m_mtx_send_que);
 		while (!m_send_que.empty())
 		{
 			CxDatChunk* dc = m_send_que.front();
@@ -346,7 +352,7 @@ namespace xs
 		}
 
 		//看是否发送心跳包
-		//if (m_nBreakHeart > 0 && difftime(time(NULL), m_tiLastSend) >= m_nBreakHeart)
+		if (m_nBreakHeart > 0 && difftime(time(NULL), m_tiLastSend) >= m_nBreakHeart)
 		{
 			SendBreakHeart();
 		}
@@ -361,10 +367,10 @@ namespace xs
 
 		if (m_pto_type == 0)
 		{
-			dc->SetDataV(2, 4, &sz, sz, buf);
+			dc->SetDataV(2,  4, &sz,  sz,buf );
 		}
 		else {
-			dc->SetDataV(2, sz, buf, m_pto_emark.length(),  m_pto_emark.c_str());
+			dc->SetDataV(2,  sz, buf,  m_pto_emark.length(),m_pto_emark.c_str() );
 		}
 
 		//dc->SetData(buf, sz);
@@ -435,15 +441,21 @@ namespace xs
 
 	void CxTcpClient::SendBreakHeart()
 	{
-		if (m_bReady) {
-			SendData("@!ECHO 1234567890", strlen("@!ECHO 1234567890"));
-		}
+		std::string str;
+		str.append(XSTR_NET_BH);
+
+		std::chrono::steady_clock::time_point my_stamp = std::chrono::steady_clock::now();
+
+
+		str.append((char*)&my_stamp, sizeof(my_stamp));
+
+		static size_t echo_bh_len = str.length();
+
+		SendData(str.c_str(), echo_bh_len);
 	}
 
 	void CxTcpClient::Write(const char* buf, size_t sz)
 	{
-		printf("%s\n", buf);
-
 		m_input.write(buf, sz);
 		while (1)
 		{
@@ -546,9 +558,27 @@ namespace xs
 			m_bReady = true;
 
 			//if (m_delegate) m_delegate->OnReady(this);
-			this->DispatchEvent(XTCS_READY, 0, 1);
+			this->DispatchEvent(XTCS_READY, m_bReady, 1);
+
+			SendBreakHeart();
+
 			return 1;
 		}
+
+
+		//如果是回声
+		if (strstr(_buf, "@!ECHO 0123456789") == _buf)
+		{
+			std::chrono::steady_clock::time_point start;
+			memcpy((char*)&start, _buf + strlen(XSTR_NET_BH), sizeof(start));
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			int64_t tick= std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
+			printf("本次回声耗时 [%zu]us 微秒 ", tick);
+			return 1;
+		}
+
+
 
 		return 0;
 	}
@@ -565,13 +595,10 @@ namespace xs
 				_type);
 			//SendData(buf, (int)strlen(buf));
 			xnet_send(ConnectSocket, buf, (int)strlen(buf));
-
-			m_tiLastSend = time(NULL);
-
-			return;
+			//return;
 		}
 
-//		if (m_pto_type == _type) return;
+		//if (m_pto_type == _type) return;
 
 		m_pto_type = _type;
 		if (_emark == NULL) _emark = "\r\n\r\n";

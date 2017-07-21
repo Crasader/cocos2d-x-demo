@@ -151,6 +151,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\LogoScene.cpp" />
     <ClCompile Include="..\Classes\MyTcpClient.cpp" />
+    <ClCompile Include="..\Classes\WorldScene.cpp" />
     <ClCompile Include="..\Game\CxVar.cpp" />
     <ClCompile Include="..\Game\XActor.cpp" />
     <ClCompile Include="..\Game\XBag.cpp" />
@@ -161,6 +162,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Game\XMsgHandler.cpp" />
     <ClCompile Include="..\Game\XObject.cpp" />
     <ClCompile Include="..\Game\XPlayer.cpp" />
+    <ClCompile Include="..\Game\XProtocol.cpp" />
     <ClCompile Include="..\Game\XScene.cpp" />
     <ClCompile Include="..\gayola\CCTcpClient.cpp" />
     <ClCompile Include="..\gayola\CxHttpClient.cpp" />
@@ -181,6 +183,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="..\Classes\LogoScene.h" />
     <ClInclude Include="..\Classes\MyTcpClient.h" />
+    <ClInclude Include="..\Classes\WorldScene.h" />
     <ClInclude Include="..\Game\CxVar.h" />
     <ClInclude Include="..\Game\opcodes.h" />
     <ClInclude Include="..\Game\Singleton.h" />
@@ -194,6 +197,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Game\XMsgHandler.h" />
     <ClInclude Include="..\Game\XObject.h" />
     <ClInclude Include="..\Game\XPlayer.h" />
+    <ClInclude Include="..\Game\XProtocol.h" />
     <ClInclude Include="..\Game\XScene.h" />
     <ClInclude Include="..\gayola\ByteBuffer.h" />
     <ClInclude Include="..\gayola\ByteConverter.h" />

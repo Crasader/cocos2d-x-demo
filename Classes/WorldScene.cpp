@@ -1,20 +1,24 @@
-#include "HelloWorldScene.h"
+#include "WorldScene.h"
 #include "SimpleAudioEngine.h"
 #include "game/XGame.h"
 
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
+Scene* GxWorld::createScene()
 {
-    return HelloWorld::create();
+	auto scene = Scene::create();
+	auto layer = GxWorld::create();
+	layer->setName("main");
+	scene->addChild(layer);
+	return scene;
 }
 
 // on "init" you need to initialize your instance
-bool HelloWorld::init()
+bool GxWorld::init()
 {
     //////////////////////////////
-    // 1. super init first
-    if ( !Scene::init() )
+    // 1. Layer init first
+    if ( !Layer::init() )
     {
         return false;
     }
@@ -30,7 +34,7 @@ bool HelloWorld::init()
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
                                            "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+                                           CC_CALLBACK_1(GxWorld::menuCloseCallback, this));
     
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
@@ -46,8 +50,8 @@ bool HelloWorld::init()
     // add a label shows "Hello World"
     // create and initialize a label
     
-    // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+    // add "GxWorld" splash screen"
+    auto sprite = Sprite::create("GxWorld.png");
 	if (sprite) {
 		// position the sprite on the center of the screen
 		sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
@@ -59,7 +63,7 @@ bool HelloWorld::init()
 }
 
 
-void HelloWorld::menuCloseCallback(Ref* pSender)
+void GxWorld::menuCloseCallback(Ref* pSender)
 {
     //Close the cocos2d-x game scene and quit the application
  /*   Director::getInstance()->end();

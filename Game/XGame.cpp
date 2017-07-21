@@ -6,6 +6,8 @@
 
 #include "tinyxml2/tinyxml2.h"
 
+#include "XProtocol.h"
+
 X_IMPL_SINSTANCE(GxApplication)
 
 using namespace xs;
@@ -105,7 +107,7 @@ void GxApplication::AuthUrlStringGet()
 
 void GxApplication::RegisterGuest()
 {
-
+	Login("http://127.0.0.1:4002/guest.php");
 }
 
 void GxApplication::OnAfterConnectGame()
@@ -115,12 +117,23 @@ void GxApplication::OnAfterConnectGame()
 	//协议号
 	//账号+会话
 	//登录服务器IP+port
+	//其他信息附加
+	ByteBuffer bbf;
+	bbf << (uint16_t)XCMSG_SESSION;
+	bbf << m_acct_id;
+	bbf << m_session;
+	bbf << m_login_host;
+	bbf << m_login_port;
+	bbf << m_net_pcode;
 	
+	CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
+
 }
 
 void GxApplication::ResponseSessionRecvAfter()
 {
 	//请求角色列表
+	XPTO_GAME::c_char_enum();
 
 }
 
@@ -247,6 +260,23 @@ int GxApplication::OnMessage(char* buf, size_t sz, void* arg)
 		brr >> cnt;
 		OnRecvLoginAfter(cnt);
 		return 1;
+	}
+
+	if (msgId == XXMSG_TCP_EVENT)
+	{
+		int state_name;
+		int state_val;
+		int arg;
+		brr >> state_name;
+		brr >> state_val;
+		brr >> arg;
+
+		if (state_name == XTCS_READY && arg == 1)
+		{
+			//TODO 发送会话登录请求
+			OnAfterConnectGame();
+		}
+		return 0;
 	}
 
 

@@ -7,8 +7,6 @@
 #include "game/XGame.h"
 #include "gayola/ByteBuffer.h"
 
-#include "CommUI.h"
-
 #include <fstream>
 
 USING_NS_CC;
@@ -32,20 +30,6 @@ bool Hall::init()
 		return false;
 	}
 	
-	//xg_warning_start.json
-	XUiLayout* _Layout = NULL;
-
-	while (_Layout == NULL)
-		_Layout = XUiLayout::createWith(static_cast<Layout*>(GUIReader::getInstance()->widgetFromJsonFile("xg_hall.json")));
-
-
-	//Label_agree_text_Copy0
-	//	_Layout->SetDefaultWidget("Panel_default", CC_CALLBACK_1(Logo::ShowExitGameMsgBox, this));
-
-	_Layout->setContentSize(theWinSize);
-	this->addChild(_Layout);
-	_Layout->setName("xg_hall.json");
-
 
 
 	return true;
@@ -53,8 +37,45 @@ bool Hall::init()
 
 
 
+
 void Hall::OnMessage(char* buf, size_t sz, void* arg)
 {
+
+#if(0)
+	auto label = Label::createWithTTF(buf, "fonts/Marker Felt.ttf", 24);
+	label->setPosition(Vec2(480, 320));
+	this->addChild(label, 1);
+#endif
+
+
+#if(0)
+	std::ofstream ofs;
+	ofs.open("d:\\1.txt", std::ios_base::binary);
+	if (ofs.good()) {
+		ofs.write(buf, sz);
+		ofs.close();
+	}
+#endif
+
+	ByteReader bbr(buf, sz);
+	uint16_t msgId;
+	bbr >> msgId;
+
+	if (msgId == XXMSG_TCP_EVENT)
+	{
+		int state_name;
+		int state_val;
+		int arg;
+		bbr >> state_name;
+		bbr >> state_val;
+		bbr >> arg;
+
+		if (state_name == XTCS_CONNECT && arg == 1)
+		{
+			OnChangeDisplyString("connected.");
+		}
+		return;
+	}
 
 
 }
@@ -83,6 +104,7 @@ Hall::~Hall()
 {
 	GxApplication::Instance()->GxListenerDel(this);
 }
+
 
 
 void Hall::onEnter()

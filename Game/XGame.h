@@ -35,12 +35,18 @@ public:
 	GxPlayer m_mySelf;
 	GxScene  m_myScene;
 
+	string m_acct_id;
 	string m_username;	//账号名
 	string m_session;  //会话令牌
 	string m_password; //密码
 
 	string m_game_host; //游戏服务器主机地址
 	int    m_game_port; //游戏服务器端口
+
+	string m_login_host; //登录服务器地址
+	int	   m_login_port; //登录服务器端口
+
+	int m_net_pcode;	//客户端协议版本号
 
 	string m_strCfgFilename;
 
