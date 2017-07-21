@@ -188,7 +188,9 @@ void Logo::onEnter()
 {
 	Layer::onEnter();
 
-	GxApplication::Instance()->Login("http://127.0.0.1:4002/guest.php");
+	//GxApplication::Instance()->Login("http://127.0.0.1:4002/guest.php");
+
+	CCTcpClient::shared()->Connect("127.0.0.1", 4002);
 
 	//ShowWarning();
 	return;

@@ -85,7 +85,7 @@ namespace xs
 	CxTcpClient::CxTcpClient()
 	{
 		ConnectSocket=0;
-		m_nBreakHeart = 10;
+		m_nBreakHeart = 5;//10
 		SetProtocol(1, "\r\n\r\n", 4);
 		Clear();
 	}
@@ -346,7 +346,7 @@ namespace xs
 		}
 
 		//看是否发送心跳包
-		if (m_nBreakHeart > 0 && difftime(time(NULL), m_tiLastSend) >= m_nBreakHeart)
+		//if (m_nBreakHeart > 0 && difftime(time(NULL), m_tiLastSend) >= m_nBreakHeart)
 		{
 			SendBreakHeart();
 		}
@@ -355,16 +355,16 @@ namespace xs
 
 	void CxTcpClient::SendData(const void* buf, int sz)
 	{
-		std::lock_guard<std::mutex> lck(m_mtx_send_que);
+//		std::lock_guard<std::mutex> lck(m_mtx_send_que);
 		
 		CxDatChunk* dc = new CxDatChunk();
 
 		if (m_pto_type == 0)
 		{
-			dc->SetDataV(2, &sz, 4, buf, sz);
+			dc->SetDataV(2, 4, &sz, sz, buf);
 		}
 		else {
-			dc->SetDataV(2, buf, sz, m_pto_emark.c_str(), m_pto_emark.length());
+			dc->SetDataV(2, sz, buf, m_pto_emark.length(),  m_pto_emark.c_str());
 		}
 
 		//dc->SetData(buf, sz);
@@ -435,11 +435,15 @@ namespace xs
 
 	void CxTcpClient::SendBreakHeart()
 	{
-
+		if (m_bReady) {
+			SendData("@!ECHO 1234567890", strlen("@!ECHO 1234567890"));
+		}
 	}
 
 	void CxTcpClient::Write(const char* buf, size_t sz)
 	{
+		printf("%s\n", buf);
+
 		m_input.write(buf, sz);
 		while (1)
 		{
@@ -561,10 +565,13 @@ namespace xs
 				_type);
 			//SendData(buf, (int)strlen(buf));
 			xnet_send(ConnectSocket, buf, (int)strlen(buf));
+
+			m_tiLastSend = time(NULL);
+
 			return;
 		}
 
-		if (m_pto_type == _type) return;
+//		if (m_pto_type == _type) return;
 
 		m_pto_type = _type;
 		if (_emark == NULL) _emark = "\r\n\r\n";
