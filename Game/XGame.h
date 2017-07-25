@@ -11,9 +11,12 @@
 #include "XBag.h"
 #include "XBagClient.h"
 #include "tinyxml2/tinyxml2.h"
+#include "XMsgHandler.h"
 
 #include <stdint.h>
 #include <cstdint>
+#include <vector>
+#include <list>
 
 #define	 X_IDS_AUTH_URL_REQ	"http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
 #define  X_IDS_AUTH_URL_PATH "/blog/static/27333216120175612634726"
@@ -50,11 +53,20 @@ public:
 
 	string m_strCfgFilename;
 
+	int m_iLastError;
+
+	std::list<gxmsginfo_t> msgHandlers;
+
+	void LoginGuest();
+public:
+
+
 	void ConfigDefaultSave(std::string _filename);
 public:
 	GxBagClient m_bagClient;	//背包客户端
 	tinyxml2::XMLDocument m_cfgDoc;
 
+	std::string GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname);
 
 	void CfgAttribIntSet(const char* kname,int _val );
 	int  CfgAttribIntGet(const char* kname);
@@ -129,6 +141,31 @@ public:
 	void AgreeWarning(bool _agree, bool _save);
 private:
 	void SaveUserPwdSidToCfg();
+public:
+	void LoginUserPassword(string _name, string _password);
+
+
+	void MsgHandlerAdd(GxMsgHandler* _handler,int _order);
+	void MsgHandlerRemove(GxMsgHandler* _handler);
+	void MsgHandlerSort();
+	void MsgHandlerDespatch(const void* buf,size_t sz,void* arg);
+
+
+public:
+
+	std::map<uint16_t, std::list<gx_net_msg_handler_t>> mapNetHandler;
+
+	/**
+	订阅网络消息
+	*/
+	void NetMsgHandlerAdd(uint16_t, XNET_MSG_HANDLER, int, void*);
+	void NetMsgHandlerRemove(XNET_MSG_HANDLER);
+
+	void NetMsgHandlerDespatch(const void* buf, size_t sz, void* arg);
+
+
+
+
 };
 
 int GameDirectorMsg(char* buf, size_t sz, void* arg);

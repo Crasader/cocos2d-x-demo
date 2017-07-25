@@ -221,6 +221,15 @@
     <ClInclude Include="..\Classes\WorldScene.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\Game\client_codes.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\url_encoder.h">
+      <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\GxError.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

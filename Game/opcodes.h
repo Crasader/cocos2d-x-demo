@@ -12,7 +12,7 @@ enum opcodes
 	XCMSG_BAG_INFO,
 	XCCOP_TCP_CONNECT,	//要求连接游戏服务器
 
-	XCMSG_SESSION,		//会话令牌验证
+	XCMSG_SESSION=320,		//会话令牌验证
 	XSMSG_SESSION,		//游戏网关针对令牌验证响应
 
 

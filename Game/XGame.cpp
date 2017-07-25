@@ -7,6 +7,8 @@
 #include "tinyxml2/tinyxml2.h"
 
 #include "XProtocol.h"
+#include "gayola/CxHttper.h"
+#include "gayola/url_encoder.h"
 
 X_IMPL_SINSTANCE(GxApplication)
 
@@ -26,6 +28,11 @@ int GameDirectorMsg(char* buf, size_t sz, void* arg)
 }
 
 
+void GxApplication::LoginGuest()
+{
+	Login("http://127.0.0.1:4002/guest.php");
+}
+
 void GxApplication::ConfigDefaultSave(std::string _filename)
 {
 	tinyxml2::XMLDocument doc;
@@ -33,6 +40,19 @@ void GxApplication::ConfigDefaultSave(std::string _filename)
 	tinyxml2::XMLElement* root = doc.NewElement("cfg");
 	doc.LinkEndChild(root);
 	doc.SaveFile(_filename.c_str());
+}
+
+std::string GxApplication::GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname)
+{
+	std::string res;
+
+	if (_elm && !kname.empty())
+	{
+		tinyxml2::XMLElement* my = _elm->FirstChildElement(kname.c_str());
+		if (my) res = my->GetText();
+	}
+
+	return res;
 }
 
 void GxApplication::CfgAttribIntSet(const char* kname, int _val)
@@ -58,7 +78,8 @@ std::string GxApplication::CfgAttribStringGet(const char* kname)
 
 GxApplication::GxApplication()
 {
-
+	m_login_host = "127.0.0.1";
+	m_login_port = 4002;
 }
 
 GxApplication::~GxApplication()
@@ -197,8 +218,28 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 
 		SaveUserPwdSidToCfg();
 
+		m_iLastError = 0;
 
+	}
 
+	//
+	if (0 == strcmp(root->Name(), "login_client_error"))
+	{
+		//错误编号
+		tinyxml2::XMLElement* elm = root->FirstChildElement("error");
+		if (elm && elm->GetText()) {
+			 m_iLastError= atoi(elm->GetText());
+		}
+
+		//向消息层发布错误消息
+	}
+
+	if (0 == strcmp(root->Name(), "login_client_passed"))
+	{
+		//验证通过了 这里要设置账号和会话令牌
+		m_acct_id = GetValueStringFrom(root, "acctid");
+		m_session = GetValueStringFrom(root, "session");
+		m_iLastError = 0;
 	}
 
 	//游戏接入服务器信息 ip+port
@@ -209,12 +250,20 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 		m_game_host = str.substr(0, pos);
 		str = str.substr(pos + 1);
 		m_game_port = std::atoi(str.c_str());
+
+		XzConnectGame(m_game_host, m_game_port);
 	}
 
-	//ByteBuffer bbf;
-	//bbf << (uint16_t)XCCOP_TCP_CONNECT;
-	//XzDirectorPushBack(bbf.contents(), bbf.size(), this);
-	XzConnectGame(m_game_host, m_game_port);
+
+	//分析错误结果
+
+
+
+	//向消息监听发送登录成功的消息
+	ByteBuffer bbf;
+	bbf << (uint16_t)XXMSG_LOGIN;
+	bbf << m_iLastError;
+	MsgHandlerDespatch(bbf.contents(),bbf.size(),0);
 
 }
 
@@ -279,6 +328,10 @@ int GxApplication::OnMessage(char* buf, size_t sz, void* arg)
 		return 0;
 	}
 
+
+	//这里向订阅消息的函数发布内容
+
+	NetMsgHandlerDespatch(buf, sz, arg);
 
 	return 0;
 }
@@ -367,5 +420,92 @@ void GxApplication::SaveUserPwdSidToCfg()
 
 	m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
 
+}
+
+void GxApplication::LoginUserPassword(string _name, string _password)
+{
+
+	m_username = _name;
+	m_password = _password;
+
+	//http://192.168.50.190:6002/login.php?usr=13123&pwd=34234&app=2342&pcode=123&t=0&
+	char buf[1024];
+	UrlEncoder::Encode(_name);
+	UrlEncoder::Encode(_password);
+
+	sprintf(buf, "http://%s:%d/login.php?usr=%s&pwd=%s&app=2342&pcode=123&t=0&", m_login_host.c_str(), m_login_port, _name.c_str(), _password.c_str());
+	
+	CxHttpClient::Instance()->SetCookie("game.login.user");
+	CxHttpClient::Instance()->ThGet(buf, XzAppMessagePushBack, this);
+
+}
+
+void GxApplication::MsgHandlerAdd(GxMsgHandler* _handler, int _order)
+{
+	MsgHandlerRemove(_handler);
+	gxmsginfo_t _h = { _handler,_order };
+	msgHandlers.push_back(_h);
+	MsgHandlerSort();
+}
+
+void GxApplication::MsgHandlerRemove(GxMsgHandler* _handler)
+{
+	for (auto it = msgHandlers.begin(); it != msgHandlers.end();)
+	{
+		if (it->m_handler == _handler) {
+			it = msgHandlers.erase(it);
+		}
+		else it++;
+	}
+}
+
+void GxApplication::MsgHandlerSort()
+{
+	msgHandlers.sort([](const gxmsginfo_t& a, const gxmsginfo_t& b) {return a.m_order < b.m_order; });
+}
+
+void GxApplication::MsgHandlerDespatch(const void* buf, size_t sz, void* arg)
+{
+	for (auto it = msgHandlers.begin(); it != msgHandlers.end();it++)
+	{
+		if(0!=it->m_handler->OnGxMessage((const char*)buf,sz,arg)) break;
+	}
+}
+
+void GxApplication::NetMsgHandlerAdd(uint16_t msgId, XNET_MSG_HANDLER proc, int order,void* userdata)
+{
+	NetMsgHandlerRemove(proc);
+
+	gx_net_msg_handler_t msgHandler = {proc,userdata,order};
+
+	mapNetHandler[msgId].push_back(msgHandler);
+	std::list<gx_net_msg_handler_t>& cnt = mapNetHandler[msgId];
+	cnt.sort([](const gx_net_msg_handler_t& a,const gx_net_msg_handler_t& b) {
+		return a.order < b.order;
+	});
+}
+
+void GxApplication::NetMsgHandlerRemove(XNET_MSG_HANDLER proc)
+{
+	for (auto it = mapNetHandler.begin(); it != mapNetHandler.end();it++)
+	{
+		std::list<gx_net_msg_handler_t>& cnt = (it->second);
+		for (auto iit = cnt.begin(); iit != cnt.end();) {
+			if (iit->handler == proc)
+			{
+				iit = cnt.erase(iit);
+			}
+			else iit++;
+		}
+	}
+}
+
+void GxApplication::NetMsgHandlerDespatch(const void * buf, size_t sz, void * arg)
+{
+	uint16_t* msgId = (uint16_t*)buf;
+	std::list<gx_net_msg_handler_t>& cnt = mapNetHandler[*msgId];
+	for (auto it : cnt) {
+		(it.handler)((const char*)buf, sz, arg, it.userdata);
+	}
 }
 
