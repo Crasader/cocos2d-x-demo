@@ -186,6 +186,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\WorldScene.h" />
     <ClInclude Include="..\Game\client_codes.h" />
     <ClInclude Include="..\Game\CxVar.h" />
+    <ClInclude Include="..\Game\GxError.h" />
     <ClInclude Include="..\Game\opcodes.h" />
     <ClInclude Include="..\Game\Singleton.h" />
     <ClInclude Include="..\Game\XActor.h" />
@@ -209,6 +210,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\gayola\CxThreadEx.h" />
     <ClInclude Include="..\gayola\CxUri.h" />
     <ClInclude Include="..\gayola\http_parser.h" />
+    <ClInclude Include="..\gayola\url_encoder.h" />
     <ClInclude Include="..\gayola\XHttp3.h" />
     <ClInclude Include="..\gayola\xnet.h" />
     <ClInclude Include="..\gayola\XNetBuffer.h" />

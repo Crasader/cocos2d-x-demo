@@ -5,8 +5,9 @@
 enum client_codes
 {
 	XXMSG_BEGIN,
+	XXMSG_ERROR,
 	XXMSG_LOGIN,
-
+	
 };
 
 

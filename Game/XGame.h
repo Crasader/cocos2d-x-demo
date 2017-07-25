@@ -53,6 +53,7 @@ public:
 
 	string m_strCfgFilename;
 
+	int m_iLastError;
 
 	std::list<gxmsginfo_t> msgHandlers;
 
@@ -65,6 +66,7 @@ public:
 	GxBagClient m_bagClient;	//±³°ü¿Í»§¶Ë
 	tinyxml2::XMLDocument m_cfgDoc;
 
+	std::string GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname);
 
 	void CfgAttribIntSet(const char* kname,int _val );
 	int  CfgAttribIntGet(const char* kname);

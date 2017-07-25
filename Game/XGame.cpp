@@ -7,7 +7,8 @@
 #include "tinyxml2/tinyxml2.h"
 
 #include "XProtocol.h"
-
+#include "gayola/CxHttper.h"
+#include "gayola/url_encoder.h"
 
 X_IMPL_SINSTANCE(GxApplication)
 
@@ -41,6 +42,19 @@ void GxApplication::ConfigDefaultSave(std::string _filename)
 	doc.SaveFile(_filename.c_str());
 }
 
+std::string GxApplication::GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname)
+{
+	std::string res;
+
+	if (_elm && !kname.empty())
+	{
+		tinyxml2::XMLElement* my = _elm->FirstChildElement(kname.c_str());
+		if (my) res = my->GetText();
+	}
+
+	return res;
+}
+
 void GxApplication::CfgAttribIntSet(const char* kname, int _val)
 {
 
@@ -64,7 +78,8 @@ std::string GxApplication::CfgAttribStringGet(const char* kname)
 
 GxApplication::GxApplication()
 {
-
+	m_login_host = "127.0.0.1";
+	m_login_port = 4002;
 }
 
 GxApplication::~GxApplication()
@@ -203,8 +218,28 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 
 		SaveUserPwdSidToCfg();
 
+		m_iLastError = 0;
 
+	}
 
+	//
+	if (0 == strcmp(root->Name(), "login_client_error"))
+	{
+		//错误编号
+		tinyxml2::XMLElement* elm = root->FirstChildElement("error");
+		if (elm && elm->GetText()) {
+			 m_iLastError= atoi(elm->GetText());
+		}
+
+		//向消息层发布错误消息
+	}
+
+	if (0 == strcmp(root->Name(), "login_client_passed"))
+	{
+		//验证通过了 这里要设置账号和会话令牌
+		m_acct_id = GetValueStringFrom(root, "acctid");
+		m_session = GetValueStringFrom(root, "session");
+		m_iLastError = 0;
 	}
 
 	//游戏接入服务器信息 ip+port
@@ -215,18 +250,19 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 		m_game_host = str.substr(0, pos);
 		str = str.substr(pos + 1);
 		m_game_port = std::atoi(str.c_str());
+
+		XzConnectGame(m_game_host, m_game_port);
 	}
 
-	//ByteBuffer bbf;
-	//bbf << (uint16_t)XCCOP_TCP_CONNECT;
-	//XzDirectorPushBack(bbf.contents(), bbf.size(), this);
-	XzConnectGame(m_game_host, m_game_port);
+
+	//分析错误结果
+
 
 
 	//向消息监听发送登录成功的消息
 	ByteBuffer bbf;
 	bbf << (uint16_t)XXMSG_LOGIN;
-	bbf << 0;
+	bbf << m_iLastError;
 	MsgHandlerDespatch(bbf.contents(),bbf.size(),0);
 
 }
@@ -384,7 +420,20 @@ void GxApplication::SaveUserPwdSidToCfg()
 
 void GxApplication::LoginUserPassword(string _name, string _password)
 {
+
+	m_username = _name;
+	m_password = _password;
+
+	//http://192.168.50.190:6002/login.php?usr=13123&pwd=34234&app=2342&pcode=123&t=0&
+	char buf[1024];
+	UrlEncoder::Encode(_name);
+	UrlEncoder::Encode(_password);
+
+	sprintf(buf, "http://%s:%d/login.php?usr=%s&pwd=%s&app=2342&pcode=123&t=0&", m_login_host.c_str(), m_login_port, _name.c_str(), _password.c_str());
 	
+	CxHttpClient::Instance()->SetCookie("game.login.user");
+	CxHttpClient::Instance()->ThGet(buf, XzAppMessagePushBack, this);
+
 }
 
 void GxApplication::MsgHandlerAdd(GxMsgHandler* _handler, int _order)

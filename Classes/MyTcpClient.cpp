@@ -528,6 +528,8 @@ void XzAppMessagePushBack(std::string kname,void* wnd, const char* buf, size_t s
 		return;
 	}
 
+
+
 }
 
 void XzSendToServer(void* buf, size_t sz)

@@ -34,6 +34,7 @@
 //#include "MemFile.h"
 
 #include "xnet.h"
+#include "CxUri.h"
 
 using namespace std;
 
@@ -182,6 +183,8 @@ public:
 	string m_port;
 
 	string m_uri_original;
+
+	Zx::Uri m_uri;
 
 public:
 	std::map<std::string, std::list<std::string> > m_fields;

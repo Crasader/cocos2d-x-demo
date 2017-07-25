@@ -35,7 +35,7 @@
 
 using namespace std;
 
-#include "CxUri.h"
+
 
 HttpResponse::HttpResponse()
 {
@@ -669,20 +669,21 @@ void HttpRequest::SetURL(const string& url)
 {
 	m_uri_original = url;
 
-	Zx::Uri _uri = Zx::Uri::parse(url);
-	//std::string protocol = _uri.Protocol();
-	m_port = "80";
-	if (_uri.isSecure()) m_port = "443";
+	m_uri = Zx::Uri::parse(url);
 
-	m_url = _uri.getPath();
-	m_host = _uri.getHost();
+	//std::string protocol = _uri.Protocol();
+	//m_port = "80";
+	//if (_uri.isSecure()) m_port = "443";
+
+	//m_url = _uri.getPath();
+	//m_host = _uri.getHost();
 
 }
 
 void HttpRequest::SendRequest()
 {
 	std::string msg;
-	msg = m_method + " " + m_url + " " + m_http_version + "\r\n";
+	msg = m_method + " " + m_uri.getPathEtc() + " " + m_http_version + "\r\n";
 	msg += strHead;
 
 	for (auto it : m_HeadFeilds)

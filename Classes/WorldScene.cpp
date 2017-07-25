@@ -139,6 +139,11 @@ int GxWorld::OnGxMessage(const char* buf, size_t sz, void* arg)
 			m_bUiActorSelector = true;
 			ShowUiActorSelector(m_bUiActorSelector);
 		}
+		else {
+			//œ‘ æ¥ÌŒÛ–≈œ¢
+
+		}
+
 		return 1;
 	}
 
