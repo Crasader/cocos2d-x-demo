@@ -150,6 +150,22 @@ public:
 	void MsgHandlerSort();
 	void MsgHandlerDespatch(const void* buf,size_t sz,void* arg);
 
+
+public:
+
+	std::map<uint16_t, std::list<gx_net_msg_handler_t>> mapNetHandler;
+
+	/**
+	¶©ÔÄÍøÂçÏûÏ¢
+	*/
+	void NetMsgHandlerAdd(uint16_t, XNET_MSG_HANDLER, int, void*);
+	void NetMsgHandlerRemove(XNET_MSG_HANDLER);
+
+	void NetMsgHandlerDespatch(const void* buf, size_t sz, void* arg);
+
+
+
+
 };
 
 int GameDirectorMsg(char* buf, size_t sz, void* arg);

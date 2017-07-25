@@ -329,6 +329,9 @@ int GxApplication::OnMessage(char* buf, size_t sz, void* arg)
 	}
 
 
+	//这里向订阅消息的函数发布内容
+	。。。
+
 	return 0;
 }
 
@@ -465,6 +468,43 @@ void GxApplication::MsgHandlerDespatch(const void* buf, size_t sz, void* arg)
 	for (auto it = msgHandlers.begin(); it != msgHandlers.end();it++)
 	{
 		if(0!=it->m_handler->OnGxMessage((const char*)buf,sz,arg)) break;
+	}
+}
+
+void GxApplication::NetMsgHandlerAdd(uint16_t msgId, XNET_MSG_HANDLER proc, int order,void* userdata)
+{
+	NetMsgHandlerRemove(proc);
+
+	gx_net_msg_handler_t msgHandler = {proc,userdata,order};
+
+	mapNetHandler[msgId].push_back(msgHandler);
+	std::list<gx_net_msg_handler_t>& cnt = mapNetHandler[msgId];
+	cnt.sort([](const gx_net_msg_handler_t& a,const gx_net_msg_handler_t& b) {
+		return a.order < b.order;
+	});
+}
+
+void GxApplication::NetMsgHandlerRemove(XNET_MSG_HANDLER proc)
+{
+	for (auto it = mapNetHandler.begin(); it != mapNetHandler.end();it++)
+	{
+		std::list<gx_net_msg_handler_t>& cnt = (it->second);
+		for (auto iit = cnt.begin(); iit != cnt.end();) {
+			if (iit->handler == proc)
+			{
+				iit = cnt.erase(iit);
+			}
+			else iit++;
+		}
+	}
+}
+
+void GxApplication::NetMsgHandlerDespatch(const void * buf, size_t sz, void * arg)
+{
+	uint16_t* msgId = (uint16_t*)buf;
+	std::list<gx_net_msg_handler_t>& cnt = mapNetHandler[*msgId];
+	for (auto it : cnt) {
+		(it.handler)((const char*)buf, sz, arg, it.userdata);
 	}
 }
 

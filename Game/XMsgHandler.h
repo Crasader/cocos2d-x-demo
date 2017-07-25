@@ -36,4 +36,20 @@ struct gxmsginfo_s
 
 typedef struct gxmsginfo_s gxmsginfo_t;
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////
+typedef int(*XNET_MSG_HANDLER)(const char* buf, size_t sz,void* arg,void* userdata);
+
+struct gx_net_msg_handler_s
+{
+	XNET_MSG_HANDLER handler;
+	void* userdata;
+	int order;
+};
+
+typedef struct gx_net_msg_handler_s gx_net_msg_handler_t;
+
+
 #endif // XMsgHandler_h__
