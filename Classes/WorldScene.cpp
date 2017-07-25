@@ -2,6 +2,11 @@
 #include "SimpleAudioEngine.h"
 #include "game/XGame.h"
 
+#include "CommUI.h"
+
+#include "gayola/ByteBuffer.h"
+#include "gayola/ByteReader.h"
+
 USING_NS_CC;
 
 Scene* GxWorld::createScene()
@@ -27,38 +32,13 @@ bool GxWorld::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
+	m_uiLayer = Layer::create();
+	addChild(m_uiLayer);
+	//m_uiLayer->setPosition(theWinCenter);
+ 
+	m_bUiLogin = true;
+	ShowUiLogin(m_bUiLogin);
 
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(GxWorld::menuCloseCallback, this));
-    
-    closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-    
-    // add "GxWorld" splash screen"
-    auto sprite = Sprite::create("GxWorld.png");
-	if (sprite) {
-		// position the sprite on the center of the screen
-		sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-
-		// add the sprite as a child to this layer
-		this->addChild(sprite, 0);
-	}
     return true;
 }
 
@@ -77,7 +57,106 @@ void GxWorld::menuCloseCallback(Ref* pSender)
     //EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
     
-	GxApplication::Instance()->RegisterGuest();
+	//GxApplication::Instance()->RegisterGuest();
 
 
 }
+
+void GxWorld::ShowUiLogin(bool& _bVisible)
+{
+	if (_bVisible)
+	{
+		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_login.json"));
+		m_uiLayer->addChild(_widget);
+		_widget->setName("ui_login.json");
+
+//		Size screenSize = Director::getInstance()->getWinSize();
+//		Size rootSize = _widget->getContentSize();
+
+		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_login");
+		if (BtnLogin) {
+			BtnLogin->addClickEventListener([=](Ref* sender) 
+			{
+				string _name;
+				auto uname= dynamic_cast<TextField*>( Helper::seekWidgetByName(_widget, "TextField_username"));
+				if (uname) {
+					_name = uname->getStringValue();
+				}
+
+				string _password;
+				auto password = dynamic_cast<TextField*>(Helper::seekWidgetByName(_widget, "TextField_password"));
+				if (password) {
+					_password = password->getStringValue();
+				}
+
+				GxApplication::Instance()->LoginUserPassword(_name, _password);
+
+				//m_bUiLogin = false;
+				//ShowLoginUi(m_bUiLogin);
+								
+
+			});
+		}
+
+		//ÓÎ¿ÍµÇÂ¼
+		auto BtnLoginGuest = Helper::seekWidgetByName(_widget, "Button_login_guest");
+		if (BtnLoginGuest) {
+			BtnLoginGuest->addClickEventListener([=](Ref* sender)
+			{
+				GxApplication::Instance()->LoginGuest();
+			});
+		}
+
+
+
+	}
+	else {
+		//É¾³ýµô
+		//m_uiLayer->removeChildByName("ui_login.json");
+		SafeRemoveUiByName("ui_login.json");
+	}
+}
+
+void GxWorld::SafeRemoveUiByName(std::string _name)
+{
+	auto _widget = m_uiLayer->getChildByName(_name);
+	if (_widget) {
+		_widget->runAction(Sequence::create(DelayTime::create(0.3f), RemoveSelf::create(), NULL));
+	}
+}
+
+int GxWorld::OnGxMessage(const char* buf, size_t sz, void* arg)
+{
+	ByteReader brr(buf,sz);
+
+	uint16_t msgId;
+	brr >> msgId;
+
+	if (msgId == XXMSG_LOGIN) {
+		int eno = brr.read<int>();
+		if (eno == 0) {
+			SafeRemoveUiByName("ui_login.json");
+			m_bUiActorSelector = true;
+			ShowUiActorSelector(m_bUiActorSelector);
+		}
+		return 1;
+	}
+
+	return 0;
+}
+
+GxWorld::GxWorld()
+{
+	GxApplication::Instance()->MsgHandlerAdd(this, 0);
+}
+
+GxWorld::~GxWorld()
+{
+	GxApplication::Instance()->MsgHandlerRemove(this);
+}
+
+void GxWorld::ShowUiActorSelector(bool& _bVisible)
+{
+
+}
+

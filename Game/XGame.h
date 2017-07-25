@@ -11,9 +11,12 @@
 #include "XBag.h"
 #include "XBagClient.h"
 #include "tinyxml2/tinyxml2.h"
+#include "XMsgHandler.h"
 
 #include <stdint.h>
 #include <cstdint>
+#include <vector>
+#include <list>
 
 #define	 X_IDS_AUTH_URL_REQ	"http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
 #define  X_IDS_AUTH_URL_PATH "/blog/static/27333216120175612634726"
@@ -49,6 +52,13 @@ public:
 	int m_net_pcode;	//客户端协议版本号
 
 	string m_strCfgFilename;
+
+
+	std::list<gxmsginfo_t> msgHandlers;
+
+	void LoginGuest();
+public:
+
 
 	void ConfigDefaultSave(std::string _filename);
 public:
@@ -129,6 +139,15 @@ public:
 	void AgreeWarning(bool _agree, bool _save);
 private:
 	void SaveUserPwdSidToCfg();
+public:
+	void LoginUserPassword(string _name, string _password);
+
+
+	void MsgHandlerAdd(GxMsgHandler* _handler,int _order);
+	void MsgHandlerRemove(GxMsgHandler* _handler);
+	void MsgHandlerSort();
+	void MsgHandlerDespatch(const void* buf,size_t sz,void* arg);
+
 };
 
 int GameDirectorMsg(char* buf, size_t sz, void* arg);

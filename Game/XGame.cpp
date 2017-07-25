@@ -8,6 +8,7 @@
 
 #include "XProtocol.h"
 
+
 X_IMPL_SINSTANCE(GxApplication)
 
 using namespace xs;
@@ -25,6 +26,11 @@ int GameDirectorMsg(char* buf, size_t sz, void* arg)
 	return GxApplication::Instance()->OnMessage(buf, sz, arg);
 }
 
+
+void GxApplication::LoginGuest()
+{
+	Login("http://127.0.0.1:4002/guest.php");
+}
 
 void GxApplication::ConfigDefaultSave(std::string _filename)
 {
@@ -216,6 +222,13 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 	//XzDirectorPushBack(bbf.contents(), bbf.size(), this);
 	XzConnectGame(m_game_host, m_game_port);
 
+
+	//向消息监听发送登录成功的消息
+	ByteBuffer bbf;
+	bbf << (uint16_t)XXMSG_LOGIN;
+	bbf << 0;
+	MsgHandlerDespatch(bbf.contents(),bbf.size(),0);
+
 }
 
 void GxApplication::OnRecvLoginInfo(std::string _host, int _port)
@@ -367,5 +380,42 @@ void GxApplication::SaveUserPwdSidToCfg()
 
 	m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
 
+}
+
+void GxApplication::LoginUserPassword(string _name, string _password)
+{
+	
+}
+
+void GxApplication::MsgHandlerAdd(GxMsgHandler* _handler, int _order)
+{
+	MsgHandlerRemove(_handler);
+	gxmsginfo_t _h = { _handler,_order };
+	msgHandlers.push_back(_h);
+	MsgHandlerSort();
+}
+
+void GxApplication::MsgHandlerRemove(GxMsgHandler* _handler)
+{
+	for (auto it = msgHandlers.begin(); it != msgHandlers.end();)
+	{
+		if (it->m_handler == _handler) {
+			it = msgHandlers.erase(it);
+		}
+		else it++;
+	}
+}
+
+void GxApplication::MsgHandlerSort()
+{
+	msgHandlers.sort([](const gxmsginfo_t& a, const gxmsginfo_t& b) {return a.m_order < b.m_order; });
+}
+
+void GxApplication::MsgHandlerDespatch(const void* buf, size_t sz, void* arg)
+{
+	for (auto it = msgHandlers.begin(); it != msgHandlers.end();it++)
+	{
+		if(0!=it->m_handler->OnGxMessage((const char*)buf,sz,arg)) break;
+	}
 }
 

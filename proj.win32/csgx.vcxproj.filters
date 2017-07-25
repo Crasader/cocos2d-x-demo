@@ -221,6 +221,9 @@
     <ClInclude Include="..\Classes\WorldScene.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\Game\client_codes.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

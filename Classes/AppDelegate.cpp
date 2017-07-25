@@ -6,6 +6,7 @@
 #include "LogoScene.h"
 
 #include "HallScene.h"
+#include "WorldScene.h"
 
 #include "game/XGame.h"
 #include "CommUI.h"
@@ -115,6 +116,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	XUIInit();
 
+	auto fileUtils = FileUtils::getInstance();
+	fileUtils->addSearchPath("ui");
+
 
 	std::string cfgfilename = FileUtils::getInstance()->getWritablePath() + "cfg.xml";
 	if (!FileUtils::getInstance()->isFileExist(cfgfilename)) GxApplication::Instance()->ConfigDefaultSave(cfgfilename);
@@ -124,9 +128,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	register_all_packages();
 
 	// create a scene. it's an autorelease object
-	auto scene = HelloWorld::createScene();
+	//auto scene = HelloWorld::createScene();
 	//auto scene = Logo::createScene();
 	//auto scene = Hall::createScene();
+	auto scene = GxWorld::createScene();
 
 	// run
 	director->runWithScene(scene);

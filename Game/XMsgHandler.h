@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "client_codes.h"
+
 /*
 网络来的消息处理方法
 */
@@ -17,7 +19,21 @@ int xmsg_handler_obj_add(uint16_t, const char*, size_t);
 //有游戏单元离开所在的场景
 int xmsg_handler_obj_del(uint16_t, const char*, size_t);
 
+class GxMsgHandler
+{
+public:
+	virtual ~GxMsgHandler() {};
 
+	virtual int OnGxMessage(const char* buf,size_t sz,void* arg)=0;
 
+};
+
+struct gxmsginfo_s
+{
+	GxMsgHandler* m_handler;
+	int m_order;
+};
+
+typedef struct gxmsginfo_s gxmsginfo_t;
 
 #endif // XMsgHandler_h__
