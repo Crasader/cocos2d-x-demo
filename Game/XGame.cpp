@@ -330,7 +330,8 @@ int GxApplication::OnMessage(char* buf, size_t sz, void* arg)
 
 
 	//这里向订阅消息的函数发布内容
-	。。。
+
+	NetMsgHandlerDespatch(buf, sz, arg);
 
 	return 0;
 }
