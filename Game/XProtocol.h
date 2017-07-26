@@ -18,6 +18,9 @@ namespace XPTO_GAME
 	void c_char_create(std::string _name);
 	void c_char_rename(std::string _name);
 	void c_char_use(std::string _name);
+
+	void c_myself_info();
+
 	void c_scene_enter(std::string _name);
 	void c_scene_exit();
 	void c_game_exit();

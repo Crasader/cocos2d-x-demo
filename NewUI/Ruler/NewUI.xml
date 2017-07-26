@@ -12,4 +12,12 @@
     <Project>ui_actor_selector</Project>
     <GuidesList />
   </GuidesProject>
+  <GuidesProject>
+    <Project>ui_main</Project>
+    <GuidesList />
+  </GuidesProject>
+  <GuidesProject>
+    <Project>ui_error</Project>
+    <GuidesList />
+  </GuidesProject>
 </ArrayOfGuidesProject>

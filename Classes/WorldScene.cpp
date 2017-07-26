@@ -297,5 +297,24 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 		return 1;
 	}
 
+	if (XSMSG_CHAR_RENAME == *msgId)
+	{
+		int* err = (int*)(buf + 2);
+		if (*err == 0) {
+			//改名成功
+			_world->ShowUiErrorShowText("改名成功", 5);
+		}
+		else {
+			//名字不被接受 重新启名
+			_world->ShowUiErrorShowText("名字不被接受 重新启名",0);
+		}
+		return 1;
+	}
+
 	return 0;
+}
+
+void GxWorld::ShowUiErrorShowText(std::string _text, int _timeout)
+{
+	throw std::logic_error("The method or operation is not implemented.");
 }

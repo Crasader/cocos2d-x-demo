@@ -16,6 +16,21 @@ enum opcodes
 	XSMSG_SESSION,		//游戏网关针对令牌验证响应
 
 
+#pragma mark ---- 基础 ----
+
+	XMSG_NULL = 3000,
+
+	XSMSG_ERROR,									//请求的操作返回错误
+	XSMSG_ACTION_COMPLETED,							//客户端的命令成功执行
+
+	XSMSG_SYSTEM_TIME,								//服务器的时间
+
+	XSMSG_ACCOUNT_USE_OTHER,						//此账号其他客户端进行了登录此游戏操作
+
+
+
+#pragma mark ---- 角色相关 ----
+
 	XCMSG_CHAR_CREATE = 3100,							//创建角色
 	XCMSG_CHAR_ENUM,								//获取角色列表
 	XCMSG_CHAR_DELETE,								//删除指定角色
@@ -24,7 +39,15 @@ enum opcodes
 	XSMSG_CHAR_DELETE,								//删除成功
 
 	XCMSG_CHAR_USE,									//使用某个角色进入游戏
+
 	XCMSG_CHAR_RENAME,								//改名字
+	XSMSG_CHAR_RENAME,
+
+	XCMSG_MY_INFO,									//获取自己的信息
+	XSMSG_MY_INFO,
+
+
+
 
 #pragma mark ---- 场景相关 ----
 

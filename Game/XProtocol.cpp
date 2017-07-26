@@ -63,6 +63,11 @@ namespace XPTO_GAME
 	}
 
 
+	void c_myself_info()
+	{
+		//获取自己的信息
+	}
+
 	int s_char_enum(const char* buf, size_t sz, void* arg, void* userdata)
 	{
 		GxApplication* app = (GxApplication*)userdata;
@@ -120,6 +125,9 @@ namespace XPTO_GAME
 
 		GxScene& scn = app->MyScene();
 		brr >> scn.m_name;
+
+		//获取角色自己信息 背包
+		c_myself_info();
 
 		return 0;
 	}

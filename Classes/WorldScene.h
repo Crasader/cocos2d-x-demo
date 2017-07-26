@@ -33,6 +33,7 @@ public:
     CREATE_FUNC(GxWorld);
 
 	void UpdateUiForCharEnum();
+	void ShowUiErrorShowText(std::string _text, int _timeout);
 public:
 	void ShowTestUi(bool& _bVisible);
 	void ShowUiLogin(bool& _bVisible);
