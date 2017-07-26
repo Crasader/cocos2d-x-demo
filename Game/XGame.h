@@ -57,6 +57,8 @@ public:
 
 	std::list<gxmsginfo_t> msgHandlers;
 
+	int m_iTimeDelta;
+
 	void LoginGuest();
 public:
 
@@ -159,7 +161,9 @@ public:
 
 	void NetMsgHandlerDespatch(const void* buf, size_t sz, void* arg);
 
-
+public:
+	void applicationDidEnterBackground();
+	void applicationWillEnterForeground();
 
 
 };

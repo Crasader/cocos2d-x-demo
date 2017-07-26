@@ -92,10 +92,34 @@ namespace XPTO_GAME
 	}
 
 
+	void c_world_ready()
+	{
+		ByteBuffer bbf;
+		bbf << (uint16_t)XCMSG_WORLD_READY;
+		CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
+	}
+
+	int s_world_new(const char* buf, size_t sz, void* arg, void* userdata)
+	{
+		GxApplication* app = (GxApplication*)userdata;
+		ByteReader brr(buf + 2, sz - 2);
+		time_t _stime;
+		brr >> _stime;
+
+		time_t _now = time(NULL);
+		app->m_iTimeDelta = difftime(_now, _stime);
+
+		GxScene& scn = app->MyScene();
+		brr >> scn.m_name;
+
+		return 0;
+	}
+
 
 	void Init()
 	{
 		theCntDoResponse[XSMSG_CHAR_ENUM] = s_char_enum;
+		theCntDoResponse[XSMSG_WORLD_NEW] = s_world_new;
 	}
 
 

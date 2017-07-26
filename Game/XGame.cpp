@@ -521,3 +521,15 @@ void GxApplication::NetMsgHandlerDespatch(const void * buf, size_t sz, void * ar
 
 }
 
+void GxApplication::applicationDidEnterBackground()
+{
+	//断开网络并且
+}
+
+void GxApplication::applicationWillEnterForeground()
+{
+	//判断离开的时间长短 如果太长了，就整个重新开始 如果仅是短暂的就直接连接游戏网关服务器
+	//并且直接使用旧的角色
+
+}
+

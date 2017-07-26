@@ -280,5 +280,12 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 		return 1;
 	}
 
+	if (XSMSG_WORLD_NEW == *msgId)
+	{
+		//界面上显示场景内容 然后告知服务器准备就绪
+		XPTO_GAME::c_world_ready();
+		return 1;
+	}
+
 	return 0;
 }

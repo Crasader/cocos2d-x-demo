@@ -28,7 +28,8 @@ enum opcodes
 
 #pragma mark ---- 场景相关 ----
 
-	XSMSG_WORLD_NEW,								//进入一个新的地图
+	XSMSG_WORLD_NEW= 3050,								//进入一个新的地图
+	XCMSG_WORLD_READY,								//客户端世界准备就绪
 	XCMSG_WORLD_ENTER,								//客户端角色请求进入一个新的地图 这里不用考虑是副本还是 只要消息号
 	XCMSG_WORLD_EXIT,								//退出当前地图(只限在副本状态时)
 
