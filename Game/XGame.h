@@ -12,6 +12,7 @@
 #include "XBagClient.h"
 #include "tinyxml2/tinyxml2.h"
 #include "XMsgHandler.h"
+#include "GxError.h"
 
 #include <stdint.h>
 #include <cstdint>

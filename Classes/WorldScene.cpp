@@ -229,6 +229,7 @@ void GxWorld::UpdateUiForCharEnum()
 					Widget* w = Helper::seekWidgetByName(_lv, buf);
 					if(w==NULL){
 						w = wt->clone();
+						_lv->addChild(w);
 					}
 					cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(w, "Label_name"));
 					if (labName) {
@@ -284,6 +285,15 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 	{
 		//界面上显示场景内容 然后告知服务器准备就绪
 		XPTO_GAME::c_world_ready();
+		return 1;
+	}
+
+	if (XSMSG_CHAR_CREATE == *msgId)
+	{
+		int* err = (int*)(buf+2);
+		if (*err == XEC_OK) {
+			//创建角色成功
+		}
 		return 1;
 	}
 

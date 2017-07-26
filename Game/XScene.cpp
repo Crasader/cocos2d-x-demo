@@ -16,11 +16,11 @@ namespace xg
 
 	}
 
-	GxScene* GxScene::Instance()
-	{
-		if (_instance == NULL) _instance = new GxScene();
-		return _instance;
-	}
+	//GxScene* GxScene::Instance()
+	//{
+	//	if (_instance == NULL) _instance = new GxScene();
+	//	return _instance;
+	//}
 
 
 
@@ -38,6 +38,18 @@ namespace xg
 	void GxScene::PlayerDelete(GxPlayer* ply)
 	{
 		GxObject::ChildDelete(ply);
+	}
+
+	GxPlayer* GxScene::FindPlayerByName(std::string _name)
+	{
+		for (auto it : m_childs) {
+			GxObject* obj = it;
+			GxPlayer* ply = dynamic_cast<GxPlayer*>(obj);
+			if (ply && ply->m_name.compare(_name) == 0) {
+				return ply;
+			}
+		}
+		return NULL;
 	}
 
 };

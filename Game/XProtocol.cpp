@@ -5,6 +5,7 @@
 #include "gayola/CxTcpClient.h"
 #include "opcodes.h"
 #include "XGame.h"
+#include "GxError.h"
 
 #include <map>
 
@@ -46,6 +47,14 @@ namespace XPTO_GAME
 	void c_char_use(std::string _name)
 	{
 		if (_name.empty()) return;
+
+		GxApplication::Instance()->m_mySelf.m_name = _name;
+		GxScene& scn = GxApplication::Instance()->MyScene();
+		GxPlayer* ply = scn.FindPlayerByName(_name);
+		if (ply) {
+			GxApplication::Instance()->m_mySelf.m_acct_uuid = ply->m_acct_uuid;
+			//FIXME 
+		}
 
 		ByteBuffer bbf;
 		bbf << (uint16_t)XCMSG_CHAR_USE;
@@ -116,10 +125,23 @@ namespace XPTO_GAME
 	}
 
 
+	int s_char_create(const char* buf, size_t sz, void* arg, void* userdata)
+	{
+		GxApplication* app = (GxApplication*)userdata;
+		ByteReader brr(buf + 2, sz - 2);
+		int err = brr.read<int>();
+		if (err == XEC_OK) {
+			c_char_enum();
+		}
+		return 0;
+	}
+
 	void Init()
 	{
 		theCntDoResponse[XSMSG_CHAR_ENUM] = s_char_enum;
 		theCntDoResponse[XSMSG_WORLD_NEW] = s_world_new;
+		theCntDoResponse[XSMSG_CHAR_CREATE] = s_char_create;
+
 	}
 
 

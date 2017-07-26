@@ -25,6 +25,7 @@ namespace XPTO_GAME
 	void c_world_ready();
 
 	int s_world_new(const char* buf, size_t sz, void* arg, void* userdata);
+	int s_char_create(const char* buf, size_t sz, void* arg, void* userdata);
 
 
 	int NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata);
