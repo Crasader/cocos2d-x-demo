@@ -49,6 +49,9 @@ namespace xg
 		string		m_name; //名字
 		int			m_icon;	//小肖像编号
 
+		uint16_t m_level;						// 角色等级
+
+
 		GxObject*  m_parent; //父
 
 		set<GxObject*> m_childs;

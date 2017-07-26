@@ -80,6 +80,9 @@ GxApplication::GxApplication()
 {
 	m_login_host = "127.0.0.1";
 	m_login_port = 4002;
+
+	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
+	XPTO_GAME::Init();
 }
 
 GxApplication::~GxApplication()
@@ -154,9 +157,11 @@ void GxApplication::OnAfterConnectGame()
 void GxApplication::ResponseSessionRecvAfter()
 {
 	//请求角色列表
-	XPTO_GAME::c_char_enum();
+	//XPTO_GAME::c_char_enum();
 
 }
+
+
 
 void GxApplication::LoginAuto(void* arg)
 {
@@ -507,5 +512,12 @@ void GxApplication::NetMsgHandlerDespatch(const void * buf, size_t sz, void * ar
 	for (auto it : cnt) {
 		(it.handler)((const char*)buf, sz, arg, it.userdata);
 	}
+
+	//发送给零的消息订阅
+	std::list<gx_net_msg_handler_t>& cnt0 = mapNetHandler[0];
+	for (auto it : cnt0) {
+		(it.handler)((const char*)buf, sz, arg, it.userdata);
+	}
+
 }
 

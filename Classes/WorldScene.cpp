@@ -7,6 +7,8 @@
 #include "gayola/ByteBuffer.h"
 #include "gayola/ByteReader.h"
 
+#include "game/XProtocol.h"
+
 USING_NS_CC;
 
 Scene* GxWorld::createScene()
@@ -136,8 +138,8 @@ int GxWorld::OnGxMessage(const char* buf, size_t sz, void* arg)
 		int eno = brr.read<int>();
 		if (eno == 0) {
 			SafeRemoveUiByName("ui_login.json");
-			m_bUiActorSelector = true;
-			ShowUiActorSelector(m_bUiActorSelector);
+			//m_bUiActorSelector = true;
+			//ShowUiActorSelector(m_bUiActorSelector);
 		}
 		else {
 			//显示错误信息
@@ -153,15 +155,130 @@ int GxWorld::OnGxMessage(const char* buf, size_t sz, void* arg)
 GxWorld::GxWorld()
 {
 	GxApplication::Instance()->MsgHandlerAdd(this, 0);
+	GxApplication::Instance()->NetMsgHandlerAdd(0, GxWorld::NetMsgHandler, 0, this);
 }
 
 GxWorld::~GxWorld()
 {
 	GxApplication::Instance()->MsgHandlerRemove(this);
+	GxApplication::Instance()->NetMsgHandlerRemove(GxWorld::NetMsgHandler);
 }
 
 void GxWorld::ShowUiActorSelector(bool& _bVisible)
 {
+	if (_bVisible)
+	{
+		XPTO_GAME::c_char_enum();
+
+		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_actor_selector.json"));
+		m_uiLayer->addChild(_widget);
+		_widget->setName("ui_actor_selector.json");
+
+		//		Size screenSize = Director::getInstance()->getWinSize();
+		//		Size rootSize = _widget->getContentSize();
+
+		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_random");
+		if (BtnLogin) {
+			BtnLogin->addClickEventListener([=](Ref* sender)
+			{
+				//GxApplication::Instance()->CharCreate("<random>");
+				XPTO_GAME::c_char_create("<random>");
+			});
+		}
+
+		auto BtnLoginGuest = Helper::seekWidgetByName(_widget, "Button_enter_game");
+		if (BtnLoginGuest) {
+			BtnLoginGuest->addClickEventListener([=](Ref* sender)
+			{
+				XPTO_GAME::c_char_use(GxApplication::Instance()->m_mySelf.m_name);
+				SafeRemoveUiByName("ui_actor_selector.json");
+			});
+		}
+
+
+
+	}
+	else {
+		//删除掉
+		SafeRemoveUiByName("ui_actor_selector.json");
+	}
+}
+
+void GxWorld::UpdateUiForCharEnum()
+{
+	char buf[256];
+	if (!m_bUiActorSelector) return;
+	int k = 0;
+
+	Layout* _widget = dynamic_cast<Layout*>(m_uiLayer->getChildByName("ui_actor_selector.json"));
+	if (_widget)
+	{
+		ListView* _lv = dynamic_cast<ListView*>(Helper::seekWidgetByName(_widget, "ListView_main"));
+		if (_lv) {
+			GxScene& scn = GxApplication::Instance()->MyScene();
+
+			Widget* wt = Helper::seekWidgetByName(_lv, "Panel_item_0");
+
+			k = 0;
+			for (auto it : scn.m_childs)
+			{
+				GxPlayer* ply = dynamic_cast<GxPlayer*>(it);
+				if (ply) {
+					//
+					sprintf(buf, "Panel_item_%d", k);
+					Widget* w = Helper::seekWidgetByName(_lv, buf);
+					if(w==NULL){
+						w = wt->clone();
+					}
+					cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(w, "Label_name"));
+					if (labName) {
+						labName->setString(ply->m_name);
+					}
+
+					//设置点击事件
+					w->addClickEventListener([=](Ref* sender)
+					{
+						//XPTO_GAME::c_char_use(GxApplication::Instance()->m_mySelf.m_name);
+						cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(w, "Label_name"));
+						if(labName) GxApplication::Instance()->m_mySelf.m_name = labName->getStringValue();
+						CCLOG("selected %s", GxApplication::Instance()->m_mySelf.m_name.c_str());
+					});
+
+				}
+				k++;
+			}
+		}
+	}
 
 }
 
+
+#pragma mark ----网络协议
+
+int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata)
+{
+	GxWorld* _world = (GxWorld*)userdata;
+	uint16_t* msgId = (uint16_t*)buf;
+
+	if (*msgId == XSMSG_SESSION)
+	{
+		CCLOG("token passed");
+		_world->m_bUiActorSelector = true;
+		_world->ShowUiActorSelector(_world->m_bUiActorSelector);
+		return 1;
+	}
+
+	if (*msgId == XSMSG_CHAR_ENUM)
+	{
+		_world->UpdateUiForCharEnum();
+		return 1;
+	}
+
+	if (*msgId == XSMSG_CHAR_CREATE)
+	{
+
+		return 1;
+	}
+
+	return 0;
+}

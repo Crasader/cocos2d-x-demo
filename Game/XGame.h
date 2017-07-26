@@ -98,10 +98,6 @@ public:
 
 	void ResponseSessionRecvAfter();
 
-	void CharEnum();
-	void CharCreate();
-	void CharCreateAuto();
-	void CharUse(std::string charName);
 
 	void LoginAuto(void*);
 	void Login(std::string _url);

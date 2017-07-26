@@ -16,11 +16,13 @@ namespace xg
 	public:
 		string m_acct_uuid; //账号 唯一的 在游戏中
 
+		uint64_t char_guid;
+
 //放在属性中
 //		uint64_t m_gold;//绑金
 //		uint64_t m_coin;//游戏币
 
-
+		string m_body_part;
 	public:
 
 
