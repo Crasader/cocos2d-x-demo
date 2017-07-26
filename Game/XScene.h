@@ -20,7 +20,7 @@ namespace xg
 		virtual ~GxScene();
 
 
-		static GxScene* Instance();
+		//static GxScene* Instance();
 
 		GxPlayer* PlayerNew();
 		void PlayerDelete(GxPlayer* ply);
@@ -30,6 +30,7 @@ namespace xg
 		*/
 		void OnMessage(const char* buf,size_t sz);
 
+		GxPlayer* FindPlayerByName(std::string _name);
 	};
 
 

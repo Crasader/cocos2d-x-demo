@@ -32,6 +32,8 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(GxWorld);
 
+	void UpdateUiForCharEnum();
+	void ShowUiErrorShowText(std::string _text, int _timeout);
 public:
 	void ShowTestUi(bool& _bVisible);
 	void ShowUiLogin(bool& _bVisible);
@@ -42,6 +44,8 @@ public:
 
 public:
 	virtual int OnGxMessage(const char* buf, size_t sz, void* arg);
+
+	static int NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata);
 
 };
 

@@ -12,6 +12,7 @@
 #include "XBagClient.h"
 #include "tinyxml2/tinyxml2.h"
 #include "XMsgHandler.h"
+#include "GxError.h"
 
 #include <stdint.h>
 #include <cstdint>
@@ -57,6 +58,8 @@ public:
 
 	std::list<gxmsginfo_t> msgHandlers;
 
+	int m_iTimeDelta;
+
 	void LoginGuest();
 public:
 
@@ -98,10 +101,6 @@ public:
 
 	void ResponseSessionRecvAfter();
 
-	void CharEnum();
-	void CharCreate();
-	void CharCreateAuto();
-	void CharUse(std::string charName);
 
 	void LoginAuto(void*);
 	void Login(std::string _url);
@@ -163,7 +162,9 @@ public:
 
 	void NetMsgHandlerDespatch(const void* buf, size_t sz, void* arg);
 
-
+public:
+	void applicationDidEnterBackground();
+	void applicationWillEnterForeground();
 
 
 };
