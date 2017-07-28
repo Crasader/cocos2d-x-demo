@@ -8,11 +8,18 @@
 namespace XPTO_GAME
 {
 
+	typedef void(*SENDTOCLIENT)(const void* buf,size_t sz);
+
 	typedef int(*DORESPONSE)(const char* buf, size_t sz, void* arg, void* userdata);
 
 	extern std::map<uint16_t, DORESPONSE> theCntDoResponse;
 
 	void Init();
+
+	/**
+	…Ë÷√∫Ø ˝÷∏’Î
+	*/
+	void SetFunction(const char* _name, void* p);
 
 	void c_char_enum();
 	void c_char_create(std::string _name);

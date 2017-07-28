@@ -8,6 +8,7 @@
 #include "gayola/ByteReader.h"
 
 #include "game/XProtocol.h"
+#include "MyTcpClient.h"
 
 USING_NS_CC;
 
@@ -39,7 +40,7 @@ bool GxWorld::init()
 	//m_uiLayer->setPosition(theWinCenter);
  
 	m_bUiLogin = true;
-	ShowUiLogin(m_bUiLogin);
+	ShowUiLogin();
 
     return true;
 }
@@ -64,9 +65,9 @@ void GxWorld::menuCloseCallback(Ref* pSender)
 
 }
 
-void GxWorld::ShowUiLogin(bool& _bVisible)
+void GxWorld::ShowUiLogin()
 {
-	if (_bVisible)
+	if (m_bUiLogin)
 	{
 		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_login.json"));
 		m_uiLayer->addChild(_widget);
@@ -164,9 +165,9 @@ GxWorld::~GxWorld()
 	GxApplication::Instance()->NetMsgHandlerRemove(GxWorld::NetMsgHandler);
 }
 
-void GxWorld::ShowUiActorSelector(bool& _bVisible)
+void GxWorld::ShowUiActorSelector()
 {
-	if (_bVisible)
+	if (m_bUiActorSelector)
 	{
 		XPTO_GAME::c_char_enum();
 
@@ -265,7 +266,7 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 	{
 		CCLOG("token passed");
 		_world->m_bUiActorSelector = true;
-		_world->ShowUiActorSelector(_world->m_bUiActorSelector);
+		_world->ShowUiActorSelector();
 		return 1;
 	}
 
@@ -283,6 +284,9 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 
 	if (XSMSG_WORLD_NEW == *msgId)
 	{
+		_world->m_bUiMain = true;
+		_world->ShowUiMain();
+
 		//界面上显示场景内容 然后告知服务器准备就绪
 		XPTO_GAME::c_world_ready();
 		return 1;
@@ -316,5 +320,80 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 
 void GxWorld::ShowUiErrorShowText(std::string _text, int _timeout)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	//throw std::logic_error("The method or operation is not implemented.");
+}
+
+void GxWorld::OnMessage(char* buf, size_t sz, void* arg)
+{
+	ByteReader bbr(buf, sz);
+	uint16_t msgId;
+	bbr >> msgId;
+
+	if (msgId == XXMSG_TCP_EVENT)
+	{
+		int state_name;
+		int state_val;
+		int arg;
+		bbr >> state_name;
+		bbr >> state_val;
+		bbr >> arg;
+
+		if (state_name == XTCS_CONNECT && arg == 1)
+		{
+			OnChangeDisplyString("connected.");
+
+			//设置协议
+
+		}
+
+		if (state_name == XTCS_DISCONNECT)
+		{
+			//界面显示网络断开 提示重新连接
+		}
+
+		return;
+	}
+}
+
+/**
+显示游戏中的主界面
+*/
+void GxWorld::ShowUiMain()
+{
+
+	if (m_bUiMain == false) {
+		SafeRemoveUiByName("ui_main.json");
+		return;
+	}
+
+		
+
+		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_main.json"));
+		m_uiLayer->addChild(_widget);
+		_widget->setName("ui_main.json");
+
+
+		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_back_login");
+		if (BtnLogin) {
+			BtnLogin->addClickEventListener([=](Ref* sender)
+			{
+				//GxApplication::Instance()->CharCreate("<random>");
+				ShowUiLogin();
+				m_bUiMain = false;
+				SafeRemoveUiByName("ui_main.json");
+			});
+		}
+
+		//auto BtnLoginGuest = Helper::seekWidgetByName(_widget, "Button_enter_game");
+		//if (BtnLoginGuest) {
+		//	BtnLoginGuest->addClickEventListener([=](Ref* sender)
+		//	{
+		//		XPTO_GAME::c_char_use(GxApplication::Instance()->m_mySelf.m_name);
+		//		SafeRemoveUiByName("ui_actor_selector.json");
+		//	});
+		//}
+
+
+
+	
 }

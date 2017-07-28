@@ -22,5 +22,5 @@
   <ResRelativePath />
   <imageFileList />
   <JsonSuffix>.json</JsonSuffix>
-  <CurrentUIJson>ui_error.json</CurrentUIJson>
+  <CurrentUIJson>ui_main.json</CurrentUIJson>
 </UIProject>
