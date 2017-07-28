@@ -10,6 +10,7 @@
 
 #include "game/XGame.h"
 #include "CommUI.h"
+#include "Game/XProtocol.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -115,6 +116,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	}
 
 	XUIInit();
+
 
 	auto fileUtils = FileUtils::getInstance();
 	fileUtils->addSearchPath("ui");

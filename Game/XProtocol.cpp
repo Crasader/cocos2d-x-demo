@@ -8,12 +8,14 @@
 #include "GxError.h"
 
 #include <map>
-
+#include <assert.h>
 
 namespace XPTO_GAME
 {
 	using namespace xs;
 	using namespace std;
+
+	static SENDTOCLIENT appSendToClient = NULL;
 
 	//typedef int(*DORESPONSE)(const char* buf, size_t sz, void* arg, void* userdata);
 
@@ -37,11 +39,6 @@ namespace XPTO_GAME
 		bbf << _name;
 		CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
 	}
-
-
-
-
-
 
 
 	void c_char_use(std::string _name)
@@ -149,9 +146,21 @@ namespace XPTO_GAME
 		theCntDoResponse[XSMSG_CHAR_ENUM] = s_char_enum;
 		theCntDoResponse[XSMSG_WORLD_NEW] = s_world_new;
 		theCntDoResponse[XSMSG_CHAR_CREATE] = s_char_create;
-
+		assert(appSendToClient);
 	}
 
+
+	void SetFunction(const char* _name, void* p)
+	{
+		assert(_name);
+		assert(p);
+
+		if (strcmp(_name, "appSendToClient") == 0) {
+			appSendToClient = (SENDTOCLIENT)p;
+			return;
+		}
+
+	}
 
 	int NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata)
 	{

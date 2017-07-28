@@ -14,6 +14,7 @@ X_IMPL_SINSTANCE(GxApplication)
 
 using namespace xs;
 
+void XzSendToClient(const void* buf, size_t sz);
 void XzConnectGame(std::string host, int port);
 void XzSendToServer(void* buf, size_t sz);
 void XzAppMessagePushBack(std::string kname, void* wnd, const char* buf, size_t sz, void* who, bool zip);
@@ -21,6 +22,12 @@ void XzAppMessagePushBack(std::string kname, void* wnd, const char* buf, size_t 
 void XzDirectorPushBack(const void* buf, size_t sz,void* arg);
 
 #define XAPP_LOGIN_URL "http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
+
+
+void XzSendToClient(const void* buf, size_t sz)
+{
+	CxTcpClient::shared()->SendData(buf, (int)sz);
+}
 
 int GameDirectorMsg(char* buf, size_t sz, void* arg)
 {
@@ -82,6 +89,8 @@ GxApplication::GxApplication()
 	m_login_port = 4002;
 
 	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
+
+	XPTO_GAME::SetFunction("appSendToClient", XzSendToClient);
 	XPTO_GAME::Init();
 }
 

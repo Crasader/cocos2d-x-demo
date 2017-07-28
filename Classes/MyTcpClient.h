@@ -50,4 +50,6 @@ void XzSendToServer(void* buf,size_t sz);
 
 void XzConnectGame(std::string host, int port);
 
+void XzSendToClient(const void* buf,size_t sz);
+
 #endif // CCTcpClient_h__
