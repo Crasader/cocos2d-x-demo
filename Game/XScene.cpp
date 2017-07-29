@@ -52,5 +52,10 @@ namespace xg
 		return NULL;
 	}
 
+	void GxScene::clear()
+	{
+		ChildRemoveAll();
+	}
+
 };
 

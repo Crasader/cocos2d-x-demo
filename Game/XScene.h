@@ -31,6 +31,12 @@ namespace xg
 		void OnMessage(const char* buf,size_t sz);
 
 		GxPlayer* FindPlayerByName(std::string _name);
+
+		/**
+		清除场景中所有单元
+		*/
+		virtual void clear();
+
 	};
 
 

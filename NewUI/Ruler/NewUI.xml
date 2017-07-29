@@ -20,4 +20,8 @@
     <Project>ui_error</Project>
     <GuidesList />
   </GuidesProject>
+  <GuidesProject>
+    <Project>ui_wait</Project>
+    <GuidesList />
+  </GuidesProject>
 </ArrayOfGuidesProject>

@@ -63,6 +63,8 @@ public:
 	void LoginGuest();
 public:
 
+	static GxScene* Scene();
+	static GxPlayer* Self();
 
 	void ConfigDefaultSave(std::string _filename);
 public:

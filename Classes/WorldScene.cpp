@@ -21,7 +21,7 @@ Scene* GxWorld::createScene()
 	return scene;
 }
 
-// on "init" you need to initialize your instance
+
 bool GxWorld::init()
 {
     //////////////////////////////
@@ -46,24 +46,6 @@ bool GxWorld::init()
 }
 
 
-void GxWorld::menuCloseCallback(Ref* pSender)
-{
-    //Close the cocos2d-x game scene and quit the application
- /*   Director::getInstance()->end();
-
-    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif*/
-    
-    /*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() and exit(0) as given above,instead trigger a custom event created in RootViewController.mm as below*/
-    
-    //EventCustom customEndEvent("game_scene_close_event");
-    //_eventDispatcher->dispatchEvent(&customEndEvent);
-    
-	//GxApplication::Instance()->RegisterGuest();
-
-
-}
 
 void GxWorld::ShowUiLogin()
 {
@@ -169,6 +151,9 @@ void GxWorld::ShowUiActorSelector()
 {
 	if (m_bUiActorSelector)
 	{
+		//清除旧的列表数据
+		GxApplication::Scene()->clear();
+
 		XPTO_GAME::c_char_enum();
 
 		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_actor_selector.json"));
@@ -205,6 +190,31 @@ void GxWorld::ShowUiActorSelector()
 	}
 }
 
+
+void GxWorld::UpdateUiForCharSelected(Ref* sender)
+{
+	char buf[256];
+	Layout* _widget = dynamic_cast<Layout*>(m_uiLayer->getChildByName("ui_actor_selector.json"));
+	if (_widget)
+	{
+		int k = 0;
+		while (1) 
+		{
+			sprintf(buf, "Panel_item_%d", k);
+			Widget* w = Helper::seekWidgetByName(_widget, buf);
+			k++;
+
+			if (w == NULL) break;
+			
+			Widget* mark= Helper::seekWidgetByName(w, "ImageView_smark");
+			bool b = false;
+			if (w == sender) b = true;
+			if (mark) mark->setVisible(b);
+		}
+	}
+}
+
+
 void GxWorld::UpdateUiForCharEnum()
 {
 	char buf[256];
@@ -231,6 +241,7 @@ void GxWorld::UpdateUiForCharEnum()
 					if(w==NULL){
 						w = wt->clone();
 						_lv->addChild(w);
+						w->setName(buf);
 					}
 					cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(w, "Label_name"));
 					if (labName) {
@@ -244,6 +255,9 @@ void GxWorld::UpdateUiForCharEnum()
 						cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(w, "Label_name"));
 						if(labName) GxApplication::Instance()->m_mySelf.m_name = labName->getStringValue();
 						CCLOG("selected %s", GxApplication::Instance()->m_mySelf.m_name.c_str());
+						//ImageView_smark
+						//其他条目选择都隐藏 这条显示
+						UpdateUiForCharSelected(sender);
 					});
 
 				}
@@ -372,12 +386,18 @@ void GxWorld::ShowUiMain()
 		m_uiLayer->addChild(_widget);
 		_widget->setName("ui_main.json");
 
+		//显示角色名字 金币 硬币 信息
+		cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_my_name"));
+		if (labName) {
+			labName->setString(GxApplication::Self()->m_name);
+		}
 
 		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_back_login");
 		if (BtnLogin) {
 			BtnLogin->addClickEventListener([=](Ref* sender)
 			{
 				//GxApplication::Instance()->CharCreate("<random>");
+				m_bUiLogin = true;
 				ShowUiLogin();
 				m_bUiMain = false;
 				SafeRemoveUiByName("ui_main.json");
@@ -397,3 +417,6 @@ void GxWorld::ShowUiMain()
 
 	
 }
+
+
+

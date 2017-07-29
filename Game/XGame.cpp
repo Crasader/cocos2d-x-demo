@@ -13,6 +13,7 @@
 X_IMPL_SINSTANCE(GxApplication)
 
 using namespace xs;
+using namespace xg;
 
 void XzSendToClient(const void* buf, size_t sz);
 void XzConnectGame(std::string host, int port);
@@ -38,6 +39,16 @@ int GameDirectorMsg(char* buf, size_t sz, void* arg)
 void GxApplication::LoginGuest()
 {
 	Login("http://127.0.0.1:4002/guest.php");
+}
+
+GxScene* GxApplication::Scene()
+{
+	return &GxApplication::Instance()->m_myScene;
+}
+
+GxPlayer* GxApplication::Self()
+{
+	return &GxApplication::Instance()->m_mySelf;
 }
 
 void GxApplication::ConfigDefaultSave(std::string _filename)
