@@ -1,6 +1,11 @@
 #ifndef XGame_h__
 #define XGame_h__
 
+/*
+
+
+
+*/
 
 
 #include "XActor.h"
@@ -18,6 +23,8 @@
 #include <cstdint>
 #include <vector>
 #include <list>
+#include <stdarg.h>
+#include <unordered_map>
 
 #define	 X_IDS_AUTH_URL_REQ	"http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
 #define  X_IDS_AUTH_URL_PATH "/blog/static/27333216120175612634726"
@@ -28,6 +35,24 @@
 #define X_MARK_L "&gt;&gt;&gt;&gt;&gt;"
 #define X_MARK_R "&lt;&lt;&lt;&lt;&lt;"
 
+typedef void(*GXLOG)(int, const char* fmt, ...);
+
+#define  XLOG_TRACE(fmt,...)   GxApplication::gLog(0,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
+#define  XLOG_DEBUG(fmt,...)    GxApplication::gLog(1,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
+#define  XLOG_INFO(fmt,...)     GxApplication::gLog(2,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
+#define  XLOG_WARN(fmt,...)    GxApplication::gLog(3,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
+#define  XLOG_ALARM(fmt,...)  GxApplication::gLog(4,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
+#define  XLOG_ERROR(fmt,...)    GxApplication::gLog(5,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
+#define  XLOG_FATAL(fmt,...)    GxApplication::gLog(6,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
+
+
+#define  X_IDOK  0
+#define  X_IDCANCEL 3
+#define  X_IDTRY 8
+#define  X_IDYES 0
+#define  X_IDNO  3
+
+
 using namespace xg;
 
 class GxApplication :public GxObject, public Singleton<GxApplication>
@@ -36,10 +61,8 @@ public:
 	time_t m_tiAuthURL; //最后一次获得的登录
 	string m_strAuthURL;
 
-	GxPlayer m_mySelf;
-	GxScene  m_myScene;
 
-	string m_acct_id;
+	string m_acct_id;	//账号 唯一性
 	string m_username;	//账号名
 	string m_session;  //会话令牌
 	string m_password; //密码
@@ -56,17 +79,25 @@ public:
 
 	int m_iLastError;
 
-	std::list<gxmsginfo_t> msgHandlers;
-
 	int m_iTimeDelta;
 
-	void LoginGuest();
+
+	GxPlayer m_mySelf;
+	GxScene  m_myScene;
+	GxBagClient m_bagClient;	//背包客户端
+
+
 public:
+
+	static GxScene* Scene();
+	static GxPlayer* Self();
+
+	static GXLOG gLog;
 
 
 	void ConfigDefaultSave(std::string _filename);
 public:
-	GxBagClient m_bagClient;	//背包客户端
+
 	tinyxml2::XMLDocument m_cfgDoc;
 
 	std::string GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname);
@@ -92,13 +123,12 @@ public:
 	bool AuthUrlIsExpire();
 	void AuthUrlStringGet();
 	void AuthUrlSet(std::string str);
+	void LoginGuest();
 
 
 	//注册一个游客 也是给玩家一个默认的账号
 	void RegisterGuest();
-
 	void OnAfterConnectGame();
-
 	void ResponseSessionRecvAfter();
 
 
@@ -110,12 +140,10 @@ public:
 //	void ConnectGameServer();
 
 	void OnRecvLoginInfo(std::string _host, int _port);
-
 	void SendToServer(const void* buf, size_t sz);
 
 public:
 	int OnMessage(char* buf, size_t sz, void* arg);
-
 
 	void DisplayStringSet(const char* txt);
 	const char* DisplayStringGet();
@@ -135,22 +163,20 @@ public:
 public:
 	//通知渲染层的改变
 	void RenderDraw(int opc,void* buf,size_t sz,void* p1,void* p2);
-
-
 	void AgreeWarning(bool _agree, bool _save);
-private:
+
 	void SaveUserPwdSidToCfg();
-public:
 	void LoginUserPassword(string _name, string _password);
 
 
+public: //本地消息
+	std::list<gxmsginfo_t> msgHandlers;
 	void MsgHandlerAdd(GxMsgHandler* _handler,int _order);
 	void MsgHandlerRemove(GxMsgHandler* _handler);
 	void MsgHandlerSort();
 	void MsgHandlerDespatch(const void* buf,size_t sz,void* arg);
 
-
-public:
+public: //网络消息
 
 	std::map<uint16_t, std::list<gx_net_msg_handler_t>> mapNetHandler;
 
@@ -159,7 +185,6 @@ public:
 	*/
 	void NetMsgHandlerAdd(uint16_t, XNET_MSG_HANDLER, int, void*);
 	void NetMsgHandlerRemove(XNET_MSG_HANDLER);
-
 	void NetMsgHandlerDespatch(const void* buf, size_t sz, void* arg);
 
 public:

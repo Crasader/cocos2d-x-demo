@@ -19,30 +19,42 @@ protected:
 
 	Layer* m_uiLayer;
 
+	int  m_error_code; //´íÎó±àºÅ
+
+private:
+//	int m_timeout;
+
 public:
 	GxWorld();
 	virtual ~GxWorld();
 
+	static cocos2d::Scene* createScene();
 
-    static cocos2d::Scene* createScene();
-
-    virtual bool init();
     
-    // a selector callback
-    void menuCloseCallback(cocos2d::Ref* pSender);
-    
-    // implement the "static create()" method manually
     CREATE_FUNC(GxWorld);
 
-	void UpdateUiForCharEnum();
-	void ShowUiErrorShowText(std::string _text, int _timeout);
 public:
-	void ShowTestUi(bool& _bVisible);
+	virtual bool init();
+
+
+public:
+
+	void UpdateUiForCharEnum();
+	void UpdateUiForCharSelected(Ref* sender);
+
+	void ShowUiErrorShowText(std::string _text, int _timeout=0);
+	void ShowUiMessageBox(std::string _text,int _flags);
+
+public:
+	void SafeRemoveUiByName(std::string _name);
+
 	void ShowUiLogin();
 	void ShowUiActorSelector();
 	void ShowUiMain();
 
-	void SafeRemoveUiByName(std::string _name);
+public:
+	void OnUiRemoveBefore(Ref* sender);
+	void OnUiRemoveAfter(Node* sender);
 
 
 public:

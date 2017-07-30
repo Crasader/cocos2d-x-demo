@@ -63,7 +63,7 @@ namespace xg
 
 		GxObject* ChildNew();
 		void ChildDelete(GxObject* obj);
-		void ChildRemoveAll();
+		virtual void ChildRemoveAll();
 
 	public:
 

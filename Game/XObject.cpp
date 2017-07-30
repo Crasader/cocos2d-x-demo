@@ -33,8 +33,8 @@ namespace xg
 		{
 			auto it = m_childs.begin();
 			GxObject* obj = (*it);
-			delete obj;
 			m_childs.erase(it);
+			delete obj;
 		}
 	}
 
