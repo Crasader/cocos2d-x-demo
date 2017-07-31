@@ -102,11 +102,24 @@ void GxWorld::ShowUiLogin()
 	}
 }
 
+void GxWorld::OnUiRemoveBefore(Ref* sender)
+{
+
+}
+
+void GxWorld::OnUiRemoveAfter(Node* sender)
+{
+
+}
+
 void GxWorld::SafeRemoveUiByName(std::string _name)
 {
 	auto _widget = m_uiLayer->getChildByName(_name);
 	if (_widget) {
-		_widget->runAction(Sequence::create(DelayTime::create(0.3f), RemoveSelf::create(), NULL));
+		OnUiRemoveBefore(_widget);
+		_widget->runAction(Sequence::create(DelayTime::create(0.3f),
+			CallFuncN::create(this,CC_CALLFUNCN_SELECTOR(GxWorld::OnUiRemoveAfter)),
+			RemoveSelf::create(), NULL));
 	}
 }
 

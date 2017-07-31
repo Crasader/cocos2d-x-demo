@@ -42,15 +42,19 @@ public:
 	void UpdateUiForCharEnum();
 	void UpdateUiForCharSelected(Ref* sender);
 
-	void ShowUiErrorShowText(std::string _text, int _timeout);
+	void ShowUiErrorShowText(std::string _text, int _timeout=0);
+	void ShowUiMessageBox(std::string _text,int _flags);
 
 public:
+	void SafeRemoveUiByName(std::string _name);
 
 	void ShowUiLogin();
 	void ShowUiActorSelector();
 	void ShowUiMain();
 
-	void SafeRemoveUiByName(std::string _name);
+public:
+	void OnUiRemoveBefore(Ref* sender);
+	void OnUiRemoveAfter(Node* sender);
 
 
 public:

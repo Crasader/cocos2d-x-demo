@@ -25,6 +25,20 @@ void XzDirectorPushBack(const void* buf, size_t sz,void* arg);
 #define XAPP_LOGIN_URL "http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
 
 
+void GxLogDefault(int level, const char* fmt, ...)
+{
+	char buffer[4096];
+	va_list ap;
+	va_start(ap, fmt);
+	vsprintf(buffer, fmt, ap);
+	va_end(ap);
+	std::cout << buffer << std::endl;
+}
+
+
+
+GXLOG GxApplication::gLog = GxLogDefault;
+
 void XzSendToClient(const void* buf, size_t sz)
 {
 	CxTcpClient::shared()->SendData(buf, (int)sz);
