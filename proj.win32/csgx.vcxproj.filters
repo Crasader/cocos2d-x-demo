@@ -108,6 +108,9 @@
     <ClCompile Include="..\Classes\WorldScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\gayola\XLanguage.cpp">
+      <Filter>gayola</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="..\Game\GxError.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\XLanguage.h">
+      <Filter>gayola</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

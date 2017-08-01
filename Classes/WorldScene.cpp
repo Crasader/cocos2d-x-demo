@@ -14,6 +14,7 @@
 
 #include "game/XProtocol.h"
 #include "MyTcpClient.h"
+#include "gayola/XLanguage.h"
 
 USING_NS_CC;
 
@@ -47,12 +48,50 @@ bool GxWorld::init()
 	addChild(m_uiLayer);
 	//m_uiLayer->setPosition(theWinCenter);
  
-	m_bUiLogin = true;
-	ShowUiLogin();
+	//m_bUiLogin = true;
+	//ShowUiLogin();
+	m_bUiWarning = true;
+	ShowUiWarning();
 
     return true;
 }
 
+
+
+void GxWorld::ShowUiWarning()
+{
+	char buf[256];
+	std::string jsonfile = "ui_warning.json";
+
+	if (m_bUiWarning == false) {
+		SafeRemoveUiByName(jsonfile);
+		return;
+	}
+
+	Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfile.c_str()));
+	m_uiLayer->addChild(_widget);
+	_widget->setName(jsonfile);
+
+	//Label_text
+	Text* labText=dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_text"));
+	if (labText) {
+		labText->setString(XLanguage::GetString("IDS_ERROR_LOGIN_U_P"));
+	}
+
+	auto Btn1 = Helper::seekWidgetByName(_widget, "Button_start");
+	if (Btn1) {
+		XX_BTN_TOUCH_EVENT(Btn1);
+		Btn1->addClickEventListener([=](Ref* sender)
+		{
+			//XPTO_GAME::c_char_use(GxApplication::Instance()->m_mySelf.m_name);
+			m_bUiLogin = true;
+			m_bUiWarning = false;
+			SafeRemoveUiByName(jsonfile);
+			ShowUiLogin();
+		});
+	}
+
+}
 
 
 void GxWorld::ShowUiLogin()
@@ -151,7 +190,12 @@ int GxWorld::OnGxMessage(const char* buf, size_t sz, void* arg)
 		}
 		else {
 			//显示错误信息
-
+			m_error_win_flag = 0;
+			m_error_win_flag |= XUI_ERROR_BAR;
+			std::string str = XLanguage::GetString("IDS_ERROR_LOGIN_U_P");
+			GxApplication::Instance()->ErrorPushBack(eno, str.c_str());
+			m_bUiError = true;
+			ShowUiError();
 		}
 
 		return 1;
@@ -408,11 +452,11 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 		int* err = (int*)(buf + 2);
 		if (*err == 0) {
 			//改名成功
-			_world->ShowUiErrorShowText("改名成功", 5);
+			//_world->ShowUiErrorShowText("改名成功", 5);
 		}
 		else {
 			//名字不被接受 重新启名
-			_world->ShowUiErrorShowText("名字不被接受 重新启名",0);
+			//_world->ShowUiErrorShowText("名字不被接受 重新启名",0);
 		}
 		return 1;
 	}
@@ -432,13 +476,14 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 	}
 
 
+
 	return 0;
 }
 
-void GxWorld::ShowUiErrorShowText(std::string _text, int _timeout)
-{
-
-}
+//void GxWorld::ShowUiErrorShowText(std::string _text, int _timeout)
+//{
+//
+//}
 
 void GxWorld::OnMessage(char* buf, size_t sz, void* arg)
 {
@@ -539,38 +584,77 @@ void GxWorld::ShowUiError()
 	_widget->setName(jsonfile);
 	_widget->setZOrder(128);
 
-	//显示错误信息 Label_text_main
-	cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_text_main"));
-	if (labName ) {
-		labName->setString(GxApplication::Instance()->ErrorLastString());
-	}
 
-	int k = 0;
-	//显示最近的其他错误信息
-	for (int i = 0; i < 5; i++)
+	//
+	auto _show_list= (Helper::seekWidgetByName(_widget, "Panel_show_text"));
+	if (_show_list && m_error_win_flag & XUI_ERROR_NAM)
 	{
-		sprintf(buf, "Label_error_%d", i);
-		cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, buf));
+
+		//显示错误信息 Label_text_main
+		cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_text_main"));
 		if (labName) {
-			std::string str = GxApplication::Instance()->ErrorString(i + 1);
-			if (str.empty()) {
-				labName->setVisible(false);
-			}
-			else {
-				labName->setVisible(true);
-				labName->setString(str);
-				k++;
+			labName->setString(GxApplication::Instance()->ErrorLastString());
+		}
+
+		int k = 0;
+		//显示最近的其他错误信息
+		for (int i = 0; i < 5; i++)
+		{
+			sprintf(buf, "Label_error_%d", i);
+			cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, buf));
+			if (labName) {
+				std::string str = GxApplication::Instance()->ErrorString(i + 1);
+				if (str.empty()) {
+					labName->setVisible(false);
+				}
+				else {
+					labName->setVisible(true);
+					labName->setString(str);
+					k++;
+				}
 			}
 		}
+
+		Widget* w = (Helper::seekWidgetByName(_widget, "ListView_main"));
+		if (w) w->setVisible(k > 0);
 	}
-	
-	Widget* w= (Helper::seekWidgetByName(_widget, "ListView_main"));
-	if (w) w->setVisible(k > 0);
+	else if(_show_list) {
+		_show_list->setVisible(false);
+	}
 
 
+	//显示控制按钮 
+	auto btn_bar= (Helper::seekWidgetByName(_widget, "Panel_button"));
+	if(btn_bar) btn_bar->setVisible(m_error_win_flag & XUI_ERROR_BTN);
 
-	//显示控制按钮
+	//显示提示条 
+	Widget* _barShow= (Helper::seekWidgetByName(_widget, "Panel_bar"));
+	if (_barShow)
+	{
+		_barShow->setVisible(m_error_win_flag & XUI_ERROR_BAR);
 
+		//Label_text_main_in_bar
+		Text* _txt=dynamic_cast<Text*> (Helper::seekWidgetByName(_widget, "Label_text_main_in_bar"));
+		if (_txt) {
+			_txt->setString(GxApplication::Instance()->ErrorLastString());
+		}
+
+		//Panel_main
+		auto wc= (Helper::seekWidgetByName(_widget, "Panel_main"));
+		if (wc) {
+			wc->addClickEventListener([=](Ref* sender)
+			{
+				m_bUiError = false;
+				SafeRemoveUiByName(jsonfile);
+
+				if (m_bUiLogin) {
+					UiSetFocused("ui_login.json", "TextField_password");
+				}
+
+			});
+		}
+
+	}
 
 }
 
@@ -601,3 +685,11 @@ void GxWorld::touchEvent(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventTy
 
 }
 
+void GxWorld::UiSetFocused(std::string jsonfile, std::string componet, bool _val/*=true*/)
+{
+	Widget* _widget = dynamic_cast<Widget*>(m_uiLayer->getChildByName(jsonfile));
+	if (_widget) {
+		auto wc= (Helper::seekWidgetByName(_widget, componet));
+		if (wc) wc->setFocused(_val);
+	}
+}

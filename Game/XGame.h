@@ -88,6 +88,7 @@ public:
 
 	int m_iTimeDelta;
 
+	string m_write_path_root;
 
 	GxPlayer m_mySelf;
 	GxScene  m_myScene;

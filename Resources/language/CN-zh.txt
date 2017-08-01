@@ -1,0 +1,2 @@
+IDS_ERROR_LOGIN_U_P=user name or password error!
+

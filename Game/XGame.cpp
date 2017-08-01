@@ -50,6 +50,22 @@ int GameDirectorMsg(char* buf, size_t sz, void* arg)
 }
 
 
+GxApplication::GxApplication()
+{
+	m_login_host = "127.0.0.1";
+	m_login_port = 4002;
+
+	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
+
+	XPTO_GAME::SetFunction("appSendToClient", XzSendToClient);
+	XPTO_GAME::Init();
+}
+
+GxApplication::~GxApplication()
+{
+
+}
+
 void GxApplication::LoginGuest()
 {
 	Login("http://127.0.0.1:4002/guest.php");
@@ -106,22 +122,6 @@ std::string GxApplication::CfgAttribStringGet(const char* kname)
 {
 	std::string str;
 	return str;
-}
-
-GxApplication::GxApplication()
-{
-	m_login_host = "127.0.0.1";
-	m_login_port = 4002;
-
-	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
-
-	XPTO_GAME::SetFunction("appSendToClient", XzSendToClient);
-	XPTO_GAME::Init();
-}
-
-GxApplication::~GxApplication()
-{
-
 }
 
 GxPlayer& GxApplication::MySelf()

@@ -13,6 +13,7 @@
     <string>ui_main.json</string>
     <string>ui_error.json</string>
     <string>ui_wait.json</string>
+    <string>ui_warning.json</string>
   </JsonList>
   <CanvasSize>
     <Width>960</Width>
@@ -23,5 +24,5 @@
   <ResRelativePath />
   <imageFileList />
   <JsonSuffix>.json</JsonSuffix>
-  <CurrentUIJson>ui_main.json</CurrentUIJson>
+  <CurrentUIJson>ui_error.json</CurrentUIJson>
 </UIProject>

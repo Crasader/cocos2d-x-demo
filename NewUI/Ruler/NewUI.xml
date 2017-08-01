@@ -18,19 +18,14 @@
   </GuidesProject>
   <GuidesProject>
     <Project>ui_error</Project>
-    <GuidesList>
-      <GuidesInfo>
-        <GuidesName>VThumb</GuidesName>
-        <GuidesPosition>285</GuidesPosition>
-      </GuidesInfo>
-      <GuidesInfo>
-        <GuidesName>HThumb</GuidesName>
-        <GuidesPosition>100.98000000000002</GuidesPosition>
-      </GuidesInfo>
-    </GuidesList>
+    <GuidesList />
   </GuidesProject>
   <GuidesProject>
     <Project>ui_wait</Project>
+    <GuidesList />
+  </GuidesProject>
+  <GuidesProject>
+    <Project>ui_warning</Project>
     <GuidesList />
   </GuidesProject>
 </ArrayOfGuidesProject>
