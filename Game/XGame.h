@@ -1,6 +1,10 @@
 #ifndef XGame_h__
 #define XGame_h__
 
+
+#ifdef _MSC_VER 
+#pragma execution_character_set("utf-8")
+#endif
 /*
 
 
@@ -46,12 +50,15 @@ typedef void(*GXLOG)(int, const char* fmt, ...);
 #define  XLOG_FATAL(fmt,...)    GxApplication::gLog(6,fmt " %s %d \n" ,##__VA_ARGS__,__FILE__,__LINE__)
 
 
-#define  X_IDOK  0
-#define  X_IDCANCEL 3
-#define  X_IDTRY 8
-#define  X_IDYES 0
-#define  X_IDNO  3
+#define  X_IDOK  0x00000000L
+#define  X_IDCANCEL 0x80000000L
+#define  X_IDTRY 0x40000000L
+#define  X_IDYES 0x00000000L
+#define  X_IDNO  0x40000000L
 
+#ifndef DWORD	
+typedef unsigned long       DWORD;
+#endif
 
 using namespace xg;
 
@@ -86,6 +93,7 @@ public:
 	GxScene  m_myScene;
 	GxBagClient m_bagClient;	//±³°ü¿Í»§¶Ë
 
+	std::vector<gx_error_t> m_strErrorCnt;
 
 public:
 
@@ -153,6 +161,10 @@ public:
 	string m_strDisplay;
 	string m_strError;
 	int	   m_iErrorCode;
+
+	void ErrorPushBack(int n, const char* txt);
+	std::string ErrorLastString();
+	std::string ErrorString(int idx);
 
 public:
 	std::set<GxListener*> m_gxListener;

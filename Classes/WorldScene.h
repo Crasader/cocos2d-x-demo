@@ -6,6 +6,7 @@
 
 #include "Game/XMsgHandler.h"
 #include "game/XListener.h"
+#include "CommUI.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -16,10 +17,14 @@ protected:
 	bool m_bUiLogin;
 	bool m_bUiActorSelector;
 	bool m_bUiMain;
+	bool m_bUiError;
 
 	Layer* m_uiLayer;
 
 	int  m_error_code; //错误编号
+	DWORD  m_flag_error_button; //错误窗口的按钮显示标志
+
+	int  m_win_result;
 
 private:
 //	int m_timeout;
@@ -41,9 +46,13 @@ public:
 
 	void UpdateUiForCharEnum();
 	void UpdateUiForCharSelected(Ref* sender);
+	void UpdateUiForMySelfInfo();
+
+
 
 	void ShowUiErrorShowText(std::string _text, int _timeout=0);
 	void ShowUiMessageBox(std::string _text,int _flags);
+
 
 public:
 	void SafeRemoveUiByName(std::string _name);
@@ -51,11 +60,13 @@ public:
 	void ShowUiLogin();
 	void ShowUiActorSelector();
 	void ShowUiMain();
+	void ShowUiError();
 
 public:
 	void OnUiRemoveBefore(Ref* sender);
 	void OnUiRemoveAfter(Node* sender);
 
+	void touchEvent(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
 public:
 	virtual int OnGxMessage(const char* buf, size_t sz, void* arg);

@@ -1,8 +1,13 @@
+
+#ifdef _MSC_VER 
+#pragma execution_character_set("utf-8")
+#endif
+
 #include "WorldScene.h"
 #include "SimpleAudioEngine.h"
 #include "game/XGame.h"
 
-#include "CommUI.h"
+
 
 #include "gayola/ByteBuffer.h"
 #include "gayola/ByteReader.h"
@@ -11,6 +16,9 @@
 #include "MyTcpClient.h"
 
 USING_NS_CC;
+
+#define XX_BTN_TOUCH_EVENT(a) a->addTouchEventListener(CC_CALLBACK_2(GxWorld::touchEvent, this))
+
 
 Scene* GxWorld::createScene()
 {
@@ -60,6 +68,9 @@ void GxWorld::ShowUiLogin()
 
 		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_login");
 		if (BtnLogin) {
+
+			BtnLogin->addTouchEventListener(CC_CALLBACK_2(GxWorld::touchEvent, this));
+
 			BtnLogin->addClickEventListener([=](Ref* sender) 
 			{
 				string _name;
@@ -86,6 +97,7 @@ void GxWorld::ShowUiLogin()
 		//游客登录
 		auto BtnLoginGuest = Helper::seekWidgetByName(_widget, "Button_login_guest");
 		if (BtnLoginGuest) {
+			XX_BTN_TOUCH_EVENT(BtnLoginGuest);
 			BtnLoginGuest->addClickEventListener([=](Ref* sender)
 			{
 				GxApplication::Instance()->LoginGuest();
@@ -178,6 +190,7 @@ void GxWorld::ShowUiActorSelector()
 
 		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_random");
 		if (BtnLogin) {
+			XX_BTN_TOUCH_EVENT(BtnLogin);
 			BtnLogin->addClickEventListener([=](Ref* sender)
 			{
 				//GxApplication::Instance()->CharCreate("<random>");
@@ -187,13 +200,31 @@ void GxWorld::ShowUiActorSelector()
 
 		auto BtnLoginGuest = Helper::seekWidgetByName(_widget, "Button_enter_game");
 		if (BtnLoginGuest) {
+			XX_BTN_TOUCH_EVENT(BtnLoginGuest);
 			BtnLoginGuest->addClickEventListener([=](Ref* sender)
 			{
 				XPTO_GAME::c_char_use(GxApplication::Instance()->m_mySelf.m_name);
+				m_bUiActorSelector = false;
 				SafeRemoveUiByName("ui_actor_selector.json");
 			});
 		}
 
+
+		auto ChkSaveSelected = dynamic_cast<CheckBox*>(Helper::seekWidgetByName(_widget, "CheckBox_save_actor_selected"));
+		if (ChkSaveSelected) {
+			ChkSaveSelected->addClickEventListener([=](Ref* sender)
+			{
+				GxApplication* app = GxApplication::Instance();
+				//ChkSaveSelected->setSelected(!ChkSaveSelected->getSelectedState());
+				bool _b = !ChkSaveSelected->getSelectedState();
+				app->AttribSet("ActorSaveSelected", XOBJ_ATTR_TYPE::OAT_I32, (const char*)&_b, 4);
+				if (app->Self()->m_name.length()) {
+					app->AttribSet("ActorSelected", XOBJ_ATTR_TYPE::OAT_STRING,
+						app->Self()->m_name.c_str(), app->Self()->m_name.length());
+				}
+				CCLOG("selected:%s,save:%d", app->Self()->m_name.c_str(),_b);
+			});
+		}
 
 
 	}
@@ -221,12 +252,51 @@ void GxWorld::UpdateUiForCharSelected(Ref* sender)
 			
 			Widget* mark= Helper::seekWidgetByName(w, "ImageView_smark");
 			bool b = false;
-			if (w == sender) b = true;
+			if (w == sender) {
+				Text* _name = dynamic_cast<Text*>(Helper::seekWidgetByName(w, "Label_name"));
+				if(_name) GxApplication::Instance()->Self()->m_name = _name->getString();
+				b = true;
+			}
 			if (mark) mark->setVisible(b);
 		}
 	}
 }
 
+#define XUI_TEXT_SET_U64(a,b) \
+	auto lab = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, a)); \
+	if (lab) { \
+		uint64_t v = ply->AttribGetValueReal<uint64_t>(b); \
+		std::string strValue = std::to_string(v); \
+		lab->setString(strValue); }
+
+
+void GxWorld::UpdateUiForMySelfInfo()
+{
+	string strValue;
+	uint64_t v = 0;
+	GxPlayer* ply = GxApplication::Self();
+
+	//查找主界面
+	Widget* _widget = dynamic_cast<Widget*>(m_uiLayer->getChildByName("ui_main.json"));
+	if (_widget) {
+		auto labCoin = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_my_coin"));
+		if (labCoin) {
+			v = ply->AttribGetValueReal<uint64_t>("coin");
+			strValue = std::to_string(v);
+			labCoin->setString(strValue);
+		}
+
+		//auto labGold = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_my_gold"));
+		//if (labGold) {
+		//	v = ply->AttribGetValueReal<uint64_t>("gold");
+		//	strValue = std::to_string(v);
+		//	labGold->setString(strValue);
+		//}
+		XUI_TEXT_SET_U64("Label_my_gold", "gold")
+
+	}
+
+}
 
 void GxWorld::UpdateUiForCharEnum()
 {
@@ -276,6 +346,11 @@ void GxWorld::UpdateUiForCharEnum()
 				}
 				k++;
 			}
+			UpdateUiForCharSelected(wt);
+			//设置ListView尺寸
+			Size sz = _lv->getInnerContainerSize();
+			sz.height = wt->getSize().height*k;
+			_lv->setInnerContainerSize(sz);
 		}
 	}
 
@@ -342,12 +417,27 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 		return 1;
 	}
 
+	if (XSMSG_ACCOUNT_USE_OTHER == *msgId)
+	{
+		GxApplication::Instance()->ErrorPushBack(XEC_C_NET_DISCONN, "账号在其他地方登录，此端将被断开");
+		_world->m_bUiError = true;
+		_world->ShowUiError();
+		return 1;
+	}
+
+	if (XSMSG_MY_INFO == *msgId)
+	{
+		_world->UpdateUiForMySelfInfo();
+		return 1;
+	}
+
+
 	return 0;
 }
 
 void GxWorld::ShowUiErrorShowText(std::string _text, int _timeout)
 {
-	//throw std::logic_error("The method or operation is not implemented.");
+
 }
 
 void GxWorld::OnMessage(char* buf, size_t sz, void* arg)
@@ -376,6 +466,9 @@ void GxWorld::OnMessage(char* buf, size_t sz, void* arg)
 		if (state_name == XTCS_DISCONNECT)
 		{
 			//界面显示网络断开 提示重新连接
+			GxApplication::Instance()->ErrorPushBack(XEC_C_NET_DISCONN,"网络断开 重新连接");
+			m_bUiError = true;
+			ShowUiError();
 		}
 
 		return;
@@ -431,5 +524,80 @@ void GxWorld::ShowUiMain()
 	
 }
 
+void GxWorld::ShowUiError()
+{
+	char buf[256];
+	std::string jsonfile = "ui_error.json";
 
+	if (m_bUiError == false) {
+		SafeRemoveUiByName(jsonfile);
+		return;
+	}
+
+	Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfile.c_str()));
+	m_uiLayer->addChild(_widget);
+	_widget->setName(jsonfile);
+	_widget->setZOrder(128);
+
+	//显示错误信息 Label_text_main
+	cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_text_main"));
+	if (labName ) {
+		labName->setString(GxApplication::Instance()->ErrorLastString());
+	}
+
+	int k = 0;
+	//显示最近的其他错误信息
+	for (int i = 0; i < 5; i++)
+	{
+		sprintf(buf, "Label_error_%d", i);
+		cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, buf));
+		if (labName) {
+			std::string str = GxApplication::Instance()->ErrorString(i + 1);
+			if (str.empty()) {
+				labName->setVisible(false);
+			}
+			else {
+				labName->setVisible(true);
+				labName->setString(str);
+				k++;
+			}
+		}
+	}
+	
+	Widget* w= (Helper::seekWidgetByName(_widget, "ListView_main"));
+	if (w) w->setVisible(k > 0);
+
+
+
+	//显示控制按钮
+
+
+}
+
+void GxWorld::touchEvent(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
+{
+	float _s = 1.0;
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+	{
+		_s = 0.8f;
+	}
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+
+	Node* n = dynamic_cast<Node*>(sender);
+	if (n) {
+		n->setScale(_s);
+	}
+
+}
 

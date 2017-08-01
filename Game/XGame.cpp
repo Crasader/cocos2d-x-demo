@@ -399,6 +399,23 @@ void GxApplication::LastErrorSet(int n, const char* txt)
 
 }
 
+void GxApplication::ErrorPushBack(int n, const char* txt)
+{
+	m_strErrorCnt.push_back(gx_error_t(n,txt));
+}
+
+std::string GxApplication::ErrorLastString()
+{
+	if (m_strErrorCnt.size() == 0) return "";
+	return std::string(m_strErrorCnt.front().text);
+}
+
+std::string GxApplication::ErrorString(int idx)
+{
+	if (m_strErrorCnt.size() <= idx || idx < 0) return "";
+	return std::string(m_strErrorCnt[idx].text);
+}
+
 void GxApplication::GxListenerAdd(GxListener* arg)
 {
 	m_gxListener.insert(arg);

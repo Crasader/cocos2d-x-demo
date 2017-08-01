@@ -80,6 +80,10 @@ namespace xg
 		virtual void* AttribSet(const char* kname, XOBJ_ATTR_TYPE _type, const char* v, size_t vsz, void* _parent = NULL, bool _force = true);
 
 		virtual void* AttribGet(const char* kname, int& _type, void* _parent = NULL);
+
+		/**
+		显示其中的值
+		*/
 		virtual void* AttribGetValue(const char* kname, void* _parent = NULL);
 
 		//删除对象属性项
@@ -92,6 +96,15 @@ namespace xg
 		virtual void* AttribMap(const char* kname, void* _parent = NULL, bool _force = true);
 	public:
 		virtual void clear();
+
+		template<class T>
+		T AttribGetValueReal(const char* kname, void* _parent = NULL)
+		{
+			T r = { 0 };
+			void* v = AttribGetValue(kname, _parent);
+			if (v) memcpy(&r, v, sizeof(T));
+			return r;
+		}
 
 	};
 
