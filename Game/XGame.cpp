@@ -68,6 +68,8 @@ GxApplication::~GxApplication()
 
 void GxApplication::LoginGuest()
 {
+	m_myScene.ChildRemoveAll();
+
 	Login("http://127.0.0.1:4002/guest.php");
 }
 
@@ -255,6 +257,12 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 			m_session = elm->GetText();
 		}
 
+		//acctid
+		elm = root->FirstChildElement("acctid");
+		if (elm && elm->GetText()) {
+			m_acct_id = elm->GetText();
+		}
+
 		SaveUserPwdSidToCfg();
 
 		m_iLastError = 0;
@@ -295,7 +303,7 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 
 
 	//分析错误结果
-
+	m_mySelf.m_acct_uuid = m_acct_id;
 
 
 	//向消息监听发送登录成功的消息
