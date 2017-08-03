@@ -1,2 +1,1 @@
-IDS_ERROR_LOGIN_U_P=user name or password error!
-
+IDS_ERROR_LOGIN_U_P=user name or password error中国字

@@ -14,7 +14,8 @@
 
 #include "game/XProtocol.h"
 #include "MyTcpClient.h"
-#include "gayola/XLanguage.h"
+#include "gayola/XString.h"
+#include "CommUI.h"
 
 USING_NS_CC;
 
@@ -176,7 +177,7 @@ void GxWorld::ShowUiWarning()
 	//Label_text
 	Text* labText=dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_text"));
 	if (labText) {
-		labText->setString(XLanguage::GetString("IDS_ERROR_LOGIN_U_P"));
+		labText->setString(XLanguage::Instance()->GetValue("IDS_ERROR_LOGIN_U_P"));
 	}
 
 	auto Btn1 = Helper::seekWidgetByName(_widget, "Button_start");
@@ -367,7 +368,7 @@ int GxWorld::OnGxMessage(const char* buf, size_t sz, void* arg)
 			//ÏÔÊ¾´íÎóÐÅÏ¢
 			m_error_win_flag = 0;
 			m_error_win_flag |= XUI_ERROR_BAR;
-			std::string str = XLanguage::GetString("IDS_ERROR_LOGIN_U_P");
+			std::string str = XLanguage::Instance()->GetValue("IDS_ERROR_LOGIN_U_P");
 			GxApplication::Instance()->ErrorPushBack(eno, str.c_str());
 			m_bUiError = true;
 			ShowUiError();
