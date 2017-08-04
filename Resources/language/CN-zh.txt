@@ -1,1 +1,4 @@
-IDS_ERROR_LOGIN_U_P=user name or password error中国字
+IDS_ERROR_LOGIN_U_P=账户名或密码错误
+IDS_ERROR_LOGIN_LOCK=账户被锁定，请联系游戏管理员
+IDS_ERROR_LOGIN_IN_USE=账户已经在游戏中了，要踢下另外一个连接
+

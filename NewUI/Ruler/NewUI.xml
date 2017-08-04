@@ -5,10 +5,6 @@
     <GuidesList />
   </GuidesProject>
   <GuidesProject>
-    <Project>ui_funs</Project>
-    <GuidesList />
-  </GuidesProject>
-  <GuidesProject>
     <Project>ui_actor_selector</Project>
     <GuidesList />
   </GuidesProject>
@@ -26,6 +22,14 @@
   </GuidesProject>
   <GuidesProject>
     <Project>ui_warning</Project>
+    <GuidesList />
+  </GuidesProject>
+  <GuidesProject>
+    <Project>ui_rename</Project>
+    <GuidesList />
+  </GuidesProject>
+  <GuidesProject>
+    <Project>ui_logo</Project>
     <GuidesList />
   </GuidesProject>
 </ArrayOfGuidesProject>

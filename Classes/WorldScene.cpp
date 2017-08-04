@@ -63,13 +63,21 @@ bool GxWorld::init()
  
 	//m_bUiLogin = true;
 	//ShowUiLogin();
-	m_bUiWarning = true;
-	ShowUiWarning();
+	//m_bUiWarning = true;
+	//ShowUiWarning();
 
     return true;
 }
 
 
+
+void GxWorld::onEnter()
+{
+	Layer::onEnter();
+
+	ShowUiLogo();
+
+}
 
 void GxWorld::ShowUiError()
 {
@@ -336,7 +344,12 @@ void GxWorld::OnUiRemoveBefore(Ref* sender)
 
 void GxWorld::OnUiRemoveAfter(Node* sender)
 {
-
+	if (sender) {
+		if (sender->getName().compare("ui_logo.json") == 0) {
+			//ActionManagerEx::getInstance()->releaseActions();
+			ActionManagerEx::getInstance()->releaseActionByName("ui_logo.json", "LogoShow");
+		}
+	}
 }
 
 void GxWorld::SafeRemoveUiByName(std::string _name)
@@ -344,7 +357,7 @@ void GxWorld::SafeRemoveUiByName(std::string _name)
 	auto _widget = m_uiLayer->getChildByName(_name);
 	if (_widget) {
 		OnUiRemoveBefore(_widget);
-		_widget->runAction(Sequence::create(DelayTime::create(0.3f),
+		_widget->runAction(Sequence::create(DelayTime::create(0.1f),
 			CallFuncN::create(this,CC_CALLFUNCN_SELECTOR(GxWorld::OnUiRemoveAfter)),
 			RemoveSelf::create(), NULL));
 	}
@@ -705,4 +718,35 @@ void GxWorld::UiSetFocused(std::string jsonfile, std::string componet, bool _val
 		auto wc= (Helper::seekWidgetByName(_widget, componet));
 		if (wc) wc->setFocused(_val);
 	}
+}
+
+void GxWorld::ShowUiRename()
+{
+
+}
+
+void GxWorld::ShowUiLogo()
+{
+	string jsonfname = "ui_logo.json";
+
+	Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfname.c_str()));
+	addChild(_widget);
+	_widget->setName(jsonfname);
+	ActionObject* ao= ActionManagerEx::getInstance()->getActionByName(jsonfname.c_str(),"LogoShow" );
+	if (ao) {
+		ao->play(CallFunc::create(CC_CALLBACK_0(GxWorld::OnLogoShowAfter,this)));
+	}
+}
+
+void GxWorld::OnLogoShowAfter()
+{
+	Node* n = getChildByName("ui_logo.json");
+	if (n) {
+		n->runAction(Sequence::create(DelayTime::create(0.1f),
+			CallFuncN::create(this, CC_CALLFUNCN_SELECTOR(GxWorld::OnUiRemoveAfter)),
+			RemoveSelf::create(), NULL));
+	}
+
+	m_bUiWarning = true;
+	ShowUiWarning();
 }

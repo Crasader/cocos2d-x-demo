@@ -8,12 +8,13 @@
   <JsonFolder>H:\MSGx3\Gx3\cocos2d-x-demo\NewUI\Json</JsonFolder>
   <JsonList>
     <string>ui_login.json</string>
-    <string>ui_funs.json</string>
     <string>ui_actor_selector.json</string>
     <string>ui_main.json</string>
     <string>ui_error.json</string>
     <string>ui_wait.json</string>
     <string>ui_warning.json</string>
+    <string>ui_rename.json</string>
+    <string>ui_logo.json</string>
   </JsonList>
   <CanvasSize>
     <Width>960</Width>
@@ -24,5 +25,5 @@
   <ResRelativePath />
   <imageFileList />
   <JsonSuffix>.json</JsonSuffix>
-  <CurrentUIJson>ui_actor_selector.json</CurrentUIJson>
+  <CurrentUIJson>ui_logo.json</CurrentUIJson>
 </UIProject>

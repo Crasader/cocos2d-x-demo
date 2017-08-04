@@ -25,8 +25,7 @@ protected:
 	int  m_error_win_flag;
 	int  m_error_code; //错误编号
 	DWORD  m_flag_error_button; //错误窗口的按钮显示标志
-
-	int  m_win_result;
+	int  m_win_result;//界面返回结果
 
 private:
 //	int m_timeout;
@@ -42,7 +41,7 @@ public:
 
 public:
 	virtual bool init();
-
+	virtual void onEnter();
 
 public:
 
@@ -50,13 +49,10 @@ public:
 	void UpdateUiForCharSelected(Ref* sender);
 	void UpdateUiForMySelfInfo();
 
-
-
 //	void ShowUiErrorShowText(std::string _text, int _timeout=0);
 //	void ShowUiMessageBox(std::string _text,int _flags);
 	void UiSetFocused(std::string jsonfile,std::string componet,bool _val=true);
 
-public:
 	void SafeRemoveUiByName(std::string _name);
 
 	void ShowUiWarning();
@@ -64,12 +60,16 @@ public:
 	void ShowUiActorSelector();
 	void ShowUiMain();
 	void ShowUiError();
+	void ShowUiRename();
+	void ShowUiLogo();
 
-public:
 	void OnUiRemoveBefore(Ref* sender);
 	void OnUiRemoveAfter(Node* sender);
 
+	void OnLogoShowAfter();
+
 	void touchEvent(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
 
 public:
 	virtual int OnGxMessage(const char* buf, size_t sz, void* arg);
