@@ -119,6 +119,13 @@ public:
     */
     void releaseActions();
 
+	/**
+	删除动作
+	im.chen
+	*/
+	bool releaseActionByName(const char* jsonName, const char* actionName);
+
+
     int getStudioVersionNumber() const;
 
 protected:

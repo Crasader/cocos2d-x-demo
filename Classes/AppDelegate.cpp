@@ -11,6 +11,7 @@
 #include "game/XGame.h"
 #include "CommUI.h"
 #include "Game/XProtocol.h"
+#include "gayola/XString.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -129,6 +130,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	register_all_packages();
 
+	//»ñÈ¡ÓïÑÔÄÚÈÝ
+	Data dat = FileUtils::getInstance()->getDataFromFile("language/CN-zh.txt");
+	XLanguage::Instance()->Parse((const char*)dat.getBytes(), dat.getSize());
+
+
+	GxApplication::Instance()->m_write_path_root = FileUtils::getInstance()->getWritablePath();
+
 	// create a scene. it's an autorelease object
 	//auto scene = HelloWorld::createScene();
 	//auto scene = Logo::createScene();
@@ -154,7 +162,10 @@ void AppDelegate::applicationDidEnterBackground() {
 }
 
 // this function will be called when the app is active again
-void AppDelegate::applicationWillEnterForeground() {
+void AppDelegate::applicationWillEnterForeground() 
+{
+
+
 	Director::getInstance()->startAnimation();
 
 #if USE_AUDIO_ENGINE

@@ -2,6 +2,11 @@
 #define GxError_h__
 
 
+#include <string>
+
+
+
+
 enum XLOGIN_ECODE
 {
 	XLE_PCODE = 1100,		//通信协议版本不兼容
@@ -18,6 +23,8 @@ enum ErrCodesST
 {
 	XEC_UNKNOW,
 	XEC_OK,											//没有错误
+
+	XEC_C_NET_DISCONN,								//客户端网络断开
 
 	XEC_NET_PROTOCOL,								//通信协议号太低
 	XEC_AUTH_ERROR,									//账号或者密码错误
@@ -39,5 +46,41 @@ enum ErrCodesST
 	XEC_TASK_PLAYER_CAREER_NOT_MATCH,				//玩家的阵营不匹配
 	XEC_TASK_NOT_IN_ACCEPT_TIME_RANGE,				//不再接任务的时间范围内
 };
+
+
+struct gx_error_s
+{
+	int code;
+	char text[255];
+
+	gx_error_s& operator=(const struct gx_error_s& _R)
+	{
+		code = _R.code;
+		memcpy(text, _R.text, 255);
+		return *this;
+	}
+
+	gx_error_s()
+	{
+		code = 0;
+		memset(text, 0, 255);
+	}
+
+	gx_error_s(int _c,const char* _t)
+	{
+		code = _c;
+		if(_t) snprintf(text, 255, "%s", _t);
+	}
+
+
+	gx_error_s(const struct gx_error_s& _R)
+	{
+		code = _R.code;
+		memcpy(text, _R.text, 255);
+	}
+
+};
+
+typedef struct gx_error_s  gx_error_t;
 
 #endif // GxError_h__

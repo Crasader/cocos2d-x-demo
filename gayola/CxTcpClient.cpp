@@ -1,7 +1,7 @@
 ﻿
 #include "CxTcpClient.h"
 #include "xnet.h"
-#include "XStrHelper.h"
+#include "XString.h"
 
 #include <chrono>
 
@@ -533,17 +533,17 @@ namespace xs
 			//	snprintf(buf, 1024, "@!HELO\nk:xxxx\nPTO_TYPE:1\nPTO_EMARK:%0d%0a%0d%0a\nPCODE:12\n");
 			//_sender->Reset();
 			//查看通信协议方式
-			std::string value = XStrHelper::GetUrlValueString(_buf, _size, "PTO_TYPE");
+			std::string value = XStringUtil::GetUrlValueString(_buf, _size, "PTO_TYPE");
 			if (!value.empty()) {
 				int _ptype = atoi(value.c_str());
-				std::string _em = XStrHelper::GetUrlValueString(_buf, _size, "PTO_EMARK");
+				std::string _em = XStringUtil::GetUrlValueString(_buf, _size, "PTO_EMARK");
 				//对_em进行转码
-				if (!_em.empty()) _em = XStrHelper::DecodeURL(_em);
+				if (!_em.empty()) _em = XStringUtil::DecodeURL(_em);
 				//SetPtoType(_ptype, _em.c_str(), (int)_em.length()); //避免回环
 				m_pto_type = _ptype;
 
 				//此设定发起人
-				std::string mt = XStrHelper::GetUrlValueString(_buf, _size, "M_TYPE");
+				std::string mt = XStringUtil::GetUrlValueString(_buf, _size, "M_TYPE");
 				if (0 == mt.compare("S")) {
 					//服务器端发起的 就此回复给服务器
 					//Send(_buf, _size);

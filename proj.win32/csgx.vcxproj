@@ -170,9 +170,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\gayola\CxThreadEx.cpp" />
     <ClCompile Include="..\gayola\CxUri.cpp" />
     <ClCompile Include="..\gayola\http_parser.c" />
+    <ClCompile Include="..\gayola\utf8util.cpp" />
     <ClCompile Include="..\gayola\XHttp3.cpp" />
     <ClCompile Include="..\gayola\xnet.cpp" />
-    <ClCompile Include="..\gayola\XStrHelper.cpp" />
+    <ClCompile Include="..\gayola\XString.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -211,10 +212,11 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\gayola\CxUri.h" />
     <ClInclude Include="..\gayola\http_parser.h" />
     <ClInclude Include="..\gayola\url_encoder.h" />
+    <ClInclude Include="..\gayola\utf8util.h" />
     <ClInclude Include="..\gayola\XHttp3.h" />
     <ClInclude Include="..\gayola\xnet.h" />
     <ClInclude Include="..\gayola\XNetBuffer.h" />
-    <ClInclude Include="..\gayola\XStrHelper.h" />
+    <ClInclude Include="..\gayola\XString.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

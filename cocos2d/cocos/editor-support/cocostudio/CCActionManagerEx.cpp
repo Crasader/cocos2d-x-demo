@@ -163,7 +163,41 @@ ActionObject* ActionManagerEx::stopActionByName(const char* jsonName,const char*
     }
     return action;
 }
-    
+   
+
+
+bool ActionManagerEx::releaseActionByName(const char* jsonName, const char* actionName)
+{
+	bool res = false;
+	ActionObject* ao = getActionByName(jsonName, actionName);
+	if (ao) {
+
+		for (auto iter = _actionDic.begin();iter!=_actionDic.end();)
+		{
+			cocos2d::Vector<ActionObject*> objList = iter->second;
+			ssize_t listCount = objList.size();
+			for (auto it = objList.begin(); it != objList.end();)
+			{
+				ActionObject* action = (*it);
+				if (action == ao)
+				{
+					action->stop();
+					it=objList.erase(it);
+					res = true;
+				}
+				else it++;
+			}
+			listCount = objList.size();
+			if (listCount == 0) {
+				iter = _actionDic.erase(iter);
+			}
+			else iter++;
+		}
+
+	}
+	return res;
+}
+
 void ActionManagerEx::releaseActions()
 {
     for (auto& iter : _actionDic)

@@ -50,8 +50,26 @@ int GameDirectorMsg(char* buf, size_t sz, void* arg)
 }
 
 
+GxApplication::GxApplication()
+{
+	m_login_host = "127.0.0.1";
+	m_login_port = 4002;
+
+	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
+
+	XPTO_GAME::SetFunction("appSendToClient", XzSendToClient);
+	XPTO_GAME::Init();
+}
+
+GxApplication::~GxApplication()
+{
+
+}
+
 void GxApplication::LoginGuest()
 {
+	m_myScene.ChildRemoveAll();
+
 	Login("http://127.0.0.1:4002/guest.php");
 }
 
@@ -106,22 +124,6 @@ std::string GxApplication::CfgAttribStringGet(const char* kname)
 {
 	std::string str;
 	return str;
-}
-
-GxApplication::GxApplication()
-{
-	m_login_host = "127.0.0.1";
-	m_login_port = 4002;
-
-	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
-
-	XPTO_GAME::SetFunction("appSendToClient", XzSendToClient);
-	XPTO_GAME::Init();
-}
-
-GxApplication::~GxApplication()
-{
-
 }
 
 GxPlayer& GxApplication::MySelf()
@@ -255,6 +257,12 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 			m_session = elm->GetText();
 		}
 
+		//acctid
+		elm = root->FirstChildElement("acctid");
+		if (elm && elm->GetText()) {
+			m_acct_id = elm->GetText();
+		}
+
 		SaveUserPwdSidToCfg();
 
 		m_iLastError = 0;
@@ -295,7 +303,7 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 
 
 	//分析错误结果
-
+	m_mySelf.m_acct_uuid = m_acct_id;
 
 
 	//向消息监听发送登录成功的消息
@@ -397,6 +405,23 @@ void GxApplication::LastErrorSet(int n, const char* txt)
 		it->OnError(n, m_strError.c_str());
 	}
 
+}
+
+void GxApplication::ErrorPushBack(int n, const char* txt)
+{
+	m_strErrorCnt.push_back(gx_error_t(n,txt));
+}
+
+std::string GxApplication::ErrorLastString()
+{
+	if (m_strErrorCnt.size() == 0) return "";
+	return std::string(m_strErrorCnt.front().text);
+}
+
+std::string GxApplication::ErrorString(int idx)
+{
+	if (m_strErrorCnt.size() <= idx || idx < 0) return "";
+	return std::string(m_strErrorCnt[idx].text);
 }
 
 void GxApplication::GxListenerAdd(GxListener* arg)

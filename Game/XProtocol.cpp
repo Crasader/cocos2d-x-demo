@@ -62,7 +62,10 @@ namespace XPTO_GAME
 
 	void c_myself_info()
 	{
-		//获取自己的信息
+		//获取自己的信息 
+		ByteBuffer bbf;
+		bbf << (uint16_t)XCMSG_MY_INFO;
+		CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
 	}
 
 	int s_char_enum(const char* buf, size_t sz, void* arg, void* userdata)
@@ -141,11 +144,41 @@ namespace XPTO_GAME
 		return 0;
 	}
 
+	int s_myself_info(const char* buf, size_t sz, void* arg, void* userdata)
+	{
+		GxApplication* app = (GxApplication*)userdata;
+		ByteReader brr(buf + 2, sz - 2);
+		GxPlayer* ply = app->Self();
+
+		//头像 vip lv coin gold
+		int v = 0;
+		brr >> v;
+		ply->AttribSet("face", XOBJ_ATTR_TYPE::OAT_I32, (const char*)&v, 4);
+
+		brr >> v;
+		ply->AttribSet("vip", XOBJ_ATTR_TYPE::OAT_I32, (const char*)&v, 4);
+
+		brr >> v;
+		ply->AttribSet("level", XOBJ_ATTR_TYPE::OAT_I32, (const char*)&v, 4);
+
+		uint64_t v64=0;
+		brr >> v64;
+		ply->AttribSet("coin", XOBJ_ATTR_TYPE::OAT_U64, (const char*)&v64, sizeof(uint64_t));
+
+		brr >> v64;
+		ply->AttribSet("gold", XOBJ_ATTR_TYPE::OAT_U64, (const char*)&v64, sizeof(uint64_t));
+
+
+		return 0;
+	}
+
+
 	void Init()
 	{
 		theCntDoResponse[XSMSG_CHAR_ENUM] = s_char_enum;
 		theCntDoResponse[XSMSG_WORLD_NEW] = s_world_new;
 		theCntDoResponse[XSMSG_CHAR_CREATE] = s_char_create;
+		theCntDoResponse[XSMSG_MY_INFO] = s_myself_info;
 		assert(appSendToClient);
 	}
 

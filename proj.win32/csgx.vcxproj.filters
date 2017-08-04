@@ -99,14 +99,17 @@
     <ClCompile Include="..\Classes\CommUI.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\gayola\XStrHelper.cpp">
-      <Filter>gayola</Filter>
-    </ClCompile>
     <ClCompile Include="..\Game\XProtocol.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\WorldScene.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gayola\utf8util.cpp">
+      <Filter>gayola</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gayola\XString.cpp">
+      <Filter>gayola</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,9 +215,6 @@
     <ClInclude Include="..\gayola\XNetBuffer.h">
       <Filter>gayola</Filter>
     </ClInclude>
-    <ClInclude Include="..\gayola\XStrHelper.h">
-      <Filter>gayola</Filter>
-    </ClInclude>
     <ClInclude Include="..\Game\XProtocol.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -229,6 +229,12 @@
     </ClInclude>
     <ClInclude Include="..\Game\GxError.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\utf8util.h">
+      <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\XString.h">
+      <Filter>gayola</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -61,4 +61,11 @@ protected:
 	_w->addClickEventListener(CC_CALLBACK_1(c, this)); _w->setTouchEnabled(true);  }
 
 
+
+#define XUI_ERROR_BAR  0x0002
+#define XUI_ERROR_BTN  0x0004
+#define XUI_ERROR_NAM  0x0008
+
+
+
 #endif // __CommUI_SCENE_H__
