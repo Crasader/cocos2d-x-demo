@@ -19,7 +19,7 @@
 #include "XListener.h"
 #include "XBag.h"
 #include "XBagClient.h"
-#include "tinyxml2/tinyxml2.h"
+//#include "tinyxml2/tinyxml2.h"
 #include "XMsgHandler.h"
 #include "GxError.h"
 
@@ -105,17 +105,15 @@ public:
 
 
 	void ConfigDefaultSave(std::string _filename);
+
 public:
 
-	tinyxml2::XMLDocument m_cfgDoc;
-
-	std::string GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname);
-
-	void CfgAttribIntSet(const char* kname,int _val );
-	int  CfgAttribIntGet(const char* kname);
-
-	void CfgAttribStringSet(const char* kname,const char* _val,size_t _sz);
-	std::string CfgAttribStringGet(const char* kname);
+//	tinyxml2::XMLDocument m_cfgDoc;
+//	std::string GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname);
+//	void CfgAttribIntSet(const char* kname,int _val );
+//	int  CfgAttribIntGet(const char* kname);
+//	void CfgAttribStringSet(const char* kname,const char* _val,size_t _sz);
+//	std::string CfgAttribStringGet(const char* kname);
 
 
 protected:
