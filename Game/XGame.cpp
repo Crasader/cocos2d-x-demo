@@ -10,7 +10,6 @@
 #include "gayola/rapidxml/rapidxml_print.hpp"
 #include "gayola/rapidxml/rapidxml_utils.hpp"
 
-
 #include "XProtocol.h"
 #include "gayola/CxHttper.h"
 #include "gayola/url_encoder.h"
@@ -30,20 +29,6 @@ void XzDirectorPushBack(const void* buf, size_t sz,void* arg);
 #define XAPP_LOGIN_URL "http://mangoschina.blog.163.com/blog/static/27333216120175612634726"
 
 
-void GxLogDefault(int level, const char* fmt, ...)
-{
-	char buffer[4096];
-	va_list ap;
-	va_start(ap, fmt);
-	vsprintf(buffer, fmt, ap);
-	va_end(ap);
-	std::cout << buffer << std::endl;
-}
-
-
-
-GXLOG GxApplication::gLog = GxLogDefault;
-
 void XzSendToClient(const void* buf, size_t sz)
 {
 	CxTcpClient::shared()->SendData(buf, (int)sz);
@@ -55,26 +40,8 @@ int GameDirectorMsg(char* buf, size_t sz, void* arg)
 }
 
 
-GxApplication::GxApplication()
-{
-	m_login_host = "127.0.0.1";
-	m_login_port = 4002;
-
-	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
-
-	XPTO_GAME::SetFunction("appSendToClient", XzSendToClient);
-	XPTO_GAME::Init();
-}
-
-GxApplication::~GxApplication()
-{
-
-}
-
 void GxApplication::LoginGuest()
 {
-	m_myScene.ChildRemoveAll();
-
 	Login("http://127.0.0.1:4002/guest.php");
 }
 
@@ -100,14 +67,15 @@ void GxApplication::ConfigDefaultSave(std::string _filename)
 //std::string GxApplication::GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname)
 //{
 //	std::string res;
+//
 //	if (_elm && !kname.empty())
 //	{
 //		tinyxml2::XMLElement* my = _elm->FirstChildElement(kname.c_str());
 //		if (my) res = my->GetText();
 //	}
+//
 //	return res;
 //}
-
 //
 //void GxApplication::CfgAttribIntSet(const char* kname, int _val)
 //{
@@ -130,6 +98,22 @@ void GxApplication::ConfigDefaultSave(std::string _filename)
 //	return str;
 //}
 
+GxApplication::GxApplication()
+{
+	m_login_host = "127.0.0.1";
+	m_login_port = 4002;
+
+	NetMsgHandlerAdd(0, XPTO_GAME::NetMsgHandler, -512, this);
+
+	XPTO_GAME::SetFunction("appSendToClient", XzSendToClient);
+	XPTO_GAME::Init();
+}
+
+GxApplication::~GxApplication()
+{
+
+}
+
 GxPlayer& GxApplication::MySelf()
 {
 	return m_mySelf;
@@ -143,7 +127,7 @@ GxScene& GxApplication::MyScene()
 void GxApplication::LoadConfigFromXmlFile(const char* fname)
 {
 	assert(fname);
-	m_strCfgFilename = fname;
+	//m_strCfgFilename = fname;
 	//m_cfgDoc.LoadFile(fname);
 	//if (m_cfgDoc.Error()) {
 	//	LastErrorSet(m_cfgDoc.ErrorID(), m_cfgDoc.GetErrorStr1());
@@ -243,7 +227,7 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 		doc.parse<0>((char*)_cnt.c_str());
 	}
 	catch (rapidxml::parse_error e) {
-		std::string errStr= e.what();
+		std::string errStr = e.what();
 		//TODO
 		return;
 	}
@@ -327,7 +311,18 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 	MsgHandlerDespatch(bbf.contents(), bbf.size(), 0);
 
 }
+/*
 
+<?xml version='1.0' encoding='utf-8' ?>
+<guest>
+<error>0</error>
+<user>557479446</user>
+<password>123456</password>
+<session>wljpsatdapfkmwwxbqyuapweqyxttqgo</session>
+<game>127.0.0.1:4002</game>
+</guest>
+
+*/
 
 #if(0)
 void GxApplication::OnRecvLoginAfter(std::string _cnt)
@@ -360,12 +355,6 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 		elm = root->FirstChildElement("session");
 		if (elm && elm->GetText()) {
 			m_session = elm->GetText();
-		}
-
-		//acctid
-		elm = root->FirstChildElement("acctid");
-		if (elm && elm->GetText()) {
-			m_acct_id = elm->GetText();
 		}
 
 		SaveUserPwdSidToCfg();
@@ -408,7 +397,7 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 
 
 	//分析错误结果
-	m_mySelf.m_acct_uuid = m_acct_id;
+
 
 
 	//向消息监听发送登录成功的消息
@@ -419,6 +408,8 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 
 }
 #endif
+
+
 
 void GxApplication::OnRecvLoginInfo(std::string _host, int _port)
 {
@@ -513,23 +504,6 @@ void GxApplication::LastErrorSet(int n, const char* txt)
 
 }
 
-void GxApplication::ErrorPushBack(int n, const char* txt)
-{
-	m_strErrorCnt.push_back(gx_error_t(n,txt));
-}
-
-std::string GxApplication::ErrorLastString()
-{
-	if (m_strErrorCnt.size() == 0) return "";
-	return std::string(m_strErrorCnt.front().text);
-}
-
-std::string GxApplication::ErrorString(int idx)
-{
-	if (m_strErrorCnt.size() <= idx || idx < 0) return "";
-	return std::string(m_strErrorCnt[idx].text);
-}
-
 void GxApplication::GxListenerAdd(GxListener* arg)
 {
 	m_gxListener.insert(arg);
@@ -547,7 +521,7 @@ void GxApplication::RenderDraw(int opc, void* buf, size_t sz, void* p1, void* p2
 
 void GxApplication::AgreeWarning(bool _agree, bool _save)
 {
-	////更新警告设定
+	//更新警告设定
 	//if (m_cfgDoc.Error()) {
 	//	LastErrorSet(-1, "配置文件错误");
 	//	return;
@@ -586,8 +560,10 @@ void GxApplication::SaveUserPwdSidToCfg()
 //	root->SetAttribute("password", m_password.c_str());
 //
 //
-//	m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
 //
+//
+//	m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
+
 }
 
 void GxApplication::LoginUserPassword(string _name, string _password)
@@ -696,3 +672,20 @@ void GxApplication::applicationWillEnterForeground()
 
 }
 
+
+void GxApplication::ErrorPushBack(int n, const char* txt)
+{
+	m_strErrorCnt.push_back(gx_error_t(n, txt));
+}
+
+std::string GxApplication::ErrorLastString()
+{
+	if (m_strErrorCnt.size() == 0) return "";
+	return std::string(m_strErrorCnt.front().text);
+}
+
+std::string GxApplication::ErrorString(int idx)
+{
+	if (m_strErrorCnt.size() <= idx || idx < 0) return "";
+	return std::string(m_strErrorCnt[idx].text);
+}
