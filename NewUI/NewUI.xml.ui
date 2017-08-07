@@ -15,6 +15,8 @@
     <string>ui_warning.json</string>
     <string>ui_rename.json</string>
     <string>ui_logo.json</string>
+    <string>ui_option.json</string>
+    <string>ui_audio.json</string>
   </JsonList>
   <CanvasSize>
     <Width>960</Width>
@@ -25,5 +27,5 @@
   <ResRelativePath />
   <imageFileList />
   <JsonSuffix>.json</JsonSuffix>
-  <CurrentUIJson>ui_logo.json</CurrentUIJson>
+  <CurrentUIJson>ui_audio.json</CurrentUIJson>
 </UIProject>

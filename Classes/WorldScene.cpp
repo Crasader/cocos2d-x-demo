@@ -221,6 +221,48 @@ void GxWorld::ShowUiLogo()
 
 void GxWorld::ShowUiRename()
 {
+	string jsonfname = "ui_rename.json";
+	if (!m_bUiRename) {
+		SafeRemoveUiByName(jsonfname);
+		return;
+	}
+
+		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfname.c_str()));
+		m_uiLayer->addChild(_widget);
+		_widget->setName(jsonfname);
+
+		auto Button = Helper::seekWidgetByName(_widget, "Button_rename");
+		if (Button) {
+
+			Button->addTouchEventListener(CC_CALLBACK_2(GxWorld::touchEvent, this));
+
+			Button->addClickEventListener([=](Ref* sender)
+			{
+				string _name;
+				auto uname = dynamic_cast<TextField*>(Helper::seekWidgetByName(_widget, "TextField_username"));
+				if (uname) {
+					_name = uname->getStringValue();
+				}
+
+				XPTO_GAME::c_char_rename(GxApplication::Instance()->Self()->m_name,_name);
+
+				m_bUiRename = false;
+				SafeRemoveUiByName(jsonfname);
+
+			});
+		}
+
+		
+		auto BtnBack = Helper::seekWidgetByName(_widget, "Button_back");
+		if (BtnBack) {
+			XX_BTN_TOUCH_EVENT(BtnBack);
+			BtnBack->addClickEventListener([=](Ref* sender)
+			{
+				m_bUiRename = false;
+				SafeRemoveUiByName(jsonfname);
+			});
+		}
+
 
 }
 
@@ -373,6 +415,20 @@ void GxWorld::ShowUiActorSelector()
 				XPTO_GAME::c_char_delete(_name);
 			});
 		}
+
+		//·µ»ØµÇÂ¼ Button_back
+		auto Button = Helper::seekWidgetByName(_widget, "Button_back");
+		if (Button) {
+			XX_BTN_TOUCH_EVENT(Button);
+			Button->addClickEventListener([=](Ref* sender)
+			{
+				m_bUiActorSelector = false;
+				m_bUiLogin = true;
+				SafeRemoveUiByName("ui_actor_selector.json");
+				ShowUiLogin();
+			});
+		}
+
 	}
 	else {
 		//É¾³ýµô

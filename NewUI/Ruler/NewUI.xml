@@ -32,4 +32,12 @@
     <Project>ui_logo</Project>
     <GuidesList />
   </GuidesProject>
+  <GuidesProject>
+    <Project>ui_option</Project>
+    <GuidesList />
+  </GuidesProject>
+  <GuidesProject>
+    <Project>ui_audio</Project>
+    <GuidesList />
+  </GuidesProject>
 </ArrayOfGuidesProject>

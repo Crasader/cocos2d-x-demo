@@ -249,8 +249,8 @@
                   },
                   "pressed": null,
                   "pressedData": {
-                    "path": "button.png",
-                    "plistFile": "",
+                    "path": null,
+                    "plistFile": null,
                     "resourceType": 0
                   },
                   "scale9Enable": false,
@@ -339,8 +339,8 @@
                   },
                   "pressed": null,
                   "pressedData": {
-                    "path": "button.png",
-                    "plistFile": "",
+                    "path": null,
+                    "plistFile": null,
                     "resourceType": 0
                   },
                   "scale9Enable": false,
@@ -429,8 +429,8 @@
                   },
                   "pressed": null,
                   "pressedData": {
-                    "path": "button.png",
-                    "plistFile": "",
+                    "path": null,
+                    "plistFile": null,
                     "resourceType": 0
                   },
                   "scale9Enable": false,

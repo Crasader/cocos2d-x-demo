@@ -42,6 +42,13 @@ namespace XPTO_GAME
 
 	void c_char_rename(std::string _name0,std::string _name1)
 	{
+		if (_name0.compare(_name1) == 0) return;
+
+		ByteBuffer bbf;
+		bbf << (uint16_t)XCMSG_CHAR_RENAME2;
+		bbf << _name0;
+		bbf << _name1;
+		CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
 
 	}
 
@@ -159,6 +166,22 @@ namespace XPTO_GAME
 		return 0;
 	}
 
+	int s_char_rename(const char* buf, size_t sz, void* arg, void* userdata)
+	{
+		GxApplication* app = (GxApplication*)userdata;
+		ByteReader brr(buf + 2, sz - 2);
+		int err = brr.read<int>();
+		string _name0,_name1;
+		brr >> _name0;
+		brr >> _name1;
+		if (err == XEC_OK)
+		{
+		//	c_char_enum();
+
+		}
+		return 0;
+	}
+
 	int s_myself_info(const char* buf, size_t sz, void* arg, void* userdata)
 	{
 		GxApplication* app = (GxApplication*)userdata;
@@ -193,6 +216,7 @@ namespace XPTO_GAME
 		theCntDoResponse[XSMSG_CHAR_ENUM] = s_char_enum;
 		theCntDoResponse[XSMSG_WORLD_NEW] = s_world_new;
 		theCntDoResponse[XSMSG_CHAR_CREATE] = s_char_create;
+		theCntDoResponse[XSMSG_CHAR_RENAME] = s_char_rename;
 		theCntDoResponse[XSMSG_MY_INFO] = s_myself_info;
 		assert(appSendToClient);
 	}

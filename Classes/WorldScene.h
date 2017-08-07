@@ -19,6 +19,7 @@ protected:
 	bool m_bUiMain;
 	bool m_bUiError;
 	bool m_bUiWarning;
+	bool m_bUiRename;
 
 	Layer* m_uiLayer;
 

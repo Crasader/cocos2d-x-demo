@@ -320,7 +320,7 @@
               "rotation": 0,
               "scaleX": 1,
               "scaleY": 1,
-              "sizePercentX": 1.42857146,
+              "sizePercentX": 3.92857146,
               "sizePercentY": 0.482142866,
               "sizeType": 0,
               "tag": 44,
@@ -586,7 +586,7 @@
               "ignoreSize": true,
               "layoutParameter": null,
               "opacity": 255,
-              "positionPercentX": 0.0921875,
+              "positionPercentX": 0.09166667,
               "positionPercentY": 0.491666675,
               "positionType": 0,
               "rotation": 0,
@@ -623,8 +623,8 @@
               },
               "pressed": null,
               "pressedData": {
-                "path": "button.png",
-                "plistFile": "",
+                "path": null,
+                "plistFile": null,
                 "resourceType": 0
               },
               "scale9Enable": false,
@@ -659,7 +659,7 @@
               "ignoreSize": true,
               "layoutParameter": null,
               "opacity": 255,
-              "positionPercentX": 0.5338542,
+              "positionPercentX": 0.533333361,
               "positionPercentY": 0.491666675,
               "positionType": 0,
               "rotation": 0,
@@ -696,8 +696,8 @@
               },
               "pressed": null,
               "pressedData": {
-                "path": "button.png",
-                "plistFile": "",
+                "path": null,
+                "plistFile": null,
                 "resourceType": 0
               },
               "scale9Enable": false,
@@ -732,7 +732,7 @@
               "ignoreSize": true,
               "layoutParameter": null,
               "opacity": 255,
-              "positionPercentX": 0.386631936,
+              "positionPercentX": 0.386458337,
               "positionPercentY": 0.491666675,
               "positionType": 0,
               "rotation": 0,
@@ -769,8 +769,8 @@
               },
               "pressed": null,
               "pressedData": {
-                "path": "button.png",
-                "plistFile": "",
+                "path": null,
+                "plistFile": null,
                 "resourceType": 0
               },
               "scale9Enable": false,
@@ -805,7 +805,7 @@
               "ignoreSize": true,
               "layoutParameter": null,
               "opacity": 255,
-              "positionPercentX": 0.2394097,
+              "positionPercentX": 0.238541663,
               "positionPercentY": 0.491666675,
               "positionType": 0,
               "rotation": 0,
@@ -842,8 +842,8 @@
               },
               "pressed": null,
               "pressedData": {
-                "path": "button.png",
-                "plistFile": "",
+                "path": null,
+                "plistFile": null,
                 "resourceType": 0
               },
               "scale9Enable": false,
@@ -878,7 +878,7 @@
               "ignoreSize": true,
               "layoutParameter": null,
               "opacity": 255,
-              "positionPercentX": 0.894270837,
+              "positionPercentX": 0.89375,
               "positionPercentY": 0.491666675,
               "positionType": 0,
               "rotation": 0,
@@ -915,8 +915,8 @@
               },
               "pressed": null,
               "pressedData": {
-                "path": "button.png",
-                "plistFile": "",
+                "path": null,
+                "plistFile": null,
                 "resourceType": 0
               },
               "scale9Enable": false,
