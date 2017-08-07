@@ -75,6 +75,11 @@ public:
 	virtual int OnGxMessage(const char* buf, size_t sz, void* arg);
 
 	static int NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata);
+	
+	/**
+	处理角色相关的协议
+	*/
+	static int NetMsgCharHandler(const char* buf, size_t sz, void* arg, void* userdata);
 
 public:
 	virtual void OnMessage(char* buf, size_t sz, void* arg);

@@ -40,6 +40,20 @@ namespace XPTO_GAME
 		CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
 	}
 
+	void c_char_rename(std::string _name0,std::string _name1)
+	{
+
+	}
+
+	void c_char_delete(std::string _name)
+	{
+		if (_name.empty()) return;
+
+		ByteBuffer bbf;
+		bbf << (uint16_t)XCMSG_CHAR_DELETE;
+		bbf << _name;
+		CxTcpClient::shared()->SendData(bbf.contents(), bbf.size());
+	}
 
 	void c_char_use(std::string _name)
 	{
@@ -72,6 +86,7 @@ namespace XPTO_GAME
 	{
 		GxApplication* app = (GxApplication*)userdata;
 		GxScene& scn = app->MyScene();
+		scn.ChildRemoveAll();
 
 		ByteReader brr(buf+2, sz-2);
 		char c = brr.read<char>();

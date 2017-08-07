@@ -45,7 +45,7 @@ enum opcodes
 
 	XCMSG_MY_INFO,									//获取自己的信息
 	XSMSG_MY_INFO,
-
+	XCMSG_CHAR_RENAME2,								//带着准备改名的角色旧名字
 
 
 

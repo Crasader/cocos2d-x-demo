@@ -211,6 +211,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\gayola\CxThreadEx.h" />
     <ClInclude Include="..\gayola\CxUri.h" />
     <ClInclude Include="..\gayola\http_parser.h" />
+    <ClInclude Include="..\gayola\rapidxml\rapidxml.hpp" />
+    <ClInclude Include="..\gayola\rapidxml\rapidxml_iterators.hpp" />
+    <ClInclude Include="..\gayola\rapidxml\rapidxml_print.hpp" />
+    <ClInclude Include="..\gayola\rapidxml\rapidxml_utils.hpp" />
     <ClInclude Include="..\gayola\url_encoder.h" />
     <ClInclude Include="..\gayola\utf8util.h" />
     <ClInclude Include="..\gayola\XHttp3.h" />

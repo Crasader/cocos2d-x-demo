@@ -23,8 +23,9 @@ namespace XPTO_GAME
 
 	void c_char_enum();
 	void c_char_create(std::string _name);
-	void c_char_rename(std::string _name);
+	void c_char_rename(std::string _name0, std::string _name1);
 	void c_char_use(std::string _name);
+	void c_char_delete(std::string _name);
 
 	void c_myself_info();
 

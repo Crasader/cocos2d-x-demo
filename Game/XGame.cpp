@@ -4,7 +4,11 @@
 #include "gayola/CxTcpClient.h"
 #include "gayola/CxHttpClient.h"
 
-#include "tinyxml2/tinyxml2.h"
+//#include "tinyxml2/tinyxml2.h"
+#include "gayola/rapidxml/rapidxml.hpp"
+#include "gayola/rapidxml/rapidxml_iterators.hpp"
+#include "gayola/rapidxml/rapidxml_print.hpp"
+#include "gayola/rapidxml/rapidxml_utils.hpp"
 
 #include "XProtocol.h"
 #include "gayola/CxHttper.h"
@@ -85,46 +89,47 @@ GxPlayer* GxApplication::Self()
 
 void GxApplication::ConfigDefaultSave(std::string _filename)
 {
-	tinyxml2::XMLDocument doc;
-	doc.LinkEndChild(doc.NewDeclaration());
-	tinyxml2::XMLElement* root = doc.NewElement("cfg");
-	doc.LinkEndChild(root);
-	doc.SaveFile(_filename.c_str());
+	//tinyxml2::XMLDocument doc;
+	//doc.LinkEndChild(doc.NewDeclaration());
+	//tinyxml2::XMLElement* root = doc.NewElement("cfg");
+	//doc.LinkEndChild(root);
+	//doc.SaveFile(_filename.c_str());
 }
 
-std::string GxApplication::GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname)
-{
-	std::string res;
+//std::string GxApplication::GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname)
+//{
+//	std::string res;
+//
+//	if (_elm && !kname.empty())
+//	{
+//		tinyxml2::XMLElement* my = _elm->FirstChildElement(kname.c_str());
+//		if (my) res = my->GetText();
+//	}
+//
+//	return res;
+//}
+//
+//void GxApplication::CfgAttribIntSet(const char* kname, int _val)
+//{
+//
+//}
+//
+//int GxApplication::CfgAttribIntGet(const char* kname)
+//{
+//	return 0;
+//}
+//
+//void GxApplication::CfgAttribStringSet(const char* kname, const char* _val, size_t _sz)
+//{
+//
+//}
+//
+//std::string GxApplication::CfgAttribStringGet(const char* kname)
+//{
+//	std::string str;
+//	return str;
+//}
 
-	if (_elm && !kname.empty())
-	{
-		tinyxml2::XMLElement* my = _elm->FirstChildElement(kname.c_str());
-		if (my) res = my->GetText();
-	}
-
-	return res;
-}
-
-void GxApplication::CfgAttribIntSet(const char* kname, int _val)
-{
-
-}
-
-int GxApplication::CfgAttribIntGet(const char* kname)
-{
-	return 0;
-}
-
-void GxApplication::CfgAttribStringSet(const char* kname, const char* _val, size_t _sz)
-{
-
-}
-
-std::string GxApplication::CfgAttribStringGet(const char* kname)
-{
-	std::string str;
-	return str;
-}
 
 GxPlayer& GxApplication::MySelf()
 {
@@ -139,19 +144,19 @@ GxScene& GxApplication::MyScene()
 void GxApplication::LoadConfigFromXmlFile(const char* fname)
 {
 	assert(fname);
-	m_strCfgFilename = fname;
-	m_cfgDoc.LoadFile(fname);
-	if (m_cfgDoc.Error()) {
-		LastErrorSet(m_cfgDoc.ErrorID(), m_cfgDoc.GetErrorStr1());
-		return;
-	}
+	//m_strCfgFilename = fname;
+	//m_cfgDoc.LoadFile(fname);
+	//if (m_cfgDoc.Error()) {
+	//	LastErrorSet(m_cfgDoc.ErrorID(), m_cfgDoc.GetErrorStr1());
+	//	return;
+	//}
 
-	tinyxml2::XMLElement* root = m_cfgDoc.RootElement();
-	if (root)
-	{
-		if (root->Attribute("username")) m_username = root->Attribute("username");
-		if (root->Attribute("password")) m_password = root->Attribute("password");
-	}
+	//tinyxml2::XMLElement* root = m_cfgDoc.RootElement();
+	//if (root)
+	//{
+	//	if (root->Attribute("username")) m_username = root->Attribute("username");
+	//	if (root->Attribute("password")) m_password = root->Attribute("password");
+	//}
 
 }
 
@@ -212,6 +217,11 @@ void GxApplication::Login(std::string _url)
 	CxHttpClient::Instance()->ThGet(_url, XzAppMessagePushBack, this);
 }
 
+
+#define GetValueStringFrom(b,a,c) \
+	{rapidxml::xml_node<> * my = b->first_node(a); \
+		if (my) c = my->contents(); }
+
 /*
 
 <?xml version='1.0' encoding='utf-8' ?>
@@ -225,6 +235,113 @@ void GxApplication::Login(std::string _url)
 
 */
 
+void GxApplication::OnRecvLoginAfter(std::string _cnt)
+{
+	//分析XML结果
+	using namespace rapidxml;
+	xml_document<> doc;
+	try {
+		doc.parse<0>((char*)_cnt.c_str());
+	}
+	catch (rapidxml::parse_error e) {
+		std::string errStr = e.what();
+		//TODO
+		return;
+	}
+
+	//
+	xml_node<> *root = doc.first_node();
+	if (root == NULL) return;
+
+	if (0 == strcmp(root->name(), "guest"))
+	{
+		xml_node<> * elm = root->first_node("user");
+		if (elm && elm->contents()) {
+			m_username = elm->contents();
+		}
+
+		//密码
+		elm = root->first_node("password");
+		if (elm && elm->contents()) {
+			m_password = elm->contents();
+		}
+
+		//会话令牌
+		elm = root->first_node("session");
+		if (elm && elm->contents()) {
+			m_session = elm->contents();
+		}
+
+		//acctid
+		elm = root->first_node("acctid");
+		if (elm && elm->contents()) {
+			m_acct_id = elm->contents();
+		}
+
+		SaveUserPwdSidToCfg();
+
+		m_iLastError = 0;
+
+	}
+
+	//
+	if (0 == strcmp(root->name(), "login_client_error"))
+	{
+		//错误编号
+		xml_node<> * elm = root->first_node("error");
+		if (elm && elm->contents()) {
+			m_iLastError = atoi(elm->contents());
+		}
+
+		//向消息层发布错误消息
+	}
+
+	if (0 == strcmp(root->name(), "login_client_passed"))
+	{
+		//验证通过了 这里要设置账号和会话令牌
+		GetValueStringFrom(root, "acctid", m_acct_id);
+		GetValueStringFrom(root, "session", m_session);
+		m_iLastError = 0;
+	}
+
+	//游戏接入服务器信息 ip+port
+	xml_node<>* elm = root->first_node("game");
+	if (elm) {
+		string str = elm->contents();
+		int pos = str.find(":");
+		m_game_host = str.substr(0, pos);
+		str = str.substr(pos + 1);
+		m_game_port = std::atoi(str.c_str());
+
+		XzConnectGame(m_game_host, m_game_port);
+	}
+
+
+	//分析错误结果
+	m_mySelf.m_acct_uuid = m_acct_id;
+
+
+	//向消息监听发送登录成功的消息
+	ByteBuffer bbf;
+	bbf << (uint16_t)XXMSG_LOGIN;
+	bbf << m_iLastError;
+	MsgHandlerDespatch(bbf.contents(), bbf.size(), 0);
+
+}
+/*
+
+<?xml version='1.0' encoding='utf-8' ?>
+<guest>
+<error>0</error>
+<user>557479446</user>
+<password>123456</password>
+<session>wljpsatdapfkmwwxbqyuapweqyxttqgo</session>
+<game>127.0.0.1:4002</game>
+</guest>
+
+*/
+
+#if(0)
 void GxApplication::OnRecvLoginAfter(std::string _cnt)
 {
 	//分析XML结果
@@ -255,12 +372,6 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 		elm = root->FirstChildElement("session");
 		if (elm && elm->GetText()) {
 			m_session = elm->GetText();
-		}
-
-		//acctid
-		elm = root->FirstChildElement("acctid");
-		if (elm && elm->GetText()) {
-			m_acct_id = elm->GetText();
 		}
 
 		SaveUserPwdSidToCfg();
@@ -306,6 +417,7 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 	m_mySelf.m_acct_uuid = m_acct_id;
 
 
+
 	//向消息监听发送登录成功的消息
 	ByteBuffer bbf;
 	bbf << (uint16_t)XXMSG_LOGIN;
@@ -313,6 +425,9 @@ void GxApplication::OnRecvLoginAfter(std::string _cnt)
 	MsgHandlerDespatch(bbf.contents(),bbf.size(),0);
 
 }
+#endif
+
+
 
 void GxApplication::OnRecvLoginInfo(std::string _host, int _port)
 {
@@ -442,47 +557,47 @@ void GxApplication::RenderDraw(int opc, void* buf, size_t sz, void* p1, void* p2
 void GxApplication::AgreeWarning(bool _agree, bool _save)
 {
 	//更新警告设定
-	if (m_cfgDoc.Error()) {
-		LastErrorSet(-1, "配置文件错误");
-		return;
-	}
+	//if (m_cfgDoc.Error()) {
+	//	LastErrorSet(-1, "配置文件错误");
+	//	return;
+	//}
 
-	tinyxml2::XMLElement* root= m_cfgDoc.RootElement();
+	//tinyxml2::XMLElement* root= m_cfgDoc.RootElement();
 
-	root->SetAttribute("warning",_agree);
+	//root->SetAttribute("warning",_agree);
 
-	m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
+	//m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
 }
 
 void GxApplication::SaveUserPwdSidToCfg()
 {
-	tinyxml2::XMLElement* root= m_cfgDoc.RootElement();
-	if (root == NULL) {
-		m_cfgDoc.LinkEndChild(m_cfgDoc.NewDeclaration());
-		root = m_cfgDoc.NewElement("cfg");
-		m_cfgDoc.LinkEndChild(root);
-	}
-	
-/*
-	tinyxml2::XMLElement* elm=root->FirstChildElement("username");
-	if (elm==NULL){
-		elm = m_cfgDoc.NewElement("username");
-		root->LinkEndChild(elm);
-	}
-
-	tinyxml2::XMLText* txt = m_cfgDoc.NewText(m_username.c_str());
-	elm->LinkEndChild(txt);
-*/	
-	//
-	root->SetAttribute("username", m_username.c_str());
-
-	//密码
-	root->SetAttribute("password", m_password.c_str());
-
-
-
-
-	m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
+//	tinyxml2::XMLElement* root= m_cfgDoc.RootElement();
+//	if (root == NULL) {
+//		m_cfgDoc.LinkEndChild(m_cfgDoc.NewDeclaration());
+//		root = m_cfgDoc.NewElement("cfg");
+//		m_cfgDoc.LinkEndChild(root);
+//	}
+//	
+///*
+//	tinyxml2::XMLElement* elm=root->FirstChildElement("username");
+//	if (elm==NULL){
+//		elm = m_cfgDoc.NewElement("username");
+//		root->LinkEndChild(elm);
+//	}
+//
+//	tinyxml2::XMLText* txt = m_cfgDoc.NewText(m_username.c_str());
+//	elm->LinkEndChild(txt);
+//*/	
+//	//
+//	root->SetAttribute("username", m_username.c_str());
+//
+//	//密码
+//	root->SetAttribute("password", m_password.c_str());
+//
+//
+//
+//
+//	m_cfgDoc.SaveFile(m_strCfgFilename.c_str());
 
 }
 
@@ -591,4 +706,5 @@ void GxApplication::applicationWillEnterForeground()
 	//并且直接使用旧的角色
 
 }
+
 

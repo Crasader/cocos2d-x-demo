@@ -36,12 +36,14 @@ GxWorld::GxWorld()
 {
 	GxApplication::Instance()->MsgHandlerAdd(this, 0);
 	GxApplication::Instance()->NetMsgHandlerAdd(0, GxWorld::NetMsgHandler, 0, this);
+	GxApplication::Instance()->NetMsgHandlerAdd(0, GxWorld::NetMsgCharHandler, 0, this);
 }
 
 GxWorld::~GxWorld()
 {
 	GxApplication::Instance()->MsgHandlerRemove(this);
 	GxApplication::Instance()->NetMsgHandlerRemove(GxWorld::NetMsgHandler);
+	GxApplication::Instance()->NetMsgHandlerRemove(GxWorld::NetMsgCharHandler);
 }
 
 bool GxWorld::init()
@@ -204,6 +206,38 @@ void GxWorld::ShowUiWarning()
 }
 
 
+void GxWorld::ShowUiLogo()
+{
+	string jsonfname = "ui_logo.json";
+
+	Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfname.c_str()));
+	addChild(_widget);
+	_widget->setName(jsonfname);
+	ActionObject* ao= ActionManagerEx::getInstance()->getActionByName(jsonfname.c_str(),"LogoShow" );
+	if (ao) {
+		ao->play(CallFunc::create(CC_CALLBACK_0(GxWorld::OnLogoShowAfter,this)));
+	}
+}
+
+void GxWorld::ShowUiRename()
+{
+
+}
+
+void GxWorld::OnLogoShowAfter()
+{
+	Node* n = getChildByName("ui_logo.json");
+	if (n) {
+		n->runAction(Sequence::create(DelayTime::create(0.1f),
+			CallFuncN::create(this, CC_CALLFUNCN_SELECTOR(GxWorld::OnUiRemoveAfter)),
+			RemoveSelf::create(), NULL));
+	}
+
+	m_bUiWarning = true;
+	ShowUiWarning();
+}
+
+
 void GxWorld::ShowUiLogin()
 {
 	if (m_bUiLogin)
@@ -328,7 +362,17 @@ void GxWorld::ShowUiActorSelector()
 			});
 		}
 
-
+		//删除角色
+		auto _Btn = Helper::seekWidgetByName(_widget, "Button_delete");
+		if (_Btn) {
+			XX_BTN_TOUCH_EVENT(_Btn);
+			_Btn->addClickEventListener([=](Ref* sender)
+			{
+				//GxApplication::Instance()->CharCreate("<random>");
+				std::string _name = GxApplication::Self()->m_name;
+				XPTO_GAME::c_char_delete(_name);
+			});
+		}
 	}
 	else {
 		//删除掉
@@ -400,6 +444,42 @@ int GxWorld::OnGxMessage(const char* buf, size_t sz, void* arg)
 		std::string strValue = std::to_string(v); \
 		lab->setString(strValue); }
 
+
+void GxWorld::UiSetFocused(std::string jsonfile, std::string componet, bool _val/*=true*/)
+{
+	Widget* _widget = dynamic_cast<Widget*>(m_uiLayer->getChildByName(jsonfile));
+	if (_widget) {
+		auto wc= (Helper::seekWidgetByName(_widget, componet));
+		if (wc) wc->setFocused(_val);
+	}
+}
+
+void GxWorld::touchEvent(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
+{
+	float _s = 1.0;
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+	{
+		_s = 0.8f;
+	}
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+
+	Node* n = dynamic_cast<Node*>(sender);
+	if (n) {
+		n->setScale(_s);
+	}
+
+}
 
 void GxWorld::UpdateUiForMySelfInfo()
 {
@@ -474,6 +554,19 @@ void GxWorld::UpdateUiForCharEnum()
 			}
 			Widget* wt = Helper::seekWidgetByName(_lv, "Panel_item_0");
 
+			k = 1;
+
+			//删除掉界面中多余的
+			while(1) {
+				sprintf(buf, "Panel_item_%d", k);
+				Widget* _wi = Helper::seekWidgetByName(_lv, buf);
+				if (_wi) {
+					_wi->removeFromParent(); 
+					k++;
+				}
+				else break;
+			}
+
 			k = 0;
 			for (auto it : scn.m_childs)
 			{
@@ -520,6 +613,95 @@ void GxWorld::UpdateUiForCharEnum()
 
 
 #pragma mark ----网络协议
+
+/**
+显示游戏中的主界面
+*/
+void GxWorld::ShowUiMain()
+{
+
+	if (m_bUiMain == false) {
+		SafeRemoveUiByName("ui_main.json");
+		return;
+	}
+
+		
+
+		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_main.json"));
+		m_uiLayer->addChild(_widget);
+		_widget->setName("ui_main.json");
+
+		//显示角色名字 金币 硬币 信息
+		cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_my_name"));
+		if (labName) {
+			labName->setString(GxApplication::Self()->m_name);
+		}
+
+		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_back_login");
+		if (BtnLogin) {
+			BtnLogin->addClickEventListener([=](Ref* sender)
+			{
+				//GxApplication::Instance()->CharCreate("<random>");
+				m_bUiLogin = true;
+				ShowUiLogin();
+				m_bUiMain = false;
+				SafeRemoveUiByName("ui_main.json");
+			});
+		}
+
+		//auto BtnLoginGuest = Helper::seekWidgetByName(_widget, "Button_enter_game");
+		//if (BtnLoginGuest) {
+		//	BtnLoginGuest->addClickEventListener([=](Ref* sender)
+		//	{
+		//		XPTO_GAME::c_char_use(GxApplication::Instance()->m_mySelf.m_name);
+		//		SafeRemoveUiByName("ui_actor_selector.json");
+		//	});
+		//}
+
+
+
+	
+}
+
+//void GxWorld::ShowUiErrorShowText(std::string _text, int _timeout)
+//{
+//
+//}
+
+void GxWorld::OnMessage(char* buf, size_t sz, void* arg)
+{
+	ByteReader bbr(buf, sz);
+	uint16_t msgId;
+	bbr >> msgId;
+
+	if (msgId == XXMSG_TCP_EVENT)
+	{
+		int state_name;
+		int state_val;
+		int arg;
+		bbr >> state_name;
+		bbr >> state_val;
+		bbr >> arg;
+
+		if (state_name == XTCS_CONNECT && arg == 1)
+		{
+			OnChangeDisplyString("connected.");
+
+			//设置协议
+
+		}
+
+		if (state_name == XTCS_DISCONNECT)
+		{
+			//界面显示网络断开 提示重新连接
+			GxApplication::Instance()->ErrorPushBack(XEC_C_NET_DISCONN,"网络断开 重新连接");
+			m_bUiError = true;
+			ShowUiError();
+		}
+
+		return;
+	}
+}
 
 int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata)
 {
@@ -595,158 +777,32 @@ int GxWorld::NetMsgHandler(const char* buf, size_t sz, void* arg, void* userdata
 	return 0;
 }
 
-//void GxWorld::ShowUiErrorShowText(std::string _text, int _timeout)
-//{
-//
-//}
-
-void GxWorld::OnMessage(char* buf, size_t sz, void* arg)
+int GxWorld::NetMsgCharHandler(const char* buf, size_t sz, void* arg, void* userdata)
 {
-	ByteReader bbr(buf, sz);
-	uint16_t msgId;
-	bbr >> msgId;
+	GxWorld* _world = (GxWorld*)userdata;
+	uint16_t* msgId = (uint16_t*)buf;
 
-	if (msgId == XXMSG_TCP_EVENT)
+	//删除角色
+	if (XSMSG_CHAR_DELETE == *msgId)
 	{
-		int state_name;
-		int state_val;
-		int arg;
-		bbr >> state_name;
-		bbr >> state_val;
-		bbr >> arg;
-
-		if (state_name == XTCS_CONNECT && arg == 1)
-		{
-			OnChangeDisplyString("connected.");
-
-			//设置协议
-
-		}
-
-		if (state_name == XTCS_DISCONNECT)
-		{
-			//界面显示网络断开 提示重新连接
-			GxApplication::Instance()->ErrorPushBack(XEC_C_NET_DISCONN,"网络断开 重新连接");
-			m_bUiError = true;
-			ShowUiError();
-		}
-
-		return;
-	}
-}
-
-/**
-显示游戏中的主界面
-*/
-void GxWorld::ShowUiMain()
-{
-
-	if (m_bUiMain == false) {
-		SafeRemoveUiByName("ui_main.json");
-		return;
-	}
-
+		int16_t* err = (int16_t*)(buf + 2);
 		
+//		GxApplication::Scene()->ChildRemoveAll();
+		XPTO_GAME::c_char_enum();
 
-		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_main.json"));
-		m_uiLayer->addChild(_widget);
-		_widget->setName("ui_main.json");
-
-		//显示角色名字 金币 硬币 信息
-		cocos2d::ui::Text* labName = dynamic_cast<Text*>(Helper::seekWidgetByName(_widget, "Label_my_name"));
-		if (labName) {
-			labName->setString(GxApplication::Self()->m_name);
+		if (*err == 1) {
+			//改名成功
+			//_world->ShowUiErrorShowText("改名成功", 5);
+			//XPTO_GAME::c_char_enum();
 		}
-
-		auto BtnLogin = Helper::seekWidgetByName(_widget, "Button_back_login");
-		if (BtnLogin) {
-			BtnLogin->addClickEventListener([=](Ref* sender)
-			{
-				//GxApplication::Instance()->CharCreate("<random>");
-				m_bUiLogin = true;
-				ShowUiLogin();
-				m_bUiMain = false;
-				SafeRemoveUiByName("ui_main.json");
-			});
+		else {
+			//名字不被接受 重新启名
+			//_world->ShowUiErrorShowText("名字不被接受 重新启名",0);
 		}
-
-		//auto BtnLoginGuest = Helper::seekWidgetByName(_widget, "Button_enter_game");
-		//if (BtnLoginGuest) {
-		//	BtnLoginGuest->addClickEventListener([=](Ref* sender)
-		//	{
-		//		XPTO_GAME::c_char_use(GxApplication::Instance()->m_mySelf.m_name);
-		//		SafeRemoveUiByName("ui_actor_selector.json");
-		//	});
-		//}
-
-
-
-	
-}
-
-void GxWorld::touchEvent(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
-{
-	float _s = 1.0;
-	switch (type)
-	{
-	case cocos2d::ui::Widget::TouchEventType::BEGAN:
-	{
-		_s = 0.8f;
-	}
-		break;
-	case cocos2d::ui::Widget::TouchEventType::MOVED:
-		break;
-	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		break;
-	case cocos2d::ui::Widget::TouchEventType::CANCELED:
-		break;
-	default:
-		break;
+		
+		return 1;
 	}
 
-	Node* n = dynamic_cast<Node*>(sender);
-	if (n) {
-		n->setScale(_s);
-	}
-
+	return 0;
 }
 
-void GxWorld::UiSetFocused(std::string jsonfile, std::string componet, bool _val/*=true*/)
-{
-	Widget* _widget = dynamic_cast<Widget*>(m_uiLayer->getChildByName(jsonfile));
-	if (_widget) {
-		auto wc= (Helper::seekWidgetByName(_widget, componet));
-		if (wc) wc->setFocused(_val);
-	}
-}
-
-void GxWorld::ShowUiRename()
-{
-
-}
-
-void GxWorld::ShowUiLogo()
-{
-	string jsonfname = "ui_logo.json";
-
-	Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfname.c_str()));
-	addChild(_widget);
-	_widget->setName(jsonfname);
-	ActionObject* ao= ActionManagerEx::getInstance()->getActionByName(jsonfname.c_str(),"LogoShow" );
-	if (ao) {
-		ao->play(CallFunc::create(CC_CALLBACK_0(GxWorld::OnLogoShowAfter,this)));
-	}
-}
-
-void GxWorld::OnLogoShowAfter()
-{
-	Node* n = getChildByName("ui_logo.json");
-	if (n) {
-		n->runAction(Sequence::create(DelayTime::create(0.1f),
-			CallFuncN::create(this, CC_CALLFUNCN_SELECTOR(GxWorld::OnUiRemoveAfter)),
-			RemoveSelf::create(), NULL));
-	}
-
-	m_bUiWarning = true;
-	ShowUiWarning();
-}

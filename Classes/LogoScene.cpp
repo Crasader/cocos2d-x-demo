@@ -215,7 +215,7 @@ void Logo::OnWarningAgree()
 {
 	_bShowWarning = true;
 
-	GxApplication::Instance()->CfgAttribIntSet("app_warning",true);
+	//GxApplication::Instance()->CfgAttribIntSet("app_warning",true);
 
 	OnAfterLogoShow();
 }

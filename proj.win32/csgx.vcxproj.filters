@@ -16,6 +16,9 @@
     <Filter Include="gayola">
       <UniqueIdentifier>{fb25a93d-f907-47d1-ac3e-1d27c28b51c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gayola\rapidxml">
+      <UniqueIdentifier>{165a1c1d-ca9c-4e81-9b9a-0092be426738}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -235,6 +238,18 @@
     </ClInclude>
     <ClInclude Include="..\gayola\XString.h">
       <Filter>gayola</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\rapidxml\rapidxml.hpp">
+      <Filter>gayola\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\rapidxml\rapidxml_iterators.hpp">
+      <Filter>gayola\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\rapidxml\rapidxml_print.hpp">
+      <Filter>gayola\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gayola\rapidxml\rapidxml_utils.hpp">
+      <Filter>gayola\rapidxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

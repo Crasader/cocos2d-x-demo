@@ -28,7 +28,12 @@
                 "scalex": 1,
                 "scaley": 1,
                 "starttime": 0,
-                "tweenParameter": [],
+                "tweenParameter": [
+                  0,
+                  0,
+                  1,
+                  1
+                ],
                 "tweenType": 0,
                 "visible": false
               },
@@ -149,7 +154,7 @@
       "classname": "Panel",
       "name": "Panel_229",
       "ZOrder": 0,
-      "actiontag": 229,
+      "actiontag": -1,
       "anchorPointX": 0,
       "anchorPointY": 0,
       "classType": "Panel",
