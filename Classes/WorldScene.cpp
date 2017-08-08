@@ -34,6 +34,9 @@ Scene* GxWorld::createScene()
 
 GxWorld::GxWorld()
 {
+	m_bUiAutoAction = true;
+	_app = GxApplication::Instance();
+
 	GxApplication::Instance()->MsgHandlerAdd(this, 0);
 	GxApplication::Instance()->NetMsgHandlerAdd(0, GxWorld::NetMsgHandler, 0, this);
 	GxApplication::Instance()->NetMsgHandlerAdd(0, GxWorld::NetMsgCharHandler, 0, this);
@@ -79,6 +82,19 @@ void GxWorld::onEnter()
 
 	ShowUiLogo();
 
+}
+
+void GxWorld::ShowUiLogo()
+{
+	string jsonfname = "ui_logo.json";
+
+	Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfname.c_str()));
+	addChild(_widget);
+	_widget->setName(jsonfname);
+	ActionObject* ao= ActionManagerEx::getInstance()->getActionByName(jsonfname.c_str(),"LogoShow" );
+	if (ao) {
+		ao->play(CallFunc::create(CC_CALLBACK_0(GxWorld::OnLogoShowAfter,this)));
+	}
 }
 
 void GxWorld::ShowUiError()
@@ -206,19 +222,6 @@ void GxWorld::ShowUiWarning()
 }
 
 
-void GxWorld::ShowUiLogo()
-{
-	string jsonfname = "ui_logo.json";
-
-	Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile(jsonfname.c_str()));
-	addChild(_widget);
-	_widget->setName(jsonfname);
-	ActionObject* ao= ActionManagerEx::getInstance()->getActionByName(jsonfname.c_str(),"LogoShow" );
-	if (ao) {
-		ao->play(CallFunc::create(CC_CALLBACK_0(GxWorld::OnLogoShowAfter,this)));
-	}
-}
-
 void GxWorld::ShowUiRename()
 {
 	string jsonfname = "ui_rename.json";
@@ -284,6 +287,18 @@ void GxWorld::ShowUiLogin()
 {
 	if (m_bUiLogin)
 	{
+
+		int bAutoLogin = GxApplication::Instance()->AttribGetValueReal<int>("auto_login");
+		if (bAutoLogin!=0 && m_bUiAutoAction)
+		{
+			//直接进入选角界面
+			m_bUiLogin = false;
+			//m_bUiActorSelector = true;
+			//ShowUiActorSelector();
+			_app->LoginUserPassword(_app->m_username, _app->m_password);
+			return;
+		}
+
 		Layout* _widget = dynamic_cast<Layout*>(cocostudio::GUIReader::getInstance()->widgetFromJsonFile("ui_login.json"));
 		m_uiLayer->addChild(_widget);
 		_widget->setName("ui_login.json");
@@ -329,6 +344,20 @@ void GxWorld::ShowUiLogin()
 			});
 		}
 
+		//保存自动登录
+		auto ckAutoLogin= dynamic_cast<CheckBox*>(Helper::seekWidgetByName(_widget, "CheckBox_save_login"));
+		if (ckAutoLogin)
+		{
+			
+			ckAutoLogin->setSelected(bAutoLogin!=0);
+
+			ckAutoLogin->addClickEventListener([=](Ref* sender)
+			{
+				//CheckBox* cBox =(ckAutoLogin);
+				int b=(int)(!ckAutoLogin->getSelectedState());
+				GxApplication::Instance()->AttribSet("auto_login",XOBJ_ATTR_TYPE::OAT_I32,(const char*)&b,4);
+			});
+		}
 
 
 	}
@@ -345,6 +374,19 @@ void GxWorld::ShowUiActorSelector()
 
 	if (m_bUiActorSelector)
 	{
+
+		//查看是否自动选择
+		int bAutoSelect = _app->AttribGetValueReal<int>("auto_char_use");
+		if (m_bUiAutoAction&& bAutoSelect)
+		{
+			m_bUiActorSelector = false;
+			string _name = _app->AttribGetString("auto_char_use_name");
+			_app->m_mySelf.m_name = _name;
+			XPTO_GAME::c_char_use(_name);
+			return;
+		}
+
+
 		//清除旧的列表数据
 		GxApplication::Scene()->clear();
 
@@ -401,6 +443,10 @@ void GxWorld::ShowUiActorSelector()
 						app->Self()->m_name.c_str(), app->Self()->m_name.length());
 				}
 				CCLOG("selected:%s,save:%d", app->Self()->m_name.c_str(),_b);
+				string _name = app->Self()->m_name;
+				_app->AttribSet("auto_char_use", XOBJ_ATTR_TYPE::OAT_I32, (const char*)&_b, 4);
+				_app->AttribSet("auto_char_use_name", XOBJ_ATTR_TYPE::OAT_STRING, _name.c_str(), _name.length());
+
 			});
 		}
 
@@ -424,6 +470,7 @@ void GxWorld::ShowUiActorSelector()
 			{
 				m_bUiActorSelector = false;
 				m_bUiLogin = true;
+				m_bUiAutoAction = false;
 				SafeRemoveUiByName("ui_actor_selector.json");
 				ShowUiLogin();
 			});

@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include <string>
 
+#include "Game/XGame.h"
 #include "Game/XMsgHandler.h"
 #include "game/XListener.h"
 #include "CommUI.h"
@@ -21,6 +22,7 @@ protected:
 	bool m_bUiWarning;
 	bool m_bUiRename;
 	bool m_bUiOption; //显示游戏选项 调声音的窗口
+	bool m_bUiAutoAction; //是否无视自动执行界面功能
 
 	Layer* m_uiLayer;
 
@@ -31,6 +33,7 @@ protected:
 
 private:
 //	int m_timeout;
+	GxApplication* _app;
 
 public:
 	GxWorld();
