@@ -90,15 +90,10 @@ public:
 	static GxPlayer* Self();
 
 	static GXLOG gLog;
-	void ConfigDefaultSave(std::string _filename);
+	
 public:
 	GxBagClient m_bagClient;	//±³°ü¿Í»§¶Ë
-//	tinyxml2::XMLDocument m_cfgDoc;
-//	std::string GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname);
-//	void CfgAttribIntSet(const char* kname,int _val );
-//	int  CfgAttribIntGet(const char* kname);
-//	void CfgAttribStringSet(const char* kname,const char* _val,size_t _sz);
-//  std::string CfgAttribStringGet(const char* kname);
+
 
 
 protected:
@@ -110,7 +105,8 @@ public:
 	GxPlayer& MySelf();
 	GxScene&  MyScene();
 
-	void LoadConfigFromXmlFile(const char* fname);
+	void ConfigLoadFromFile(std::string _filename);
+	void ConfigSaveToFile(std::string _filename);
 
 	bool AuthUrlIsExpire();
 	void AuthUrlStringGet();

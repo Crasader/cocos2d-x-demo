@@ -20,6 +20,7 @@ protected:
 	bool m_bUiError;
 	bool m_bUiWarning;
 	bool m_bUiRename;
+	bool m_bUiOption; //显示游戏选项 调声音的窗口
 
 	Layer* m_uiLayer;
 
@@ -56,13 +57,16 @@ public:
 
 	void SafeRemoveUiByName(std::string _name);
 
+	void ShowUiLogo();
 	void ShowUiWarning();
 	void ShowUiLogin();
 	void ShowUiActorSelector();
-	void ShowUiMain();
 	void ShowUiError();
 	void ShowUiRename();
-	void ShowUiLogo();
+
+	void ShowOption();
+
+	void ShowUiMain();
 
 	void OnUiRemoveBefore(Ref* sender);
 	void OnUiRemoveAfter(Node* sender);

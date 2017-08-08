@@ -429,6 +429,17 @@ void GxWorld::ShowUiActorSelector()
 			});
 		}
 
+		//¸ÄÃû
+		Button = Helper::seekWidgetByName(_widget, "Button_rename");
+		if (Button) {
+			XX_BTN_TOUCH_EVENT(Button);
+			Button->addClickEventListener([=](Ref* sender)
+			{
+				m_bUiRename = true;
+				ShowUiRename();
+			});
+		}
+
 	}
 	else {
 		//É¾³ýµô

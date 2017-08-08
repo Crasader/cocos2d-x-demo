@@ -27,5 +27,5 @@
   <ResRelativePath />
   <imageFileList />
   <JsonSuffix>.json</JsonSuffix>
-  <CurrentUIJson>ui_audio.json</CurrentUIJson>
+  <CurrentUIJson>ui_rename.json</CurrentUIJson>
 </UIProject>

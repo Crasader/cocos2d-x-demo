@@ -106,6 +106,32 @@ namespace xg
 		return nullptr;
 	}
 
+	void * GxObject::AttribGetValueEx(const char * kname,size_t& sz, void * _parent)
+	{
+		int t = 0;
+		CxVar* v = (CxVar*)AttribGet(kname, t, _parent);
+		if (v) {
+			sz = v->Length();
+			return v->GetData();
+		}
+		sz = 0;
+		return nullptr;
+	}
+
+	std::string GxObject::AttribGetString(const char* kname, void* _parent /*= NULL*/)
+	{
+		int t = 0;
+		CxVar* v = (CxVar*)AttribGet(kname, t, _parent);
+		if (v) {
+			size_t sz = v->Length();
+			//return v->GetData();
+			std::string s;
+			s.append(v->GetData(), sz);
+			return s;
+		}
+		return "";
+	}
+
 	bool GxObject::AttribRemove(const char * kname, void * _parent)
 	{
 		CxVar* var = NULL;

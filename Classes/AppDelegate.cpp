@@ -123,10 +123,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	fileUtils->addSearchPath("ui");
 
 
-	std::string cfgfilename = FileUtils::getInstance()->getWritablePath() + "cfg.xml";
-	if (!FileUtils::getInstance()->isFileExist(cfgfilename)) GxApplication::Instance()->ConfigDefaultSave(cfgfilename);
+	std::string cfgfilename = FileUtils::getInstance()->getWritablePath() + "cfg.dat";
+	GxApplication::Instance()->m_strCfgFilename = cfgfilename;
 
-	GxApplication::Instance()->LoadConfigFromXmlFile(cfgfilename.c_str());
+	if (FileUtils::getInstance()->isFileExist(cfgfilename))
+	{
+		GxApplication::Instance()->ConfigLoadFromFile(cfgfilename);
+	}
 
 	register_all_packages();
 

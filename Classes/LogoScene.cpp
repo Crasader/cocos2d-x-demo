@@ -177,7 +177,7 @@ void Logo::onEnter()
 	if (!_bShowWarning)
 	{
 	
-		_app->LoadConfigFromXmlFile(fname.c_str());
+//		_app->LoadConfigFromXmlFile(fname.c_str());
 
 		if (_app->AuthUrlIsExpire())
 		{

@@ -20,7 +20,7 @@
       "classname": "Panel",
       "name": "Panel_301",
       "ZOrder": 0,
-      "actiontag": 301,
+      "actiontag": -1,
       "anchorPointX": 0,
       "anchorPointY": 0,
       "classType": "Panel",

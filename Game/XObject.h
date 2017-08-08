@@ -86,6 +86,13 @@ namespace xg
 		*/
 		virtual void* AttribGetValue(const char* kname, void* _parent = NULL);
 
+		/**
+		显示其中的值
+		@param sz [out] 数据长度
+		*/
+		void* AttribGetValueEx(const char* kname,size_t& sz, void* _parent = NULL);
+		std::string AttribGetString(const char* kname, void* _parent = NULL);
+
 		//删除对象属性项
 		virtual bool  AttribRemove(const char* kname, void* _parent = NULL);
 		virtual void  AttribRemoveAll();
@@ -105,6 +112,8 @@ namespace xg
 			if (v) memcpy(&r, v, sizeof(T));
 			return r;
 		}
+
+
 
 	};
 

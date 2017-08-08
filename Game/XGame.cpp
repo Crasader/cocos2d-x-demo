@@ -67,7 +67,7 @@ GxApplication::GxApplication()
 
 GxApplication::~GxApplication()
 {
-
+	ConfigSaveToFile(m_strCfgFilename);
 }
 
 void GxApplication::LoginGuest()
@@ -87,48 +87,23 @@ GxPlayer* GxApplication::Self()
 	return &GxApplication::Instance()->m_mySelf;
 }
 
-void GxApplication::ConfigDefaultSave(std::string _filename)
+
+void  GxApplication::ConfigLoadFromFile(std::string _filename)
 {
-	//tinyxml2::XMLDocument doc;
-	//doc.LinkEndChild(doc.NewDeclaration());
-	//tinyxml2::XMLElement* root = doc.NewElement("cfg");
-	//doc.LinkEndChild(root);
-	//doc.SaveFile(_filename.c_str());
+	CxVar::LoadFromFile(m_attrib, _filename);
+	m_acct_id = AttribGetString("acct_id");
+	m_username = AttribGetString("username");
+	m_password = AttribGetString("password");
 }
 
-//std::string GxApplication::GetValueStringFrom(tinyxml2::XMLElement* _elm, std::string kname)
-//{
-//	std::string res;
-//
-//	if (_elm && !kname.empty())
-//	{
-//		tinyxml2::XMLElement* my = _elm->FirstChildElement(kname.c_str());
-//		if (my) res = my->GetText();
-//	}
-//
-//	return res;
-//}
-//
-//void GxApplication::CfgAttribIntSet(const char* kname, int _val)
-//{
-//
-//}
-//
-//int GxApplication::CfgAttribIntGet(const char* kname)
-//{
-//	return 0;
-//}
-//
-//void GxApplication::CfgAttribStringSet(const char* kname, const char* _val, size_t _sz)
-//{
-//
-//}
-//
-//std::string GxApplication::CfgAttribStringGet(const char* kname)
-//{
-//	std::string str;
-//	return str;
-//}
+void GxApplication::ConfigSaveToFile(std::string _filename)
+{
+	AttribSet("acct_id", XOBJ_ATTR_TYPE::OAT_STRING, m_acct_id.c_str(), m_acct_id.length());
+	AttribSet("username", XOBJ_ATTR_TYPE::OAT_STRING, m_username.c_str(), m_username.length());
+	AttribSet("password", XOBJ_ATTR_TYPE::OAT_STRING, m_password.c_str(), m_password.length());
+
+	CxVar::SaveToFile(m_attrib, _filename);
+}
 
 
 GxPlayer& GxApplication::MySelf()
@@ -141,24 +116,7 @@ GxScene& GxApplication::MyScene()
 	return m_myScene;
 }
 
-void GxApplication::LoadConfigFromXmlFile(const char* fname)
-{
-	assert(fname);
-	//m_strCfgFilename = fname;
-	//m_cfgDoc.LoadFile(fname);
-	//if (m_cfgDoc.Error()) {
-	//	LastErrorSet(m_cfgDoc.ErrorID(), m_cfgDoc.GetErrorStr1());
-	//	return;
-	//}
 
-	//tinyxml2::XMLElement* root = m_cfgDoc.RootElement();
-	//if (root)
-	//{
-	//	if (root->Attribute("username")) m_username = root->Attribute("username");
-	//	if (root->Attribute("password")) m_password = root->Attribute("password");
-	//}
-
-}
 
 bool GxApplication::AuthUrlIsExpire()
 {

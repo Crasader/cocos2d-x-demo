@@ -862,10 +862,7 @@ public:
 
 
 
-public:
 
-	//	int LoadFromFile(std::string fname);
-	//	int SaveToFile(std::string fname);
 
 public:
 
@@ -1005,7 +1002,57 @@ public:
 		return v;
 	}
 
+public:
 
+	static std::string ToHexString(CxVarMap& _attrib,std::string* _des)
+	{
+		CxArrayByte ar;
+		CxVar::CxVarMapWriteToArrayByte(ar, _attrib);
+		if (_des) {
+			CxVar::hexEncodeByteArray((const uint8*)&ar[0], ar.size(), *_des);
+			return *_des;
+		}
+		else {
+			std::string result;
+			CxVar::hexEncodeByteArray((const uint8*)&ar[0], ar.size(), result);
+			return result;
+		}
+	}
+
+	static void FromHexString(CxVarMap& _attrib, const char* src,size_t _size)
+	{
+		std::string str;
+		CxVar::hexDecodeByteArray((const uint8*)src, _size, str);
+		CxVar::CxVarMapLoadFromByte(_attrib, str.c_str());
+	}
+
+	static int LoadFromFile(CxVarMap& _attrib,std::string fname)
+	{
+		if (fname.empty()) return -1;
+		std::ifstream mf;
+		mf.open(fname.c_str(), std::ios_base::binary);
+		if (mf.good()) {
+			std::string result;
+			mf >> result;
+			FromHexString(_attrib, result.c_str(), result.length());
+			mf.close();
+		}
+	}
+	
+	static int SaveToFile(CxVarMap& _attrib,std::string fname)
+	{
+		if (fname.empty()) return -1;
+
+		std::ofstream o;
+		o.open(fname.c_str(), std::ios_base::binary);
+		if (o.good())
+		{
+			std::string result;
+			ToHexString(_attrib, &result);
+			o << result;
+			o.close();
+		}
+	}
 
 };
 
